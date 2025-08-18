@@ -12,7 +12,7 @@ export const themeToggleButtonGroup = {
       props: { variant: "push", orientation: "vertical" },
       style: ({ theme }) => ({
         [`&.${toggleButtonGroupClasses.root}`]: {
-          backgroundColor: theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900],
+          backgroundColor: theme.palette.surface[100],
         },
         [`& .${toggleButtonClasses.root}`]: {
           paddingLeft: "12px",
@@ -46,7 +46,7 @@ export const themeToggleButtonGroup = {
       props: { variant: "push", orientation: "horizontal" },
       style: ({ theme }) => ({
         [`&.${toggleButtonGroupClasses.root}`]: {
-          backgroundColor: theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900],
+          backgroundColor: theme.palette.surface[100],
           border: "1px solid rgba(255, 255, 255, 0.12) !important",
         },
         [`& .${toggleButtonClasses.root}`]: {

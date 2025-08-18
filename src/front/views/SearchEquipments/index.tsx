@@ -51,7 +51,7 @@ export const SearchEquipments = () => {
         sx={{
           p: 1,
           gap: 1,
-          bgcolor: (theme) => (theme.palette.mode === "light" ? "grey.100" : "grey.900"),
+          bgcolor: "surface.100",
           borderRadius: 2,
         }}
       >

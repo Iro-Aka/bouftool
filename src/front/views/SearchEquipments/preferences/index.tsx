@@ -17,7 +17,7 @@ export const SearchItemsPreferences = ({ onChange }: TSearchItemsPreferencesProp
     <StackRow
       sx={{
         [`& .${stackRowClasses.root}`]: {
-          bgcolor: (theme) => (theme.palette.mode === "light" ? "grey.300" : "grey.850"),
+          bgcolor: "surface.150",
           px: 1,
           py: 0.5,
           borderRadius: 2,

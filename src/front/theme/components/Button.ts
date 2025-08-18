@@ -20,7 +20,7 @@ export const themeButton = {
       props: { variant: "push" },
       style: ({ theme }) => ({
         textTransform: "none",
-        backgroundColor: theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900],
+        backgroundColor: theme.palette.surface[100],
         boxShadow: theme.palette.mode === "light" ? "inset 0 0 4px white" : "inset 0 0 4px black",
         border:
           theme.palette.mode === "light" ? "1px solid rgba(0, 0, 0, 0.12)" : "1px solid rgba(255, 255, 255, 0.12)",
