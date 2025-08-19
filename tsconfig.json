@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "nodenext",
+    "module": "ESNext",
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,
@@ -15,7 +15,7 @@
       ]
     },
     "outDir": "dist",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "jsx": "react-jsx"
   }
