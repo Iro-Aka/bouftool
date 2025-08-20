@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { lazy, Suspense, useLayoutEffect, useRef } from "react";
 import { VariableSizeGrid } from "react-window";
 import { useResizeObserver } from "src/front/hooks/useResizeObserver";
@@ -58,9 +58,7 @@ export const SearchEquipments = () => {
         <SearchItemsPreferences onChange={setSort} />
         <SearchItemsFilters onChange={setFilters} />
       </Stack>
-      <Typography variant="caption" sx={{ pl: 1 }}>
-        Résultats : {items.length}
-      </Typography>
+      {/* <Typography variant="caption">Résultats : {items.length}</Typography> */}
       <Box sx={{ flex: 1, overflow: "hidden" }} ref={boxRef}>
         <VariableSizeGrid
           rowCount={rowCount}
@@ -90,7 +88,7 @@ export const SearchEquipments = () => {
                   pb: 2,
                   [`&:nth-of-type(-n+${columnCount})`]: { pt: "2px" },
                   [`&:nth-of-type(${columnCount}n)`]: { pr: 1 },
-                  [`&:nth-of-type(${columnCount}n+1)`]: { pl: 1 },
+                  [`&:nth-of-type(${columnCount}n+1)`]: { pl: "2px" },
                 }}
               >
                 <Suspense fallback={<div style={{ height: "100%", borderRadius: 8, background: "hsl(0 0% 16%)" }} />}>

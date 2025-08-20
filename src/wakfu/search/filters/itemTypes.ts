@@ -21,6 +21,6 @@ export const searchItemsItemTypesFilter = (item: WakfuItem, itemTypes: number[])
     ];
   }
   return itemTypes.some(
-    (itemType) => itemType === item.getItemType() || itemType === itemTypesMap.get(item.getItemType())?.parentId,
+    (itemType) => itemType === item.getItemTypeId() || itemType === itemTypesMap.get(item.getItemTypeId())?.parentId,
   );
 };

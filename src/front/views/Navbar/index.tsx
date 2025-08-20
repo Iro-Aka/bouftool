@@ -1,3 +1,4 @@
+import DropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ModeLightIcon from "@mui/icons-material/LightMode";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import { Button, buttonClasses, Divider, Switch, Typography, useColorScheme } from "@mui/material";
@@ -28,7 +29,7 @@ export const Navbar = () => {
             variant="text"
             color="inherit"
             className={Math.floor(currentView / NavigationView.Builds) === 1 ? "Mui-selected" : ""}
-            onClick={() => setCurrentView(NavigationView.Builds)}
+            onClick={() => setCurrentView(NavigationView.Builds, undefined)}
           >
             <Typography variant="subtitle2" sx={{ textTransform: "none" }}>
               Builds
@@ -38,10 +39,11 @@ export const Navbar = () => {
             variant="text"
             color="inherit"
             className={Math.floor(currentView / NavigationView.EncyclopediaEquipment) === 1 ? "Mui-selected" : ""}
-            onClick={() => setCurrentView(NavigationView.EncyclopediaEquipment)}
+            onClick={() => setCurrentView(NavigationView.EncyclopediaEquipment, undefined)}
+            endIcon={<DropDownIcon />}
           >
             <Typography variant="subtitle2" sx={{ textTransform: "none" }}>
-              Equipements
+              Encyclopédie
             </Typography>
           </Button>
         </StackRow>

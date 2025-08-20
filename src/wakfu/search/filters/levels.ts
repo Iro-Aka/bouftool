@@ -9,7 +9,7 @@ export const searchItemsLevelsFilter = (
   levels: { min: number; max: number },
   filters: TSearchItemsFilters,
 ) => {
-  if (filters.itemTypes.some((type) => Exceptions.includes(type)) && Exceptions.includes(item.getItemType())) {
+  if (filters.itemTypes.some((type) => Exceptions.includes(type)) && Exceptions.includes(item.getItemTypeId())) {
     return true;
   }
   return item.getLevel() >= levels.min && item.getLevel() <= levels.max;

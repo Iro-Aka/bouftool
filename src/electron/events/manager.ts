@@ -16,9 +16,11 @@ export class ElectronEventManager {
     console.log("registering event:", event);
     ipcMain.handle(event, (evt, payload: ElectronEventsMain[E]) => {
       console.log("event received:", event, payload);
+      console.time(`Event: ${event}`);
       callback((payload: ElectronEventsRenderer[E]) => {
         evt.sender.send(event, payload);
       }, payload);
+      console.timeEnd(`Event: ${event}`);
     });
   }
 }

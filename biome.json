@@ -27,6 +27,9 @@
       },
       "complexity": {
         "noForEach": "error"
+      },
+      "suspicious": {
+        "useAwait": "warn"
       }
     }
   }

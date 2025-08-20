@@ -3,8 +3,16 @@ import type { WakfuItem } from "../data/item";
 import type { TSearchItemsSort } from "../search/types";
 import { isWakfuStats } from "../types/action";
 import { isWakfuBreed, type WakfuBreed } from "../types/breed";
-import { isWakfuItemParsed, type TWakfuItemParsed } from "../types/items";
-import type { WakfuEquipmentPosition } from "../types/itemType";
+import { isWakfuEquipmentPosition, type WakfuEquipmentPosition } from "../types/itemType";
+
+export enum WakfuBuildEquippedPositionStatus {
+  Empty,
+  Disabled,
+}
+
+export const isWakfuBuildEquippedPositionStatus = (value: unknown): value is WakfuBuildEquippedPositionStatus => {
+  return isNumber(value) && value in WakfuBuildEquippedPositionStatus;
+};
 
 export type TWakfuPreferences = TSearchItemsSort;
 
@@ -18,7 +26,7 @@ export type TWakfuBuild = {
   breed: WakfuBreed;
   level: number;
   preferences: TWakfuPreferences;
-  items: TWakfuItemParsed[];
+  items: Record<WakfuEquipmentPosition, number | WakfuBuildEquippedPositionStatus>;
 };
 
 export const isWakfuBuildPreferences = (json: unknown) => {
@@ -90,7 +98,14 @@ export const isWakfuBuild = (json: unknown): json is TWakfuBuild => {
     console.warn("Invalid JSON: Preferences is not valid");
     return false;
   }
-  if (!("items" in json && isArrayOf(json.items, isWakfuItemParsed))) {
+  if (
+    !(
+      "items" in json &&
+      isObject(json.items) &&
+      isArrayOf(Object.keys(json.items), isWakfuEquipmentPosition) &&
+      isArrayOf(Object.values(json.items), isNumber)
+    )
+  ) {
     console.warn("Invalid JSON: Items is not valid");
     return false;
   }

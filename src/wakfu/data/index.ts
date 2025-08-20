@@ -39,6 +39,7 @@ export class WakfuData {
   private recipeCategoryMap: Map<number, TWakfuDescription> = new Map();
   private statesMap: Map<number, TWakfuDescription> = new Map();
   private items: WakfuItem[] = [];
+  private itemsMap: Map<number, WakfuItem> = new Map();
 
   public static async initialize() {
     if (!WakfuData.instance) {
@@ -114,15 +115,15 @@ export class WakfuData {
         });
         const equipEffectsLabels = parser.parse();
         item.level = realLevel;
-        this.items.push(
-          new WakfuItem(
-            {
-              ...item,
-              equipEffectsLabels,
-            },
-            this.lang,
-          ),
+        const wakfuItem = new WakfuItem(
+          {
+            ...item,
+            equipEffectsLabels,
+          },
+          this.lang,
         );
+        this.items.push(wakfuItem);
+        this.itemsMap.set(wakfuItem.getId(), wakfuItem);
       }
     }
   }
@@ -136,6 +137,19 @@ export class WakfuData {
     await this.fetchAndBuildRecipeCategories();
     await this.fetchAndBuildItems();
     await this.saveGamedata();
+  }
+
+  private async loadGamedataFromFile(parsedData: TWakfuGamedata) {
+    console.log("WakfuData: Load from file");
+    this.version = parsedData.version;
+    this.lang = parsedData.lang;
+    this.actionLabelsMap = new Map(parsedData.actionLabels.map(({ id, description }) => [id, description]));
+    this.itemTypesMap = new Map(parsedData.itemTypes.map(({ id, ...data }) => [id, { id, ...data }]));
+    this.itemTypeLabelsMap = new Map(parsedData.itemTypeLabels.map(({ id, description }) => [id, description]));
+    this.recipeCategoryMap = new Map(parsedData.recipeCategories.map(({ id, description }) => [id, description]));
+    this.statesMap = new Map(parsedData.states.map(({ id, description }) => [id, description]));
+    this.items = parsedData.items.map((item) => new WakfuItem(item, this.lang));
+    this.itemsMap = new Map(this.items.map((item) => [item.getId(), item]));
   }
 
   private async saveGamedata() {
@@ -158,15 +172,7 @@ export class WakfuData {
       const gamedata = await fs.readFile(WakfuData.filePath, "utf-8");
       const parsedData = JSON.parse(gamedata);
       if (isWakfuGamedata(parsedData)) {
-        console.log("WakfuData: Load from file");
-        this.version = parsedData.version;
-        this.lang = parsedData.lang;
-        this.actionLabelsMap = new Map(parsedData.actionLabels.map(({ id, description }) => [id, description]));
-        this.itemTypesMap = new Map(parsedData.itemTypes.map(({ id, ...data }) => [id, { id, ...data }]));
-        this.itemTypeLabelsMap = new Map(parsedData.itemTypeLabels.map(({ id, description }) => [id, description]));
-        this.recipeCategoryMap = new Map(parsedData.recipeCategories.map(({ id, description }) => [id, description]));
-        this.statesMap = new Map(parsedData.states.map(({ id, description }) => [id, description]));
-        this.items = parsedData.items.map((item) => new WakfuItem(item, this.lang));
+        this.loadGamedataFromFile(parsedData);
       } else {
         console.error("WakfuData: Invalid data format");
       }
@@ -205,6 +211,10 @@ export class WakfuData {
 
   public getItems(): WakfuItem[] {
     return this.items;
+  }
+
+  public getItemById(id: number): WakfuItem | undefined {
+    return this.itemsMap.get(id);
   }
 
   public getItemTypesMap() {

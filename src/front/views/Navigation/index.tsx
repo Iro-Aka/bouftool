@@ -1,33 +1,62 @@
 import { createContext, useContext, useState } from "react";
-import { BuildsDashboard } from "../BuildsDashboard";
-import { CreateBuild } from "../CreateBuild";
+import { BuildsDashboard } from "../Builds/Dashboard";
+import { BuildDetails } from "../Builds/Details";
+import { BuildDetailsProvider } from "../Builds/Details/context";
 import { SearchEquipments } from "../SearchEquipments";
-import { type NavigationContext, NavigationView, type TNavigationProviderProps } from "./types";
+import {
+  isNavigationContextView,
+  NavigationView,
+  type TNavigationContext,
+  type TNavigationParams,
+  type TNavigationProviderProps,
+  type UseNavigationContextReturn,
+} from "./types";
 
-const context = createContext<NavigationContext | undefined>(undefined);
+const context = createContext<TNavigationContext | undefined>(undefined);
 
-export const useNavigationContext = () => {
+export const useNavigationContext = <View extends NavigationView | undefined = undefined>(
+  view?: View,
+): UseNavigationContextReturn<View> => {
   const value = useContext(context);
   if (value === undefined) {
     throw new Error("useNavigationContext must be used within a NavigationProvider");
   }
-  return value;
+  if (view !== undefined && !isNavigationContextView(value, view)) {
+    throw new Error(`useNavigationContext called with invalid view: ${view}`);
+  }
+  return value as UseNavigationContextReturn<View>;
 };
 
 export const NavigationProvider = ({ children }: TNavigationProviderProps) => {
-  const [currentView, setCurrentView] = useState<NavigationView>(NavigationView.Builds);
+  const [state, setState] = useState<Omit<TNavigationContext, "setCurrentView">>({
+    currentView: NavigationView.Builds,
+    params: undefined,
+  });
 
-  return <context.Provider value={{ currentView, setCurrentView }}>{children}</context.Provider>;
+  const setCurrentView = <NewView extends NavigationView>(view: NewView, params: TNavigationParams[NewView]) => {
+    setState({ currentView: view, params });
+  };
+
+  const contextValue = {
+    ...state,
+    setCurrentView,
+  } as TNavigationContext;
+
+  return <context.Provider value={contextValue}>{children}</context.Provider>;
 };
 
 export const Navigation = () => {
-  const { currentView } = useNavigationContext();
+  const { currentView, params } = useNavigationContext();
 
   switch (currentView) {
     case NavigationView.Builds:
       return <BuildsDashboard />;
-    case NavigationView.BuildCreate:
-      return <CreateBuild />;
+    case NavigationView.BuildDetails:
+      return (
+        <BuildDetailsProvider buildId={params.buildId}>
+          <BuildDetails />
+        </BuildDetailsProvider>
+      );
     case NavigationView.EncyclopediaEquipment:
       return <SearchEquipments />;
     default:

@@ -1,6 +1,8 @@
 import { WakfuActionId, WakfuStats, wakfuStatsToWakfuActionId } from "../types/action";
 import type { TWakfuItemDisplay, TWakfuItemParsed } from "../types/items";
+import type { TWakfuItemType } from "../types/itemType";
 import type { WakfuLang } from "../types/utils";
+import { WakfuData } from ".";
 
 export enum WakfuParamIndex {
   EffectValue = 1,
@@ -72,8 +74,12 @@ export class WakfuItem {
     return this.item.level;
   }
 
-  public getItemType(): number {
+  public getItemTypeId(): number {
     return this.item.itemTypeId;
+  }
+
+  public getItemType(): TWakfuItemType | undefined {
+    return WakfuData.getInstance().getItemTypesMap().get(this.item.itemTypeId);
   }
 
   public getRarity(): number {

@@ -7,7 +7,7 @@ const Exceptions = [WakfuItemTypeId.Pet, WakfuItemTypeId.Mount];
 export const searchItemsRaritiesFilter = (item: WakfuItem, rarities: number[], filters: TSearchItemsFilters) => {
   if (
     rarities.length === 0 ||
-    (filters.itemTypes.some((type) => Exceptions.includes(type)) && Exceptions.includes(item.getItemType()))
+    (filters.itemTypes.some((type) => Exceptions.includes(type)) && Exceptions.includes(item.getItemTypeId()))
   ) {
     return true;
   }
