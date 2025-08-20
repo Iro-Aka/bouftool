@@ -2,8 +2,8 @@ import { Box, type BoxProps } from "@mui/material";
 import clsx from "clsx";
 import { isWakfuBuildEquippedPositionStatus, type WakfuBuildEquippedPositionStatus } from "src/wakfu/builder/types";
 import type { WakfuEquipmentPosition } from "src/wakfu/types/itemType";
-import { ItemIcon } from "./ItemIcon";
-import { ItemSlotBox, itemSlotClasses } from "./ItemSlot/styles";
+import { ItemIcon } from "../ItemIcon";
+import { ItemSlotBox, itemSlotClasses } from "./styles";
 
 export type TItemSlotProps = {
   position: WakfuEquipmentPosition;
@@ -17,26 +17,36 @@ export type TItemSlotProps = {
 
 export const ItemSlot = ({ position, item, size, slotProps }: TItemSlotProps) => {
   return (
-    <ItemSlotBox {...slotProps?.box} size={size} className={clsx(itemSlotClasses.root, slotProps?.box?.className)}>
+    <ItemSlotBox
+      {...slotProps?.box}
+      size={size}
+      equippedItem={!isWakfuBuildEquippedPositionStatus(item)}
+      className={clsx(itemSlotClasses.root, slotProps?.box?.className)}
+    >
+      <Box className={itemSlotClasses.frame} />
       {isWakfuBuildEquippedPositionStatus(item) ? (
         <img
-          width={size - 32}
-          height={size - 32}
+          width={size - 24}
+          height={size - 24}
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
+            filter: "brightness(0.3)",
           }}
           src={`wakfu/slots/item/${position}.png`}
           alt={`Slots ${position}`}
         />
       ) : (
-        <ItemIcon width={size} height={size} style={{ position: "absolute" }}>
+        <ItemIcon
+          width={size}
+          height={size}
+          style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
+        >
           {item.gfxId}
         </ItemIcon>
       )}
-      <Box className={itemSlotClasses.frame} />
     </ItemSlotBox>
   );
 };

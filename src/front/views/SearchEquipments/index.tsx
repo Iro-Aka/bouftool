@@ -8,7 +8,11 @@ import { SearchItemsPreferences } from "./preferences";
 
 const SearchEquipmentsItemLazy = lazy(async () => import("./item/item"));
 
-export const SearchEquipments = () => {
+export type TSearchEquipmentsProps = {
+  buildId?: number;
+};
+
+export const SearchEquipments = ({ buildId }: TSearchEquipmentsProps) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const size = useResizeObserver(boxRef.current);
   const columnCount = Math.max(1, Math.floor(size.width / 384));
@@ -28,6 +32,14 @@ export const SearchEquipments = () => {
           highestEffectsCounts = effectsCount;
         }
       }
+    }
+    if (buildId) {
+      return (
+        196 +
+        16 +
+        // (highestEffectsCounts > 6 ? 24 : 0) + // Added height for the fourth effect only
+        Math.max(0, highestEffectsCounts - 6) * 24 // Added height for effects beyond the fourth
+      );
     }
     return (
       128 + // Base card height
@@ -92,7 +104,7 @@ export const SearchEquipments = () => {
                 }}
               >
                 <Suspense fallback={<div style={{ height: "100%", borderRadius: 8, background: "hsl(0 0% 16%)" }} />}>
-                  <SearchEquipmentsItemLazy item={item} />
+                  <SearchEquipmentsItemLazy item={item} buildId={buildId} />
                 </Suspense>
               </Box>
             );

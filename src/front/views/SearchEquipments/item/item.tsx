@@ -1,16 +1,19 @@
 import { Box, Stack, Typography } from "@mui/material";
+import { StackGrid } from "src/front/components/Layout/StackGrid";
 import { RarityIcon } from "src/front/components/Wakfu/RarityIcon";
 import type { TSearchItemsResult } from "src/wakfu/search/types";
 import { Rarity } from "src/wakfu/types/rarity";
 import { ItemTypeIcon } from "../../../components/Wakfu/ItemTypeIcon";
 import { EquipmentEffectLabel } from "./effect";
+import { SearchEquipmentsItemEquip } from "./equip";
 import { ItemCard, itemCardClasses } from "./styles";
 
 export type SearchEquipmentsItemProps = {
   item: TSearchItemsResult;
+  buildId?: number;
 };
 
-export const SearchEquipmentsItem = ({ item }: SearchEquipmentsItemProps) => {
+export const SearchEquipmentsItem = ({ item, buildId }: SearchEquipmentsItemProps) => {
   return (
     <ItemCard className={itemCardClasses.root} rarity={item.rarity}>
       <Stack sx={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", pb: 0.5 }}>
@@ -22,8 +25,8 @@ export const SearchEquipmentsItem = ({ item }: SearchEquipmentsItemProps) => {
           <ItemTypeIcon height={24}>{item.itemTypeId}</ItemTypeIcon>
         </Stack>
       </Stack>
-      <Stack sx={{ flexDirection: "row", gap: 1 }}>
-        <Stack>
+      <Stack sx={{ flexDirection: "row", gap: 1.5 }}>
+        <Stack sx={{ flex: "0 0 64px" }}>
           <Box
             sx={{
               display: "flex",
@@ -36,9 +39,15 @@ export const SearchEquipmentsItem = ({ item }: SearchEquipmentsItemProps) => {
               borderRadius: "8px",
             }}
           >
-            <img src={`wakfu/items/${item.gfxId}.png`} alt={item.title ?? "item"} width={56} height={56} />
+            <img src={`wakfu/items/${item.gfxId}.png`} alt={item.title ?? "item"} width={58} height={58} />
           </Box>
           <Typography variant="caption">Niv. {item.level}</Typography>
+          <StackGrid columns={2} gap={0.5}>
+            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+          </StackGrid>
         </Stack>
         <Stack sx={{ flex: 1 }}>
           {item.equipEffectsLabels.map((effectLabel, index) => (

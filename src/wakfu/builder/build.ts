@@ -3,8 +3,9 @@ import path from "node:path";
 import { isErrnoException } from "src/types/utils";
 import { WakfuData } from "../data";
 import type { WakfuItem } from "../data/item";
+import { WakfuStats } from "../types/action";
 import { WakfuBreed } from "../types/breed";
-import { WakfuEquipmentPosition } from "../types/itemType";
+import { isWakfuEquipmentPosition, WakfuEquipmentPosition } from "../types/itemType";
 import {
   isWakfuBuild,
   isWakfuBuildEquippedPositionStatus,
@@ -35,7 +36,7 @@ export class WakfuBuild {
   private id: number;
   private name: string = "";
   private breed: WakfuBreed = WakfuBreed.Feca;
-  private level: number = 1;
+  private level: number = 245;
   private preferences: TWakfuPreferences = defaultWakfuPreferences;
   private items: Record<WakfuEquipmentPosition, WakfuItem | WakfuBuildEquippedPositionStatus> = {
     [WakfuEquipmentPosition.Head]: WakfuBuildEquippedPositionStatus.Empty,
@@ -269,5 +270,113 @@ export class WakfuBuild {
 
   public setPreferences(preferences: TWakfuPreferences): void {
     this.preferences = preferences;
+  }
+
+  public getEquipmentsStats() {
+    const stats = {
+      [WakfuStats.PV]: 50 + this.level * 10,
+      [WakfuStats.PA]: 6,
+      [WakfuStats.PM]: 3,
+      [WakfuStats.PW]: 6,
+      [WakfuStats.MasteryFire]: 0,
+      [WakfuStats.MasteryWater]: 0,
+      [WakfuStats.MasteryEarth]: 0,
+      [WakfuStats.MasteryAir]: 0,
+      [WakfuStats.ResistanceFire]: 0,
+      [WakfuStats.ResistanceWater]: 0,
+      [WakfuStats.ResistanceEarth]: 0,
+      [WakfuStats.ResistanceAir]: 0,
+      [WakfuStats.CriticalRate]: 0,
+      [WakfuStats.Block]: 0,
+      [WakfuStats.Initiative]: 0,
+      [WakfuStats.Range]: 0,
+      [WakfuStats.Dodge]: 0,
+      [WakfuStats.Lock]: 0,
+      [WakfuStats.Control]: 1,
+      [WakfuStats.Willpower]: 0,
+      [WakfuStats.CriticalMastery]: 0,
+      [WakfuStats.CriticalResistance]: 0,
+      [WakfuStats.BackMastery]: 0,
+      [WakfuStats.BackResistance]: 0,
+      [WakfuStats.MeleeMastery]: 0,
+      [WakfuStats.DistanceMastery]: 0,
+      [WakfuStats.HealingMastery]: 0,
+      [WakfuStats.BerserkMastery]: 0,
+      [WakfuStats.ArmorGiven]: 0,
+      [WakfuStats.ArmorReceived]: 0,
+    };
+    for (const position in this.items) {
+      if (!isWakfuEquipmentPosition(position)) {
+        continue;
+      }
+      const item = this.items[position];
+      if (isWakfuBuildEquippedPositionStatus(item)) {
+        continue;
+      }
+      stats[WakfuStats.PV] += item.getStats(WakfuStats.PV);
+      stats[WakfuStats.PA] += item.getStats(WakfuStats.PA);
+      stats[WakfuStats.PM] += item.getStats(WakfuStats.PM);
+      stats[WakfuStats.PW] += item.getStats(WakfuStats.PW);
+      stats[WakfuStats.MasteryFire] += item.getStats(WakfuStats.MasteryFire) + item.getStats(WakfuStats.Mastery);
+      stats[WakfuStats.MasteryWater] += item.getStats(WakfuStats.MasteryWater) + item.getStats(WakfuStats.Mastery);
+      stats[WakfuStats.MasteryEarth] += item.getStats(WakfuStats.MasteryEarth) + item.getStats(WakfuStats.Mastery);
+      stats[WakfuStats.MasteryAir] += item.getStats(WakfuStats.MasteryAir) + item.getStats(WakfuStats.Mastery);
+      stats[WakfuStats.ResistanceFire] +=
+        item.getStats(WakfuStats.ResistanceFire) + item.getStats(WakfuStats.Resistance);
+      stats[WakfuStats.ResistanceWater] +=
+        item.getStats(WakfuStats.ResistanceWater) + item.getStats(WakfuStats.Resistance);
+      stats[WakfuStats.ResistanceEarth] +=
+        item.getStats(WakfuStats.ResistanceEarth) + item.getStats(WakfuStats.Resistance);
+      stats[WakfuStats.ResistanceAir] += item.getStats(WakfuStats.ResistanceAir) + item.getStats(WakfuStats.Resistance);
+      stats[WakfuStats.CriticalRate] += item.getStats(WakfuStats.CriticalRate);
+      stats[WakfuStats.Block] += item.getStats(WakfuStats.Block);
+      stats[WakfuStats.Initiative] += item.getStats(WakfuStats.Initiative);
+      stats[WakfuStats.Range] += item.getStats(WakfuStats.Range);
+      stats[WakfuStats.Dodge] += item.getStats(WakfuStats.Dodge);
+      stats[WakfuStats.Lock] += item.getStats(WakfuStats.Lock);
+      stats[WakfuStats.Control] += item.getStats(WakfuStats.Control);
+      stats[WakfuStats.Willpower] += item.getStats(WakfuStats.Willpower);
+      stats[WakfuStats.CriticalMastery] += item.getStats(WakfuStats.CriticalMastery);
+      stats[WakfuStats.CriticalResistance] += item.getStats(WakfuStats.CriticalResistance);
+      stats[WakfuStats.BackMastery] += item.getStats(WakfuStats.BackMastery);
+      stats[WakfuStats.BackResistance] += item.getStats(WakfuStats.BackResistance);
+      stats[WakfuStats.MeleeMastery] += item.getStats(WakfuStats.MeleeMastery);
+      stats[WakfuStats.DistanceMastery] += item.getStats(WakfuStats.DistanceMastery);
+      stats[WakfuStats.HealingMastery] += item.getStats(WakfuStats.HealingMastery);
+      stats[WakfuStats.BerserkMastery] += item.getStats(WakfuStats.BerserkMastery);
+      stats[WakfuStats.ArmorGiven] += item.getStats(WakfuStats.ArmorGiven);
+      stats[WakfuStats.ArmorReceived] += item.getStats(WakfuStats.ArmorReceived);
+    }
+    return stats;
+  }
+
+  public toDisplay() {
+    const getItemForDisplay = (position: WakfuEquipmentPosition) => {
+      const item = this.items[position];
+      return isWakfuBuildEquippedPositionStatus(item) ? item : item.toDisplay();
+    };
+    return {
+      name: this.getName(),
+      breed: this.getBreed(),
+      level: this.getLevel(),
+      preferences: this.getPreferences(),
+      items: {
+        [WakfuEquipmentPosition.Head]: getItemForDisplay(WakfuEquipmentPosition.Head),
+        [WakfuEquipmentPosition.Back]: getItemForDisplay(WakfuEquipmentPosition.Back),
+        [WakfuEquipmentPosition.Neck]: getItemForDisplay(WakfuEquipmentPosition.Neck),
+        [WakfuEquipmentPosition.Shoulders]: getItemForDisplay(WakfuEquipmentPosition.Shoulders),
+        [WakfuEquipmentPosition.Chest]: getItemForDisplay(WakfuEquipmentPosition.Chest),
+        [WakfuEquipmentPosition.Belt]: getItemForDisplay(WakfuEquipmentPosition.Belt),
+        [WakfuEquipmentPosition.LeftHand]: getItemForDisplay(WakfuEquipmentPosition.LeftHand),
+        [WakfuEquipmentPosition.RightHand]: getItemForDisplay(WakfuEquipmentPosition.RightHand),
+        [WakfuEquipmentPosition.Legs]: getItemForDisplay(WakfuEquipmentPosition.Legs),
+        [WakfuEquipmentPosition.FirstWeapon]: getItemForDisplay(WakfuEquipmentPosition.FirstWeapon),
+        [WakfuEquipmentPosition.SecondWeapon]: getItemForDisplay(WakfuEquipmentPosition.SecondWeapon),
+        [WakfuEquipmentPosition.Accessory]: getItemForDisplay(WakfuEquipmentPosition.Accessory),
+        [WakfuEquipmentPosition.Pet]: getItemForDisplay(WakfuEquipmentPosition.Pet),
+        [WakfuEquipmentPosition.Mount]: getItemForDisplay(WakfuEquipmentPosition.Mount),
+      },
+      stats: this.getEquipmentsStats(),
+    };
   }
 }

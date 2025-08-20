@@ -1,4 +1,4 @@
-import { LinearProgress, Stack, Typography } from "@mui/material";
+import { LinearProgress, Stack } from "@mui/material";
 import type { ReactNode } from "react";
 
 export type LoadingProps = {
@@ -18,9 +18,7 @@ export const Loading = ({ children }: LoadingProps) => {
       }}
     >
       <LinearProgress variant={"indeterminate"} />
-      <Typography variant="body1" sx={{ alignSelf: "center" }}>
-        {children}
-      </Typography>
+      {children}
     </Stack>
   );
 };

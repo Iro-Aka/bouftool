@@ -18,7 +18,7 @@ export const ItemCard = styled("div", { shouldForwardProp: (prop) => prop !== "r
       height: "100%",
       position: "relative",
       backgroundColor: theme.palette.mode === "light" ? theme.palette.grey[100] : theme.palette.grey[900],
-      padding: theme.spacing(1, 2),
+      padding: theme.spacing(1, 1.5),
       gap: theme.spacing(1),
       borderImageSource: `url(wakfu/${RarityBorders[rarity]}.png)`,
       borderImageSlice: "26",

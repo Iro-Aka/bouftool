@@ -18,20 +18,14 @@ export const EquipmentEffectLabel = ({ effect }: EquipmentEffectLabelProps) => {
     }
     const [, type, value] = match;
     parts.push(
-      <img
-        key={`img-${match.index}`}
-        src={`wakfu/${type}/${value}.png`}
-        alt={`${type} ${value}`}
-        width={16}
-        height={16}
-      />,
+      <img key={parts.length} src={`wakfu/${type}/${value}.png`} alt={`${type} ${value}`} width={16} height={16} />,
     );
     lastIndex = pattern.lastIndex;
     match = pattern.exec(effect);
   }
 
   if (lastIndex < effect.length) {
-    parts.push(<span>{effect.slice(lastIndex)}</span>);
+    parts.push(<span key={parts.length}>{effect.slice(lastIndex)}</span>);
   }
 
   return parts;
