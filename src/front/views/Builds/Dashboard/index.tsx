@@ -11,7 +11,7 @@ export const BuildsDashboard = () => {
   const { setCurrentView } = useNavigationContext();
   const [createBuild, response, loading] = useElectronEvent(ElectronEvents.CreateBuild);
 
-  const handleCreateBuild = async () => {
+  const handleCreateBuild = () => {
     createBuild(undefined);
   };
 

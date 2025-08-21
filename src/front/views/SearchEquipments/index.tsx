@@ -1,18 +1,18 @@
 import { Box, Stack } from "@mui/material";
-import { lazy, Suspense, useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { VariableSizeGrid } from "react-window";
 import { useResizeObserver } from "src/front/hooks/useResizeObserver";
-import { SearchItemsFilters } from "./filters";
+import { SearchItemsFilters, type TSearchItemsFiltersForm } from "./filters";
+import { SearchEquipmentsItem } from "./item/item";
 import { useWakfuSearchItems } from "./logics";
 import { SearchItemsPreferences } from "./preferences";
 
-const SearchEquipmentsItemLazy = lazy(async () => import("./item/item"));
-
 export type TSearchEquipmentsProps = {
-  buildId?: number;
+  defaultFilters?: Partial<TSearchItemsFiltersForm>;
+  onEquipItem?: (itemId: number) => void;
 };
 
-export const SearchEquipments = ({ buildId }: TSearchEquipmentsProps) => {
+export const SearchEquipments = ({ defaultFilters, onEquipItem }: TSearchEquipmentsProps) => {
   const boxRef = useRef<HTMLDivElement>(null);
   const size = useResizeObserver(boxRef.current);
   const columnCount = Math.max(1, Math.floor(size.width / 384));
@@ -33,7 +33,7 @@ export const SearchEquipments = ({ buildId }: TSearchEquipmentsProps) => {
         }
       }
     }
-    if (buildId) {
+    if (onEquipItem) {
       return (
         196 +
         16 +
@@ -68,7 +68,7 @@ export const SearchEquipments = ({ buildId }: TSearchEquipmentsProps) => {
         }}
       >
         <SearchItemsPreferences onChange={setSort} />
-        <SearchItemsFilters onChange={setFilters} />
+        <SearchItemsFilters onChange={setFilters} defaultFilters={defaultFilters} />
       </Stack>
       {/* <Typography variant="caption">Résultats : {items.length}</Typography> */}
       <Box sx={{ flex: 1, overflow: "hidden" }} ref={boxRef}>
@@ -99,13 +99,11 @@ export const SearchEquipments = ({ buildId }: TSearchEquipmentsProps) => {
                   pr: 2,
                   pb: 2,
                   [`&:nth-of-type(-n+${columnCount})`]: { pt: "2px" },
-                  [`&:nth-of-type(${columnCount}n)`]: { pr: 1 },
+                  [`&:nth-of-type(${columnCount}n)`]: { pr: "2px" },
                   [`&:nth-of-type(${columnCount}n+1)`]: { pl: "2px" },
                 }}
               >
-                <Suspense fallback={<div style={{ height: "100%", borderRadius: 8, background: "hsl(0 0% 16%)" }} />}>
-                  <SearchEquipmentsItemLazy item={item} buildId={buildId} />
-                </Suspense>
+                <SearchEquipmentsItem item={item} onEquipItem={onEquipItem} />
               </Box>
             );
           }}

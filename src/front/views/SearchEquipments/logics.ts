@@ -27,9 +27,23 @@ export const useWakfuSearchItems = () => {
     },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    console.log("Send change !");
     send({ filters, sort });
-  }, [send, filters, sort]);
+  }, [send]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    console.log("Filters changed, sending new filters");
+    send({ filters, sort });
+  }, [filters]);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
+  useEffect(() => {
+    console.log("Sort changed, sending new sort");
+    send({ filters, sort });
+  }, [sort]);
 
   return { items: items || [], filters, setFilters, sort, setSort };
 };

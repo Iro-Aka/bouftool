@@ -16,6 +16,7 @@ export enum WakfuEquipmentPosition {
   Accessory = "ACCESSORY",
   Pet = "PET",
   Mount = "MOUNT",
+  Costume = "COSTUME",
 }
 
 export enum WakfuItemTypeId {

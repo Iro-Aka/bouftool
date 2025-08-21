@@ -1,12 +1,12 @@
 import CloseIcon from "@mui/icons-material/Close";
 import { Button, InputAdornment, Stack, TextField, ToggleButton, ToggleButtonGroup, Typography } from "@mui/material";
 import type { ReactNode } from "react";
+import { wakfuStatsLabels } from "src/front/constants/stats";
 import { SearchItemsFilterStatsOperator } from "src/wakfu/search/types";
 import { WakfuStats } from "src/wakfu/types/action";
 import { SidePopover } from "../../../../components/Navigation/SidePopover";
 import { StatsIcon } from "../../../../components/Wakfu/StatsIcon";
 import type { TSearchItemsFiltersForm } from "../index";
-import { searchableStats } from "./constants";
 import { StatsFiltersCardsOperator } from "./operator";
 
 const Stats: Record<string, WakfuStats[]> = {
@@ -81,7 +81,7 @@ export const StatsFilters = ({ value, onChange }: TStatsFilters) => {
                 }}
               >
                 <StatsIcon>{stat}</StatsIcon>
-                <Typography variant="caption">{searchableStats[stat].fr}</Typography>
+                <Typography variant="caption">{wakfuStatsLabels[stat].fr}</Typography>
               </ToggleButton>
             ))}
           </ToggleButtonGroup>

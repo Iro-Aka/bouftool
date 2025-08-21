@@ -1,7 +1,7 @@
 import { WakfuStats } from "src/wakfu/types/action";
 import type { TWakfuDescription } from "src/wakfu/types/description";
 
-export const searchableStats: Record<WakfuStats, TWakfuDescription> = {
+export const wakfuStatsLabels: Record<WakfuStats, TWakfuDescription> = {
   [WakfuStats.PV]: {
     fr: "PV",
     en: "HP",
@@ -193,5 +193,47 @@ export const searchableStats: Record<WakfuStats, TWakfuDescription> = {
     en: "Berserk Mastery",
     es: "Maestría Berserk",
     pt: "Maestria Berserk",
+  },
+  [WakfuStats.FinalDamage]: {
+    fr: "Dommages infligés",
+    en: "Damage Dealt",
+    es: "Daño Infligido",
+    pt: "Dano Infligido",
+  },
+  [WakfuStats.FinalHealing]: {
+    fr: "Soins réalisés",
+    en: "Healing Done",
+    es: "Curación Realizada",
+    pt: "Cura Realizada",
+  },
+  [WakfuStats.Wisdom]: {
+    fr: "Sagesse",
+    en: "Wisdom",
+    es: "Sabiduría",
+    pt: "Sabedoria",
+  },
+  [WakfuStats.Prospection]: {
+    fr: "Prospection",
+    en: "Prospection",
+    es: "Prospección",
+    pt: "Prospeção",
+  },
+  [WakfuStats.IndirectDamages]: {
+    fr: "Dommages Indirects",
+    en: "Indirect Damages",
+    es: "Daños Indirectos",
+    pt: "Danos Indiretos",
+  },
+  [WakfuStats.HealingReceived]: {
+    fr: "Soins Reçus",
+    en: "Healing Received",
+    es: "Curación Recibida",
+    pt: "Cura Recebida",
+  },
+  [WakfuStats.Armor]: {
+    fr: "Armure",
+    en: "Armor",
+    es: "Armadura",
+    pt: "Armadura",
   },
 };

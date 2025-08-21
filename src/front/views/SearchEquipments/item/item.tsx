@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import { StackGrid } from "src/front/components/Layout/StackGrid";
 import { RarityIcon } from "src/front/components/Wakfu/RarityIcon";
-import type { TSearchItemsResult } from "src/wakfu/search/types";
+import type { TWakfuItemDisplay } from "src/wakfu/types/items";
 import { Rarity } from "src/wakfu/types/rarity";
 import { ItemTypeIcon } from "../../../components/Wakfu/ItemTypeIcon";
 import { EquipmentEffectLabel } from "./effect";
@@ -9,11 +9,11 @@ import { SearchEquipmentsItemEquip } from "./equip";
 import { ItemCard, itemCardClasses } from "./styles";
 
 export type SearchEquipmentsItemProps = {
-  item: TSearchItemsResult;
-  buildId?: number;
+  item: TWakfuItemDisplay;
+  onEquipItem?: (itemId: number) => void;
 };
 
-export const SearchEquipmentsItem = ({ item, buildId }: SearchEquipmentsItemProps) => {
+export const SearchEquipmentsItem = ({ item, onEquipItem }: SearchEquipmentsItemProps) => {
   return (
     <ItemCard className={itemCardClasses.root} rarity={item.rarity}>
       <Stack sx={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", pb: 0.5 }}>
@@ -43,10 +43,10 @@ export const SearchEquipmentsItem = ({ item, buildId }: SearchEquipmentsItemProp
           </Box>
           <Typography variant="caption">Niv. {item.level}</Typography>
           <StackGrid columns={2} gap={0.5}>
-            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
-            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
-            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
-            <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
+            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
+            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
+            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
           </StackGrid>
         </Stack>
         <Stack sx={{ flex: 1 }}>
@@ -99,5 +99,3 @@ export const SearchEquipmentsItem = ({ item, buildId }: SearchEquipmentsItemProp
     </ItemCard>
   );
 };
-
-export default SearchEquipmentsItem;

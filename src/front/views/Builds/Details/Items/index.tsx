@@ -1,10 +1,27 @@
+import type { Dispatch, SetStateAction } from "react";
+import { ElectronEvents } from "src/electron/types";
 import { StackGrid } from "src/front/components/Layout/StackGrid";
 import { ItemSlot } from "src/front/components/Wakfu/ItemSlot";
+import { sendElectronEvent } from "src/front/hooks/electron";
+import type { TSearchItemsFiltersForm } from "src/front/views/SearchEquipments/filters";
 import { WakfuEquipmentPosition } from "src/wakfu/types/itemType";
 import { useBuildDetailsContext } from "../context";
 
-export const BuildDetailsItems = () => {
+export type TBuildDetailsItemsProps = {
+  setDefaultFilters: Dispatch<SetStateAction<Partial<TSearchItemsFiltersForm>>>;
+};
+
+export const BuildDetailsItems = ({ setDefaultFilters }: TBuildDetailsItemsProps) => {
   const build = useBuildDetailsContext();
+
+  const handleClick = async (position: WakfuEquipmentPosition) => {
+    const itemTypes = await sendElectronEvent(ElectronEvents.GetItemTypesByEquipmentPosition, { position });
+    setDefaultFilters((prev) => ({ ...prev, itemTypes }));
+  };
+
+  const handleRightClick = (position: WakfuEquipmentPosition) => {
+    sendElectronEvent(ElectronEvents.BuildUnequipItem, { buildId: build.id, position });
+  };
 
   return (
     <StackGrid
@@ -12,15 +29,20 @@ export const BuildDetailsItems = () => {
       gap={0.5}
       sx={{ bgcolor: "surface.100", borderRadius: 2, boxShadow: "inset 0 0 0 black", py: 1.25, px: 1, my: 0.5 }}
     >
-      {Object.values(WakfuEquipmentPosition).map((position) => (
-        <ItemSlot
-          key={position}
-          position={position}
-          item={build.items[position]}
-          size={48}
-          slotProps={{ box: { sx: { flex: "0 0 auto" } } }}
-        />
-      ))}
+      {Object.values(WakfuEquipmentPosition).map(
+        (position) =>
+          position !== WakfuEquipmentPosition.Costume && (
+            <ItemSlot
+              key={position}
+              position={position}
+              item={build.items[position]}
+              size={48}
+              onClick={handleClick}
+              onRightClick={handleRightClick}
+              slotProps={{ box: { sx: { flex: "0 0 auto" } } }}
+            />
+          ),
+      )}
     </StackGrid>
   );
 };

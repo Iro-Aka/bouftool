@@ -1,29 +1,16 @@
-import { Stack, stackClasses } from "@mui/material";
-import { StackGrid } from "src/front/components/Layout/StackGrid";
+import { Stack } from "@mui/material";
 import { WakfuStats } from "src/wakfu/types/action";
 import { useBuildDetailsContext } from "../context";
 import { BuildStats } from "../stats";
 import { getStatsColor } from "./logics";
+import { StatsPanel, statsPanelClasses } from "./styles";
 
 export const BuildDetailsStatsSecondary = () => {
   const build = useBuildDetailsContext();
 
   return (
-    <StackGrid columns={2}>
-      <Stack
-        sx={{
-          overflow: "hidden",
-          borderTopLeftRadius: "8px",
-          borderBottomLeftRadius: "8px",
-          border: (theme) => `1px solid ${theme.palette.border.light}`,
-          [`& > .${stackClasses.root}`]: {
-            "&:nth-of-type(2n)": { bgcolor: "surface.250" },
-            "&:nth-of-type(2n+1)": { bgcolor: "surface.150" },
-            px: 1,
-            py: 0.5,
-          },
-        }}
-      >
+    <StatsPanel className={statsPanelClasses.root} columns={2}>
+      <Stack className={statsPanelClasses.column}>
         <BuildStats
           stats={WakfuStats.CriticalMastery}
           value={build.stats[WakfuStats.CriticalMastery].toLocaleString("fr-FR")}
@@ -55,20 +42,7 @@ export const BuildDetailsStatsSecondary = () => {
           statsColor={getStatsColor(build.stats[WakfuStats.BerserkMastery])}
         />
       </Stack>
-      <Stack
-        sx={{
-          overflow: "hidden",
-          borderTopRightRadius: "8px",
-          borderBottomRightRadius: "8px",
-          border: (theme) => `1px solid ${theme.palette.border.light}`,
-          [`& > .${stackClasses.root}`]: {
-            "&:nth-of-type(2n)": { bgcolor: "surface.250" },
-            "&:nth-of-type(2n+1)": { bgcolor: "surface.150" },
-            px: 1,
-            py: 0.5,
-          },
-        }}
-      >
+      <Stack className={statsPanelClasses.column}>
         <BuildStats
           stats={WakfuStats.CriticalResistance}
           value={build.stats[WakfuStats.CriticalResistance].toLocaleString("fr-FR")}
@@ -89,9 +63,17 @@ export const BuildDetailsStatsSecondary = () => {
           value={`${build.stats[WakfuStats.ArmorReceived]}%`}
           statsColor={getStatsColor(build.stats[WakfuStats.ArmorReceived], true)}
         />
-        <BuildStats stats={WakfuStats.ArmorReceived} value={`0%`} statsColor={getStatsColor(0, true)} />
-        <Stack sx={{ flex: "1" }} />
+        <BuildStats
+          stats={WakfuStats.HealingReceived}
+          value={`${build.stats[WakfuStats.HealingReceived]}%`}
+          statsColor={getStatsColor(build.stats[WakfuStats.HealingReceived], true)}
+        />
+        <BuildStats
+          stats={WakfuStats.IndirectDamages}
+          value={`${build.stats[WakfuStats.IndirectDamages]}%`}
+          statsColor={getStatsColor(build.stats[WakfuStats.IndirectDamages], true)}
+        />
       </Stack>
-    </StackGrid>
+    </StatsPanel>
   );
 };

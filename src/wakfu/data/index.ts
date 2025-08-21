@@ -6,7 +6,12 @@ import { WakfuParserItemEffects } from "../parser/Item";
 import { loadWakfuActionFromJson } from "../types/action";
 import type { TWakfuDescription } from "../types/description";
 import { loadWakfuItemFromJson } from "../types/items";
-import { loadWakfuItemTypeFromJson, type TWakfuItemType, WakfuItemTypeId } from "../types/itemType";
+import {
+  loadWakfuItemTypeFromJson,
+  type TWakfuItemType,
+  WakfuEquipmentPosition,
+  WakfuItemTypeId,
+} from "../types/itemType";
 import { loadWakfuRecipeCategoryFromJson } from "../types/recipeCategory";
 import { loadWakfuStateFromJson } from "../types/state";
 import { WakfuLang } from "../types/utils";
@@ -68,9 +73,24 @@ export class WakfuData {
 
   private async fetchAndBuildItemTypes() {
     const itemTypes = await fetchWakfuGamedata(this.version, WakfuGamedataTypes.ItemTypes, loadWakfuItemTypeFromJson);
+    const equipmentItemTypes = await fetchWakfuGamedata(
+      this.version,
+      WakfuGamedataTypes.EquipmentItemTypes,
+      loadWakfuItemTypeFromJson,
+    );
     this.itemTypesMap = new Map<number, Omit<TWakfuItemType, "title">>();
     this.itemTypeLabelsMap = new Map<number, TWakfuDescription>();
     for (const itemType of itemTypes) {
+      const { title, ...rest } = itemType;
+      this.itemTypesMap.set(itemType.id, rest);
+      if (title) {
+        this.itemTypeLabelsMap.set(itemType.id, title);
+      }
+    }
+    for (const itemType of equipmentItemTypes) {
+      if (itemType.id === WakfuItemTypeId.Mount) {
+        itemType.equipmentPositions = [WakfuEquipmentPosition.Mount];
+      }
       const { title, ...rest } = itemType;
       this.itemTypesMap.set(itemType.id, rest);
       if (title) {
@@ -139,7 +159,7 @@ export class WakfuData {
     await this.saveGamedata();
   }
 
-  private async loadGamedataFromFile(parsedData: TWakfuGamedata) {
+  private loadGamedataFromFile(parsedData: TWakfuGamedata) {
     console.log("WakfuData: Load from file");
     this.version = parsedData.version;
     this.lang = parsedData.lang;

@@ -10,23 +10,18 @@ import {
   isWakfuBuild,
   isWakfuBuildEquippedPositionStatus,
   type TWakfuBuild,
-  type TWakfuPreferences,
+  type TWakfuBuildPreferences,
   WakfuBuildEquippedPositionStatus,
 } from "./types";
 
-const defaultWakfuPreferences: TWakfuPreferences = {
-  mastery: {
-    elementsPriority: [],
-    backMastery: false,
-    berserkMastery: false,
-    criticalMastery: false,
-    healingMastery: false,
-    meleeMastery: false,
-    rangeMastery: false,
-  },
-  resistance: {
-    elementsPriority: [],
-  },
+const defaultWakfuPreferences: TWakfuBuildPreferences = {
+  mastery: [WakfuStats.MasteryFire, WakfuStats.MasteryWater, WakfuStats.MasteryEarth, WakfuStats.MasteryAir],
+  resistance: [
+    WakfuStats.ResistanceFire,
+    WakfuStats.ResistanceWater,
+    WakfuStats.ResistanceEarth,
+    WakfuStats.ResistanceAir,
+  ],
 };
 
 export class WakfuBuild {
@@ -37,7 +32,7 @@ export class WakfuBuild {
   private name: string = "";
   private breed: WakfuBreed = WakfuBreed.Feca;
   private level: number = 245;
-  private preferences: TWakfuPreferences = defaultWakfuPreferences;
+  private preferences: TWakfuBuildPreferences = defaultWakfuPreferences;
   private items: Record<WakfuEquipmentPosition, WakfuItem | WakfuBuildEquippedPositionStatus> = {
     [WakfuEquipmentPosition.Head]: WakfuBuildEquippedPositionStatus.Empty,
     [WakfuEquipmentPosition.Back]: WakfuBuildEquippedPositionStatus.Empty,
@@ -53,6 +48,7 @@ export class WakfuBuild {
     [WakfuEquipmentPosition.Accessory]: WakfuBuildEquippedPositionStatus.Empty,
     [WakfuEquipmentPosition.Pet]: WakfuBuildEquippedPositionStatus.Empty,
     [WakfuEquipmentPosition.Mount]: WakfuBuildEquippedPositionStatus.Empty,
+    [WakfuEquipmentPosition.Costume]: WakfuBuildEquippedPositionStatus.Empty,
   };
   private timeout: NodeJS.Timeout | null = null;
   private savePromise: Promise<void> | null = null;
@@ -134,6 +130,7 @@ export class WakfuBuild {
             [WakfuEquipmentPosition.Accessory]: getItemForSave(WakfuEquipmentPosition.Accessory),
             [WakfuEquipmentPosition.Pet]: getItemForSave(WakfuEquipmentPosition.Pet),
             [WakfuEquipmentPosition.Mount]: getItemForSave(WakfuEquipmentPosition.Mount),
+            [WakfuEquipmentPosition.Costume]: WakfuBuildEquippedPositionStatus.Empty,
           },
         } satisfies TWakfuBuild;
         const filePath = path.join(WakfuBuild.FolderPath, `${this.id}.json`);
@@ -182,6 +179,7 @@ export class WakfuBuild {
           [WakfuEquipmentPosition.Accessory]: getItemForLoad(WakfuEquipmentPosition.Accessory),
           [WakfuEquipmentPosition.Pet]: getItemForLoad(WakfuEquipmentPosition.Pet),
           [WakfuEquipmentPosition.Mount]: getItemForLoad(WakfuEquipmentPosition.Mount),
+          [WakfuEquipmentPosition.Costume]: WakfuBuildEquippedPositionStatus.Empty,
         };
       }
     } catch (error) {
@@ -196,6 +194,11 @@ export class WakfuBuild {
 
   public getEquippedItems(): Record<WakfuEquipmentPosition, WakfuItem | WakfuBuildEquippedPositionStatus> {
     return this.items;
+  }
+
+  public isEquipped(position: WakfuEquipmentPosition): boolean {
+    const item = this.items[position];
+    return !isWakfuBuildEquippedPositionStatus(item);
   }
 
   public unequipItem(position: WakfuEquipmentPosition): boolean {
@@ -264,12 +267,16 @@ export class WakfuBuild {
     this.level = level;
   }
 
-  public getPreferences(): TWakfuPreferences {
-    return this.preferences;
+  public setMasteryPreferences(preferences: TWakfuBuildPreferences["mastery"]): void {
+    this.preferences.mastery = preferences;
   }
 
-  public setPreferences(preferences: TWakfuPreferences): void {
-    this.preferences = preferences;
+  public setResistancePreferences(preferences: TWakfuBuildPreferences["resistance"]): void {
+    this.preferences.resistance = preferences;
+  }
+
+  public getPreferences() {
+    return this.preferences;
   }
 
   public getEquipmentsStats() {
@@ -304,6 +311,13 @@ export class WakfuBuild {
       [WakfuStats.BerserkMastery]: 0,
       [WakfuStats.ArmorGiven]: 0,
       [WakfuStats.ArmorReceived]: 0,
+      [WakfuStats.FinalDamage]: 0,
+      [WakfuStats.FinalHealing]: 0,
+      [WakfuStats.Wisdom]: 0,
+      [WakfuStats.Prospection]: 0,
+      [WakfuStats.IndirectDamages]: 0,
+      [WakfuStats.HealingReceived]: 0,
+      [WakfuStats.Armor]: 0,
     };
     for (const position in this.items) {
       if (!isWakfuEquipmentPosition(position)) {
@@ -346,6 +360,28 @@ export class WakfuBuild {
       stats[WakfuStats.BerserkMastery] += item.getStats(WakfuStats.BerserkMastery);
       stats[WakfuStats.ArmorGiven] += item.getStats(WakfuStats.ArmorGiven);
       stats[WakfuStats.ArmorReceived] += item.getStats(WakfuStats.ArmorReceived);
+      stats[WakfuStats.FinalDamage] += item.getStats(WakfuStats.FinalDamage);
+      stats[WakfuStats.FinalHealing] += item.getStats(WakfuStats.FinalHealing);
+      stats[WakfuStats.Wisdom] += item.getStats(WakfuStats.Wisdom);
+      stats[WakfuStats.Prospection] += item.getStats(WakfuStats.Prospection);
+      stats[WakfuStats.IndirectDamages] += item.getStats(WakfuStats.IndirectDamages);
+      stats[WakfuStats.HealingReceived] += item.getStats(WakfuStats.HealingReceived);
+      stats[WakfuStats.Armor] += item.getStats(WakfuStats.Armor);
+      const masteryXElem = item.getMasteryXElements();
+      if (masteryXElem) {
+        for (let i = 0; i < masteryXElem.count; i++) {
+          stats[this.preferences.mastery[i]] += masteryXElem.value;
+        }
+      }
+      const resistanceXElem = item.getResistanceXElements();
+      if (resistanceXElem) {
+        for (let i = 0; i < resistanceXElem.count; i++) {
+          stats[this.preferences.resistance[i]] += resistanceXElem.value;
+        }
+      }
+    }
+    for (const key in stats) {
+      stats[Number(key) as keyof typeof stats] = Math.floor(stats[Number(key) as keyof typeof stats]);
     }
     return stats;
   }
@@ -356,6 +392,7 @@ export class WakfuBuild {
       return isWakfuBuildEquippedPositionStatus(item) ? item : item.toDisplay();
     };
     return {
+      id: this.getId(),
       name: this.getName(),
       breed: this.getBreed(),
       level: this.getLevel(),
@@ -375,6 +412,7 @@ export class WakfuBuild {
         [WakfuEquipmentPosition.Accessory]: getItemForDisplay(WakfuEquipmentPosition.Accessory),
         [WakfuEquipmentPosition.Pet]: getItemForDisplay(WakfuEquipmentPosition.Pet),
         [WakfuEquipmentPosition.Mount]: getItemForDisplay(WakfuEquipmentPosition.Mount),
+        [WakfuEquipmentPosition.Costume]: WakfuBuildEquippedPositionStatus.Empty,
       },
       stats: this.getEquipmentsStats(),
     };

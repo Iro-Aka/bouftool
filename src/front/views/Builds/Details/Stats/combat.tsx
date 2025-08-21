@@ -1,30 +1,21 @@
-import { Stack, stackClasses } from "@mui/material";
-import { StackGrid } from "src/front/components/Layout/StackGrid";
+import { Stack } from "@mui/material";
 import { WakfuStats } from "src/wakfu/types/action";
 import { useBuildDetailsContext } from "../context";
 import { BuildStats } from "../stats";
 import { getStatsColor } from "./logics";
+import { StatsPanel, statsPanelClasses } from "./styles";
 
 export const BuildDetailsStatsCombat = () => {
   const build = useBuildDetailsContext();
 
   return (
-    <StackGrid columns={2}>
-      <Stack
-        sx={{
-          overflow: "hidden",
-          borderTopLeftRadius: "8px",
-          borderBottomLeftRadius: "8px",
-          border: (theme) => `1px solid ${theme.palette.border.light}`,
-          [`& > .${stackClasses.root}`]: {
-            "&:nth-of-type(2n)": { bgcolor: "surface.250" },
-            "&:nth-of-type(2n+1)": { bgcolor: "surface.150" },
-            px: 1,
-            py: 0.5,
-          },
-        }}
-      >
-        <BuildStats stats={WakfuStats.CriticalRate} value="0" statsColor={getStatsColor(0, true)} />
+    <StatsPanel className={statsPanelClasses.root} columns={2}>
+      <Stack className={statsPanelClasses.column}>
+        <BuildStats
+          stats={WakfuStats.FinalDamage}
+          value={`${build.stats[WakfuStats.FinalDamage]}%`}
+          statsColor={getStatsColor(build.stats[WakfuStats.FinalDamage], true)}
+        />
         <BuildStats
           stats={WakfuStats.CriticalRate}
           value={`${build.stats[WakfuStats.CriticalRate]}%`}
@@ -40,28 +31,23 @@ export const BuildDetailsStatsCombat = () => {
           value={build.stats[WakfuStats.Dodge].toLocaleString("fr-FR")}
           statsColor={getStatsColor(build.stats[WakfuStats.Dodge])}
         />
-        <BuildStats stats={WakfuStats.CriticalRate} value={"0"} statsColor={getStatsColor(0, true)} />
+        <BuildStats
+          stats={WakfuStats.Wisdom}
+          value={build.stats[WakfuStats.Wisdom].toLocaleString("fr-FR")}
+          statsColor={getStatsColor(build.stats[WakfuStats.Wisdom])}
+        />
         <BuildStats
           stats={WakfuStats.Control}
           value={build.stats[WakfuStats.Control].toLocaleString("fr-FR")}
           statsColor={getStatsColor(build.stats[WakfuStats.Control])}
         />
       </Stack>
-      <Stack
-        sx={{
-          overflow: "hidden",
-          borderTopRightRadius: "8px",
-          borderBottomRightRadius: "8px",
-          border: (theme) => `1px solid ${theme.palette.border.light}`,
-          [`& > .${stackClasses.root}`]: {
-            "&:nth-of-type(2n)": { bgcolor: "surface.250" },
-            "&:nth-of-type(2n+1)": { bgcolor: "surface.150" },
-            px: 1,
-            py: 0.5,
-          },
-        }}
-      >
-        <BuildStats stats={WakfuStats.CriticalRate} value="0%" statsColor={getStatsColor(0, true)} />
+      <Stack className={statsPanelClasses.column}>
+        <BuildStats
+          stats={WakfuStats.FinalHealing}
+          value={`${build.stats[WakfuStats.FinalHealing]}%`}
+          statsColor={getStatsColor(build.stats[WakfuStats.FinalHealing], true)}
+        />
         <BuildStats
           stats={WakfuStats.Block}
           value={`${build.stats[WakfuStats.Block]}%`}
@@ -78,9 +64,9 @@ export const BuildDetailsStatsCombat = () => {
           statsColor={getStatsColor(build.stats[WakfuStats.Lock])}
         />
         <BuildStats
-          stats={WakfuStats.CriticalRate}
-          value={`${build.stats[WakfuStats.CriticalRate]}%`}
-          statsColor={getStatsColor(build.stats[WakfuStats.CriticalRate], true)}
+          stats={WakfuStats.Prospection}
+          value={build.stats[WakfuStats.Prospection].toLocaleString("fr-FR")}
+          statsColor={getStatsColor(build.stats[WakfuStats.Prospection])}
         />
         <BuildStats
           stats={WakfuStats.Willpower}
@@ -88,6 +74,6 @@ export const BuildDetailsStatsCombat = () => {
           statsColor={getStatsColor(build.stats[WakfuStats.Willpower])}
         />
       </Stack>
-    </StackGrid>
+    </StatsPanel>
   );
 };

@@ -34,6 +34,13 @@ export enum WakfuStats {
   ArmorReceived,
   HealingMastery,
   BerserkMastery,
+  FinalDamage,
+  FinalHealing,
+  Wisdom,
+  Prospection,
+  IndirectDamages,
+  HealingReceived,
+  Armor,
 }
 
 export type TWakfuStatsElementalMastery =
@@ -112,6 +119,13 @@ export enum WakfuActionId {
   BerserkMasteryLoss = 1061,
   MasteryOnXElements = 1068,
   ResistanceOnXElements = 1069,
+  FinalDamage = 39, // [#3] = 10 000
+  FinalHealing = 39, // [#3] = 10 001
+  Wisdom = 39, // [#3] = 10 002
+  Prospection = 39, // [#3] = 10 003
+  IndirectDamages = 39, // [#3] = 10 004
+  HealingReceived = 39, // [#3] = 10 005
+  Armor = 39, // [#3] = 10 006
 }
 
 export const wakfuStatsToWakfuActionId: Record<
@@ -196,6 +210,34 @@ export const wakfuStatsToWakfuActionId: Record<
   [WakfuStats.BerserkMastery]: {
     gain: WakfuActionId.BerserkMastery,
     loss: WakfuActionId.BerserkMasteryLoss,
+  },
+  [WakfuStats.FinalDamage]: {
+    gain: WakfuActionId.FinalDamage,
+    params: [{ paramIndex: 3, value: 10000 }],
+  },
+  [WakfuStats.FinalHealing]: {
+    gain: WakfuActionId.FinalHealing,
+    params: [{ paramIndex: 3, value: 10001 }],
+  },
+  [WakfuStats.Wisdom]: {
+    gain: WakfuActionId.Wisdom,
+    params: [{ paramIndex: 3, value: 10002 }],
+  },
+  [WakfuStats.Prospection]: {
+    gain: WakfuActionId.Prospection,
+    params: [{ paramIndex: 3, value: 10003 }],
+  },
+  [WakfuStats.IndirectDamages]: {
+    gain: WakfuActionId.IndirectDamages,
+    params: [{ paramIndex: 3, value: 10004 }],
+  },
+  [WakfuStats.HealingReceived]: {
+    gain: WakfuActionId.HealingReceived,
+    params: [{ paramIndex: 3, value: 10005 }],
+  },
+  [WakfuStats.Armor]: {
+    gain: WakfuActionId.Armor,
+    params: [{ paramIndex: 3, value: 10006 }],
   },
 };
 

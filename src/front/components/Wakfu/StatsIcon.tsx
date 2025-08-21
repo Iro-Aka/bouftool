@@ -34,6 +34,13 @@ const StatsToIcon: Record<WakfuStats, string> = {
   [WakfuStats.ArmorReceived]: "ARMOR_RECEIVED",
   [WakfuStats.HealingMastery]: "HEAL_IN_PERCENT",
   [WakfuStats.BerserkMastery]: "BERSERK_DMG",
+  [WakfuStats.FinalDamage]: "FINAL_DMG_IN_PERCENT",
+  [WakfuStats.FinalHealing]: "FINAL_HEAL_IN_PERCENT",
+  [WakfuStats.Wisdom]: "WISDOM",
+  [WakfuStats.Prospection]: "PROSPECTION",
+  [WakfuStats.IndirectDamages]: "INDIRECT_DMG",
+  [WakfuStats.HealingReceived]: "HEAL_IN_PERCENT",
+  [WakfuStats.Armor]: "ARMOR",
 };
 
 export type TStatsIconProps = Omit<HTMLProps<HTMLImageElement>, "children" | "src" | "alt"> & {

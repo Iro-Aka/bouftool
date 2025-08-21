@@ -20,16 +20,16 @@ export const SearchItemsResistanceElementsPreferences = ({
       onChange={(_, newValue: TSearchItemsPreferences["resistance"]["elementsPriority"]) => onChange(newValue)}
     >
       <ToggleButton value={WakfuStats.ResistanceFire}>
-        <StatsIcon>{WakfuStats.MasteryFire}</StatsIcon>
+        <StatsIcon>{WakfuStats.ResistanceFire}</StatsIcon>
       </ToggleButton>
       <ToggleButton value={WakfuStats.ResistanceWater}>
-        <StatsIcon>{WakfuStats.MasteryWater}</StatsIcon>
+        <StatsIcon>{WakfuStats.ResistanceWater}</StatsIcon>
       </ToggleButton>
       <ToggleButton value={WakfuStats.ResistanceEarth}>
-        <StatsIcon>{WakfuStats.MasteryEarth}</StatsIcon>
+        <StatsIcon>{WakfuStats.ResistanceEarth}</StatsIcon>
       </ToggleButton>
       <ToggleButton value={WakfuStats.ResistanceAir}>
-        <StatsIcon>{WakfuStats.MasteryAir}</StatsIcon>
+        <StatsIcon>{WakfuStats.ResistanceAir}</StatsIcon>
       </ToggleButton>
     </ToggleButtonGroup>
   );

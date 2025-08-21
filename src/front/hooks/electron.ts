@@ -14,10 +14,41 @@ export const useElectronEvent = <E extends ElectronEvents>(event: E) => {
   );
 
   useEffect(() => {
-    window.electron.receive(event, (payload) => {
+    const listener = window.electron.addListener(event, (payload) => {
       setLoading(false);
       setResponse(payload);
     });
+    return () => window.electron.removeListener(event, listener);
+  }, [event]);
+
+  return [send, response, loading] as const;
+};
+
+export const useFilteredElectronEvent = <E extends ElectronEvents>(
+  event: E,
+  filter: (payload: ElectronEventsRenderer[E]) => boolean,
+) => {
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState<ElectronEventsRenderer[E] | null>(null);
+
+  const send = useCallback(
+    (payload: ElectronEventsMain[E]) => {
+      setLoading(true);
+      window.electron.send(event, payload);
+    },
+    [event],
+  );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Avoid depending on callback
+  useEffect(() => {
+    const listener = window.electron.addListener(event, (payload) => {
+      if (payload && !filter(payload)) {
+        return;
+      }
+      setLoading(false);
+      setResponse(payload);
+    });
+    return () => window.electron.removeListener(event, listener);
   }, [event]);
 
   return [send, response, loading] as const;
@@ -25,8 +56,9 @@ export const useElectronEvent = <E extends ElectronEvents>(event: E) => {
 
 export const sendElectronEvent = <E extends ElectronEvents>(event: E, payload: ElectronEventsMain[E]) =>
   new Promise<ElectronEventsRenderer[E]>((resolve) => {
-    window.electron.send(event, payload);
-    window.electron.receive(event, (response) => {
+    const listener = window.electron.addListener(event, (response) => {
       resolve(response);
+      window.electron.removeListener(event, listener);
     });
+    window.electron.send(event, payload);
   });
