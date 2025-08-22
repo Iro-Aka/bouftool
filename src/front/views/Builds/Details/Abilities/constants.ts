@@ -3,7 +3,7 @@ import { WakfuStats } from "src/wakfu/types/action";
 
 export const AbilitiesDisplay: Record<EnumAbilities, { icon: WakfuStats; label: string; description?: string }> = {
   [EnumAbilities.PercentHp]: {
-    icon: WakfuStats.HealingReceived,
+    icon: WakfuStats.PercentHp,
     label: "% Point de vie",
   },
   [EnumAbilities.Resistance]: {
@@ -20,7 +20,7 @@ export const AbilitiesDisplay: Record<EnumAbilities, { icon: WakfuStats; label: 
     label: "% Soins reçus",
   },
   [EnumAbilities.PercentHpToArmor]: {
-    icon: WakfuStats.Armor,
+    icon: WakfuStats.PercentHpToArmor,
     label: "% Points de vie en armure",
   },
   [EnumAbilities.Mastery]: {

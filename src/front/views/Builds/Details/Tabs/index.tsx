@@ -1,9 +1,8 @@
 import { Stack } from "@mui/material";
 import { useState } from "react";
-import type { TSearchItemsFiltersForm } from "src/front/views/SearchEquipments/filters";
-import { SearchEquipments } from "../../../SearchEquipments";
 import { BuildAbilities } from "../Abilities";
 import { BuildDetailsNavbar } from "./Navbar";
+import { BuildSearchItems } from "./SearchItems";
 
 export enum EnumBuildDetailsTabs {
   Equipments = "equipments",
@@ -12,14 +11,12 @@ export enum EnumBuildDetailsTabs {
 
 export type TBuildDetailsTabsSwitchProps = {
   selectedTab: EnumBuildDetailsTabs;
-  defaultFilters: Partial<TSearchItemsFiltersForm>;
-  onEquipItem: (itemId: number) => void;
 };
 
-const BuildDetailsTabsSwitch = ({ selectedTab, defaultFilters, onEquipItem }: TBuildDetailsTabsSwitchProps) => {
+const BuildDetailsTabsSwitch = ({ selectedTab }: TBuildDetailsTabsSwitchProps) => {
   switch (selectedTab) {
     case EnumBuildDetailsTabs.Equipments:
-      return <SearchEquipments defaultFilters={defaultFilters} onEquipItem={onEquipItem} />;
+      return <BuildSearchItems />;
     case EnumBuildDetailsTabs.Abilities:
       return <BuildAbilities />;
     default:
@@ -27,18 +24,13 @@ const BuildDetailsTabsSwitch = ({ selectedTab, defaultFilters, onEquipItem }: TB
   }
 };
 
-export type TBuildDetailsTabsProps = {
-  defaultFilters: Partial<TSearchItemsFiltersForm>;
-  onEquipItem: (itemId: number) => void;
-};
-
-export const BuildDetailsTabs = ({ defaultFilters, onEquipItem }: TBuildDetailsTabsProps) => {
+export const BuildDetailsTabs = () => {
   const [selectedTab, setSelectedTab] = useState<EnumBuildDetailsTabs>(EnumBuildDetailsTabs.Equipments);
 
   return (
     <Stack sx={{ flex: 1, overflow: "hidden" }}>
       <BuildDetailsNavbar selectedTab={selectedTab} onTabChange={setSelectedTab} />
-      <BuildDetailsTabsSwitch selectedTab={selectedTab} defaultFilters={defaultFilters} onEquipItem={onEquipItem} />
+      <BuildDetailsTabsSwitch selectedTab={selectedTab} />
     </Stack>
   );
 };

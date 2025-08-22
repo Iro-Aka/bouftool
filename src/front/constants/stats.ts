@@ -236,4 +236,16 @@ export const wakfuStatsLabels: Record<WakfuStats, TWakfuDescription> = {
     es: "Armadura",
     pt: "Armadura",
   },
+  [WakfuStats.PercentHp]: {
+    fr: "Pourcentage de PV",
+    en: "Percent HP",
+    es: "Porcentaje de PV",
+    pt: "Porcentagem de PV",
+  },
+  [WakfuStats.PercentHpToArmor]: {
+    fr: "Pourcentage de PV à l'Armure",
+    en: "Percent HP to Armor",
+    es: "Porcentaje de PV a la Armadura",
+    pt: "Porcentagem de PV à Armadura",
+  },
 };

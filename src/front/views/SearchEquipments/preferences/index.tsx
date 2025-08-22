@@ -1,17 +1,11 @@
 import TuneIcon from "@mui/icons-material/Tune";
-import type { Dispatch, SetStateAction } from "react";
 import { StackRow, stackRowClasses } from "src/front/components/Layout/StackRow";
-import type { TSearchItemsSort } from "src/wakfu/search/types";
-import { useSearchItemsPreferences } from "./logics";
+import { useSearchItemsPreferencesContext } from "../contexts/preferences";
 import { SearchItemsMasteryPreferences } from "./mastery";
 import { SearchItemsResistancePreferences } from "./resistance";
 
-export type TSearchItemsPreferencesProps = {
-  onChange: Dispatch<SetStateAction<TSearchItemsSort>>;
-};
-
-export const SearchItemsPreferences = ({ onChange }: TSearchItemsPreferencesProps) => {
-  const { preferences, dispatchPreferences } = useSearchItemsPreferences(onChange);
+export const SearchItemsPreferences = () => {
+  const { preferences, dispatchPreferences } = useSearchItemsPreferencesContext();
 
   return (
     <StackRow

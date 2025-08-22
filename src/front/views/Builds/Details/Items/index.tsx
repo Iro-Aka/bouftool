@@ -1,27 +1,33 @@
-import type { Dispatch, SetStateAction } from "react";
+import { useEffect } from "react";
 import { ElectronEvents } from "src/electron/types";
 import { StackGrid } from "src/front/components/Layout/StackGrid";
 import { ItemSlot } from "src/front/components/Wakfu/ItemSlot";
 import { sendElectronEvent } from "src/front/hooks/electron";
-import type { TSearchItemsFiltersForm } from "src/front/views/SearchEquipments/filters";
+import { useSearchItemsFiltersContext } from "src/front/views/SearchEquipments/contexts/filters";
 import { WakfuEquipmentPosition } from "src/wakfu/types/itemType";
+import { WakfuLevelsRange } from "src/wakfu/types/utils";
 import { useBuildDetailsContext } from "../context";
 
-export type TBuildDetailsItemsProps = {
-  setDefaultFilters: Dispatch<SetStateAction<Partial<TSearchItemsFiltersForm>>>;
-};
-
-export const BuildDetailsItems = ({ setDefaultFilters }: TBuildDetailsItemsProps) => {
+export const BuildDetailsItems = () => {
   const build = useBuildDetailsContext();
+  const { setFilters } = useSearchItemsFiltersContext();
 
   const handleClick = async (position: WakfuEquipmentPosition) => {
     const itemTypes = await sendElectronEvent(ElectronEvents.GetItemTypesByEquipmentPosition, { position });
-    setDefaultFilters((prev) => ({ ...prev, itemTypes }));
+    setFilters((prev) => ({ ...prev, itemTypes }));
   };
 
   const handleRightClick = (position: WakfuEquipmentPosition) => {
     sendElectronEvent(ElectronEvents.BuildUnequipItem, { buildId: build.id, position });
   };
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Rune once
+  useEffect(() => {
+    const levelsRange = WakfuLevelsRange.find((range) => range.min <= build.level && range.max >= build.level);
+    if (levelsRange) {
+      setFilters((prev) => ({ ...prev, levels: levelsRange }));
+    }
+  }, []);
 
   return (
     <StackGrid
