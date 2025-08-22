@@ -15,7 +15,7 @@ import {
   type TWakfuBuildPreferences,
   WakfuBuildEquippedPositionStatus,
 } from "./types";
-import { initializeStats, setEquipmentPositionRecord } from "./utils";
+import { floorEveryValues, initializeStats, setEquipmentPositionRecord } from "./utils";
 
 const defaultWakfuPreferences: TWakfuBuildPreferences = {
   mastery: [WakfuStats.MasteryFire, WakfuStats.MasteryWater, WakfuStats.MasteryEarth, WakfuStats.MasteryAir],
@@ -281,6 +281,7 @@ export class WakfuBuild {
     stats[WakfuStats.PA] = 6;
     stats[WakfuStats.PM] = 3;
     stats[WakfuStats.PW] = 6;
+    stats[WakfuStats.CriticalRate] = 3;
     stats[WakfuStats.Control] = 1;
     const abilitiesStats = this.abilities.getStats();
     for (const stat of Object.values(WakfuStats)) {
@@ -298,19 +299,19 @@ export class WakfuBuild {
       value += abilitiesStats[stat] || 0;
       switch (stat) {
         case WakfuStats.Mastery:
-          stats[WakfuStats.MasteryFire] = Math.floor(stats[WakfuStats.MasteryFire] + value);
-          stats[WakfuStats.MasteryWater] = Math.floor(stats[WakfuStats.MasteryWater] + value);
-          stats[WakfuStats.MasteryEarth] = Math.floor(stats[WakfuStats.MasteryEarth] + value);
-          stats[WakfuStats.MasteryAir] = Math.floor(stats[WakfuStats.MasteryAir] + value);
+          stats[WakfuStats.MasteryFire] = stats[WakfuStats.MasteryFire] + value;
+          stats[WakfuStats.MasteryWater] = stats[WakfuStats.MasteryWater] + value;
+          stats[WakfuStats.MasteryEarth] = stats[WakfuStats.MasteryEarth] + value;
+          stats[WakfuStats.MasteryAir] = stats[WakfuStats.MasteryAir] + value;
           break;
         case WakfuStats.Resistance:
-          stats[WakfuStats.ResistanceFire] = Math.floor(stats[WakfuStats.ResistanceFire] + value);
-          stats[WakfuStats.ResistanceWater] = Math.floor(stats[WakfuStats.ResistanceWater] + value);
-          stats[WakfuStats.ResistanceEarth] = Math.floor(stats[WakfuStats.ResistanceEarth] + value);
-          stats[WakfuStats.ResistanceAir] = Math.floor(stats[WakfuStats.ResistanceAir] + value);
+          stats[WakfuStats.ResistanceFire] = stats[WakfuStats.ResistanceFire] + value;
+          stats[WakfuStats.ResistanceWater] = stats[WakfuStats.ResistanceWater] + value;
+          stats[WakfuStats.ResistanceEarth] = stats[WakfuStats.ResistanceEarth] + value;
+          stats[WakfuStats.ResistanceAir] = stats[WakfuStats.ResistanceAir] + value;
           break;
         default:
-          stats[stat] = Math.floor(stats[stat] + value);
+          stats[stat] = stats[stat] + value;
           break;
       }
     }
@@ -322,18 +323,19 @@ export class WakfuBuild {
       const masteryXElem = item.getMasteryXElements();
       if (masteryXElem) {
         for (let i = 0; i < masteryXElem.count; i++) {
-          stats[this.preferences.mastery[i]] = Math.floor(stats[this.preferences.mastery[i]] + masteryXElem.value);
+          stats[this.preferences.mastery[i]] = stats[this.preferences.mastery[i]] + masteryXElem.value;
         }
       }
       const resistanceXElem = item.getResistanceXElements();
       if (resistanceXElem) {
         for (let i = 0; i < resistanceXElem.count; i++) {
-          stats[this.preferences.resistance[i]] = Math.floor(
-            stats[this.preferences.resistance[i]] + resistanceXElem.value,
-          );
+          stats[this.preferences.resistance[i]] = stats[this.preferences.resistance[i]] + resistanceXElem.value;
         }
       }
     }
+    stats[WakfuStats.PV] += (stats[WakfuStats.PercentHp] / 100) * stats[WakfuStats.PV];
+    stats[WakfuStats.Armor] += (stats[WakfuStats.PercentHpToArmor] / 100) * stats[WakfuStats.PV];
+    floorEveryValues(stats);
     return stats;
   }
 

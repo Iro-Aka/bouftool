@@ -2,7 +2,7 @@ import { WakfuActionId, WakfuStats, wakfuStatsToWakfuActionId } from "../types/a
 import type { TWakfuItemDisplay, TWakfuItemParsed } from "../types/items";
 import type { TWakfuItemType } from "../types/itemType";
 import type { WakfuLang } from "../types/utils";
-import { WakfuData } from ".";
+import { ItemIdOverrideLevel, ItemTypesOverrideLevel, WakfuData } from "./index";
 
 export enum WakfuParamIndex {
   EffectValue = 1,
@@ -28,7 +28,9 @@ export class WakfuItem {
 
   private getParamValue(params: number[], index: number) {
     const realIndex = this.getRealParamIndex(index);
-    return params[realIndex] + (params[realIndex + 1] ?? 0) * this.item.level;
+    const paramLevel =
+      ItemIdOverrideLevel[this.item.id] || ItemTypesOverrideLevel[this.item.itemTypeId] || this.item.level || 100;
+    return params[realIndex] + (params[realIndex + 1] ?? 0) * paramLevel;
   }
 
   private setParamValue(params: number[], index: number, value: number, levelScaling?: number) {

@@ -134,7 +134,7 @@ export class WakfuData {
           states: this.statesMap,
         });
         const equipEffectsLabels = parser.parse();
-        item.level = realLevel;
+        item.level = realLevel || 1;
         const wakfuItem = new WakfuItem(
           {
             ...item,
@@ -225,7 +225,7 @@ export class WakfuData {
         recipeCategories: this.recipeCategoryMap,
         states: this.statesMap,
       }).parse();
-      item.item.level = realLevel;
+      item.item.level = realLevel || 1;
     }
   }
 

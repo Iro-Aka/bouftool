@@ -16,7 +16,7 @@ export class WakfuAbilities {
       return;
     }
     const availablePoints = getCurrentAbilitiesCategoryPoints(this.abilities, category, this.level);
-    const realLevels = Math.max(availablePoints, level);
+    const realLevels = Math.min(availablePoints, level);
     const value = (this.abilities[ability] ?? 0) + realLevels;
     this.abilities[ability] =
       AbilitiesDefinitions[ability].maxLevel > 0 ? Math.min(value, AbilitiesDefinitions[ability].maxLevel) : value;

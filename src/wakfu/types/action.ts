@@ -41,6 +41,8 @@ export enum WakfuStats {
   IndirectDamages,
   HealingReceived,
   Armor,
+  PercentHp,
+  PercentHpToArmor,
 }
 
 export type TWakfuStatsElementalMastery =
@@ -126,6 +128,8 @@ export enum WakfuActionId {
   IndirectDamages = 39, // [#3] = 10 004
   HealingReceived = 39, // [#3] = 10 005
   Armor = 39, // [#3] = 10 006
+  PercentHp = 39, // [#3] = 10 007
+  PercentHpToArmor = 39, // [#3] = 10 008
 }
 
 export const wakfuStatsToWakfuActionId: Record<
@@ -238,6 +242,14 @@ export const wakfuStatsToWakfuActionId: Record<
   [WakfuStats.Armor]: {
     gain: WakfuActionId.Armor,
     params: [{ paramIndex: 3, value: 10006 }],
+  },
+  [WakfuStats.PercentHp]: {
+    gain: WakfuActionId.PercentHp,
+    params: [{ paramIndex: 3, value: 10007 }],
+  },
+  [WakfuStats.PercentHpToArmor]: {
+    gain: WakfuActionId.PercentHpToArmor,
+    params: [{ paramIndex: 3, value: 10008 }],
   },
 };
 

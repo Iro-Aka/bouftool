@@ -42,11 +42,11 @@ export type TAbilitiesEffect = {
 };
 
 export const AbilitiesDefinitions: Record<EnumAbilities, { effects: TAbilitiesEffect[]; maxLevel: number }> = {
-  [EnumAbilities.PercentHp]: { effects: [], maxLevel: 0 },
+  [EnumAbilities.PercentHp]: { effects: [{ stats: WakfuStats.PercentHp, scaling: 4 }], maxLevel: 0 },
   [EnumAbilities.Resistance]: { effects: [{ stats: WakfuStats.Resistance, scaling: 10 }], maxLevel: 10 },
   [EnumAbilities.Barrier]: { effects: [], maxLevel: 10 },
   [EnumAbilities.HealingReceived]: { effects: [{ stats: WakfuStats.HealingReceived, scaling: 6 }], maxLevel: 5 },
-  [EnumAbilities.PercentHpToArmor]: { effects: [], maxLevel: 10 },
+  [EnumAbilities.PercentHpToArmor]: { effects: [{ stats: WakfuStats.PercentHpToArmor, scaling: 4 }], maxLevel: 0 },
   [EnumAbilities.Mastery]: { effects: [{ stats: WakfuStats.Mastery, scaling: 5 }], maxLevel: 0 },
   [EnumAbilities.MeleeMastery]: { effects: [{ stats: WakfuStats.MeleeMastery, scaling: 8 }], maxLevel: 40 },
   [EnumAbilities.RangeMastery]: { effects: [{ stats: WakfuStats.DistanceMastery, scaling: 8 }], maxLevel: 40 },

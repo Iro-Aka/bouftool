@@ -18,3 +18,9 @@ export const setEquipmentPositionRecord = <T>(getValue: (position: WakfuEquipmen
   }
   return record as Record<WakfuEquipmentPosition, T>;
 };
+
+export const floorEveryValues = (obj: Record<string, number>): void => {
+  for (const [key, value] of Object.entries(obj)) {
+    obj[key] = Math.floor(value);
+  }
+};
