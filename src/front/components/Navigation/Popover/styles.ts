@@ -23,5 +23,6 @@ export const PopoverPaper = styled(Paper, {
     maxHeight: "100%",
     maxWidth: "100%",
     boxShadow: theme.shadows[4],
+    borderRadius: "8px",
   },
 }));

@@ -25,6 +25,16 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     reply(build.toDisplay());
   });
 
+  manager.register(ElectronEvents.BuildSetBreed, (reply, { buildId, breed }) => {
+    const build = WakfuBuild.getBuildById(buildId);
+    if (!build) {
+      throw new Error(`Build with ID ${buildId} not found`);
+    }
+    build.setBreed(breed);
+    ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
+    reply(undefined);
+  });
+
   manager.register(ElectronEvents.BuildEquipItem, (reply, { buildId, itemId, position: forcedPosition }) => {
     const build = WakfuBuild.getBuildById(buildId);
     if (!build) {
