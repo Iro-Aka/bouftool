@@ -1,8 +1,10 @@
 import { isArrayOf, isNumber, isObject, isString } from "src/types/utils";
 import type { WakfuItem } from "../data/item";
+import type { EnumAbilities } from "../types/ability";
 import { isWakfuStats, type WakfuStats } from "../types/action";
 import { isWakfuBreed, type WakfuBreed } from "../types/breed";
 import { isWakfuEquipmentPosition, type WakfuEquipmentPosition } from "../types/itemType";
+import { isWakfuAbilities } from "./abilities/types";
 
 export enum WakfuBuildEquippedPositionStatus {
   Empty,
@@ -39,6 +41,7 @@ export type TWakfuBuild = {
   level: number;
   preferences: TWakfuBuildPreferences;
   items: Record<WakfuEquipmentPosition, number | WakfuBuildEquippedPositionStatus>;
+  abilities: Partial<Record<EnumAbilities, number>>;
 };
 
 export const isWakfuBuildPreferences = (json: unknown) => {
@@ -87,6 +90,10 @@ export const isWakfuBuild = (json: unknown): json is TWakfuBuild => {
     )
   ) {
     console.warn("Invalid JSON: Items is not valid");
+    return false;
+  }
+  if (!("abilities" in json && isWakfuAbilities(json.abilities))) {
+    console.warn("Invalid JSON: Abilities is not valid");
     return false;
   }
   return true;
