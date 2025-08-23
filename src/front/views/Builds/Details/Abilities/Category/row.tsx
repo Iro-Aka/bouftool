@@ -1,7 +1,7 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { Button, OutlinedInput, Tooltip, Typography } from "@mui/material";
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent, useEffect, useState } from "react";
 import { ElectronEvents } from "src/electron/types";
 import { StatsIcon } from "src/front/components/Wakfu/StatsIcon";
 import { sendElectronEvent } from "src/front/hooks/electron";
@@ -18,8 +18,9 @@ export type TAbilitiesCategoryRowProps = {
 };
 
 export const AbilitiesCategoryRow = ({ ability, availablePoints }: TAbilitiesCategoryRowProps) => {
-  const [parentOpen, setParentOpen] = useState(false);
-  const [childOpened, setChildOpened] = useState(false);
+  const [rowTooltipOpen, setRowTooltipOpen] = useState(false);
+  const [removeTooltipOpen, setRemoveTooltipOpen] = useState(false);
+  const [addTooltipOpen, setAddTooltipOpen] = useState(false);
   const build = useBuildDetailsContext();
   const abilityLevel = build.abilities[ability] ?? 0;
   const addLevelDisabled =
@@ -37,15 +38,27 @@ export const AbilitiesCategoryRow = ({ ability, availablePoints }: TAbilitiesCat
     sendElectronEvent(ElectronEvents.BuildRemoveAbilityLevel, { buildId: build.id, ability, level: levels });
   };
 
+  useEffect(() => {
+    if (addLevelDisabled) {
+      setAddTooltipOpen(false);
+    }
+  }, [addLevelDisabled]);
+
+  useEffect(() => {
+    if (removeLevelDisabled) {
+      setRemoveTooltipOpen(false);
+    }
+  }, [removeLevelDisabled]);
+
   return (
     <Tooltip
-      open={childOpened ? false : parentOpen}
+      open={removeTooltipOpen || addTooltipOpen ? false : rowTooltipOpen}
+      onOpen={() => setRowTooltipOpen(true)}
+      onClose={() => setRowTooltipOpen(false)}
       title={<AbilitiesCategoryTooltip ability={ability} />}
       placement="left"
       arrow
       disableInteractive
-      onOpen={() => setParentOpen(true)}
-      onClose={() => setParentOpen(false)}
     >
       <div className={abilitiesCategoryClasses.row}>
         <div className={abilitiesCategoryClasses.rowLabel}>
@@ -54,13 +67,13 @@ export const AbilitiesCategoryRow = ({ ability, availablePoints }: TAbilitiesCat
         </div>
         <div className={abilitiesCategoryClasses.rowActions}>
           <Tooltip
+            open={removeLevelDisabled ? false : removeTooltipOpen}
+            onOpen={() => !removeLevelDisabled && setRemoveTooltipOpen(true)}
+            onClose={() => setRemoveTooltipOpen(false)}
             title={<AbilitiesCategoryButtonTooltip type="remove" />}
             placement="top"
             arrow
             disableInteractive
-            onOpen={() => setChildOpened(true)}
-            onClose={() => setChildOpened(false)}
-            disableHoverListener={removeLevelDisabled}
           >
             <span>
               <Button
@@ -80,13 +93,13 @@ export const AbilitiesCategoryRow = ({ ability, availablePoints }: TAbilitiesCat
             className={abilitiesCategoryClasses.rowActionsInput}
           />
           <Tooltip
+            open={addLevelDisabled ? false : addTooltipOpen}
+            onOpen={() => !addLevelDisabled && setAddTooltipOpen(true)}
+            onClose={() => setAddTooltipOpen(false)}
             title={<AbilitiesCategoryButtonTooltip type="add" />}
             placement="top"
             arrow
             disableInteractive
-            onOpen={() => setChildOpened(true)}
-            onClose={() => setChildOpened(false)}
-            disableHoverListener={addLevelDisabled}
           >
             <span>
               <Button
