@@ -6,6 +6,7 @@ import { ItemIcon } from "src/front/components/Wakfu/ItemIcon";
 import { RarityIcon } from "src/front/components/Wakfu/RarityIcon";
 import { useElectronEvent } from "src/front/hooks/electron";
 import type { TWakfuItemDisplay } from "src/wakfu/types/items";
+import { RecipeIngredient } from "./Ingredient";
 
 export type TModalItemRecipeProps = {
   open: boolean;
@@ -45,34 +46,7 @@ export const ModalItemRecipe = ({ open, item, onClose }: TModalItemRecipeProps) 
               </StackRow>
               <Stack>
                 {recipe.ingredients.map((ingredient) => (
-                  <StackRow
-                    key={ingredient.itemId}
-                    sx={{
-                      border: (theme) => `1px solid ${theme.palette.border.main}`,
-                      borderTopWidth: "0px",
-                      borderBottomWidth: "0px",
-                      py: 0.5,
-                      px: 1,
-                      "&:first-of-type": {
-                        borderTopWidth: "1px",
-                        borderTopLeftRadius: "8px",
-                        borderTopRightRadius: "8px",
-                      },
-                      "&:last-of-type": {
-                        borderBottomWidth: "1px",
-                        borderBottomLeftRadius: "8px",
-                        borderBottomRightRadius: "8px",
-                      },
-                      "&:nth-of-type(2n+1)": { bgcolor: "surface.150" },
-                      "&:nth-of-type(2n)": { bgcolor: "surface.250" },
-                    }}
-                  >
-                    <ItemIcon width={24}>{ingredient.itemGfxId}</ItemIcon>
-                    <RarityIcon width={10}>{ingredient.itemRarity}</RarityIcon>
-                    <Typography variant="body2">
-                      x{ingredient.quantity} {ingredient.itemLabel}
-                    </Typography>
-                  </StackRow>
+                  <RecipeIngredient key={ingredient.itemId} ingredient={ingredient} />
                 ))}
               </Stack>
             </Stack>

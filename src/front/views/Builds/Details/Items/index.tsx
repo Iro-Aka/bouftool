@@ -37,8 +37,8 @@ export const BuildDetailsItems = () => {
               position={position}
               item={build.items[position]}
               size={48}
-              onClick={handleClick}
-              onRightClick={handleRightClick}
+              onClick={() => handleClick(position)}
+              onRightClick={() => handleRightClick(position)}
               slotProps={{ box: { sx: { flex: "0 0 auto" } } }}
             />
           ),

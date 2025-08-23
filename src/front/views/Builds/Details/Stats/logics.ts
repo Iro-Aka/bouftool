@@ -8,7 +8,7 @@ export const getResistanceText = (value: number) => {
 
 export const getStatsColor = (value: number, percentage?: boolean) => {
   if (value < 0) {
-    return "#D75959";
+    return "#FF6B2B";
   } else if (value > 0 || percentage === true) {
     return "#75C059";
   } else {

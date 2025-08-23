@@ -65,6 +65,7 @@ export const registerElectronDataEvents = (manager: ElectronEventManager) => {
               itemId: ingredient.itemId,
               itemLabel: jobItem?.title[lang] ?? "Undefined",
               itemRarity: jobItem?.rarity ?? 0,
+              itemTypeId: jobItem?.itemTypeId ?? 0,
               itemGfxId: jobItem?.gfxId ?? 0,
               quantity: ingredient.quantity,
             };

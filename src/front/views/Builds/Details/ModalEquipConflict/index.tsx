@@ -1,4 +1,4 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
 import { ElectronEvents } from "src/electron/types";
 import { StackRow } from "src/front/components/Layout/StackRow";
 import { ItemSlot } from "src/front/components/Wakfu/ItemSlot";
@@ -28,7 +28,6 @@ export const ModalEquipConflict = ({ conflictPositions, onClose }: TModalEquipCo
 
   return (
     <Dialog open={!!conflictPositions} onClose={onClose}>
-      <DialogTitle variant="subtitle2">Equiper</DialogTitle>
       <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
         <Typography variant="body2">Veuillez sélectionner l'équipement à remplacer</Typography>
         <StackRow sx={{ "&&": { gap: 2 } }}>

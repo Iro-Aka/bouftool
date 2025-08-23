@@ -6,11 +6,11 @@ import { useSearchItemsContext } from "./contexts/search";
 import { SearchEquipmentsItem } from "./item/item";
 
 export type TSearchItemsListProps = {
-  onEquipItem?: (itemId: number) => void;
+  buildId?: number;
 };
 
-export const SearchItemsList = ({ onEquipItem }: TSearchItemsListProps) => {
-  const { items } = useSearchItemsContext();
+export const SearchItemsList = ({ buildId }: TSearchItemsListProps) => {
+  const items = useSearchItemsContext();
   const gridRef = useRef<VariableSizeGrid>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const size = useResizeObserver(boxRef.current);
@@ -30,7 +30,7 @@ export const SearchItemsList = ({ onEquipItem }: TSearchItemsListProps) => {
         }
       }
     }
-    if (onEquipItem) {
+    if (buildId) {
       return (
         196 +
         16 +
@@ -87,7 +87,7 @@ export const SearchItemsList = ({ onEquipItem }: TSearchItemsListProps) => {
                 [`&:nth-of-type(${columnCount}n+1)`]: { pl: "2px" },
               }}
             >
-              <SearchEquipmentsItem item={item} onEquipItem={onEquipItem} />
+              <SearchEquipmentsItem item={item} buildId={buildId} />
             </Box>
           );
         }}

@@ -58,9 +58,7 @@ const formatPreferences = (preferences: TSearchItemsPreferences): TSearchItemsSo
   };
 };
 
-export type TSearchItemsContext = {
-  items: TWakfuItemDisplay[];
-};
+export type TSearchItemsContext = TWakfuItemDisplay[];
 
 const SearchContext = createContext<TSearchItemsContext | undefined>(undefined);
 
@@ -75,6 +73,8 @@ export const useSearchItemsContext = () => {
 export type TSearchItemsProviderProps = {
   children: ReactNode;
 };
+
+const DefaultValues: TWakfuItemDisplay[] = [];
 
 export const SearchItemsProvider = ({ children }: TSearchItemsProviderProps) => {
   const { filters } = useSearchItemsFiltersContext();
@@ -98,5 +98,5 @@ export const SearchItemsProvider = ({ children }: TSearchItemsProviderProps) => 
     }
   }, [filters, preferences]);
 
-  return <SearchContext.Provider value={{ items: items ?? [] }}>{children}</SearchContext.Provider>;
+  return <SearchContext.Provider value={items ?? DefaultValues}>{children}</SearchContext.Provider>;
 };

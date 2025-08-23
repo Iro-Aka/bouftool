@@ -8,12 +8,12 @@ import { ItemIcon } from "../ItemIcon";
 import { ItemSlotBox, itemSlotClasses } from "./styles";
 
 export type TItemSlotProps = {
-  position: WakfuEquipmentPosition;
+  position?: WakfuEquipmentPosition;
   item: TWakfuItemDisplay | WakfuBuildEquippedPositionStatus;
   size: number;
   disableTooltip?: boolean;
-  onClick?: (position: WakfuEquipmentPosition) => void;
-  onRightClick?: (position: WakfuEquipmentPosition) => void;
+  onClick?: (position?: WakfuEquipmentPosition) => void;
+  onRightClick?: (position?: WakfuEquipmentPosition) => void;
   slotProps?: {
     box?: Partial<BoxProps>;
   };
@@ -30,7 +30,13 @@ export const ItemSlot = ({
 }: TItemSlotProps) => {
   return (
     <Tooltip
-      title={isWakfuBuildEquippedPositionStatus(item) || disableTooltip ? "" : <SearchEquipmentsItem item={item} />}
+      title={
+        isWakfuBuildEquippedPositionStatus(item) || disableTooltip ? (
+          ""
+        ) : (
+          <SearchEquipmentsItem item={item} hideButtons />
+        )
+      }
       slotProps={{ tooltip: { sx: { bgcolor: "transparent", maxWidth: "unset", width: 376, p: 0 } } }}
       disableInteractive
       placement="right"

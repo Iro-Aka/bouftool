@@ -14,9 +14,7 @@ export const themeDialog = {
         padding: theme.spacing(1.5, 1.5, 0, 1.5),
       },
       [`& .${dialogContentClasses.root}`]: {
-        "&&": {
-          paddingTop: theme.spacing(1.5),
-        },
+        paddingTop: `${theme.spacing(1.5)} !important`,
         padding: theme.spacing(1.5, 1.5, 0, 1.5),
       },
       [`& .${dialogActionsClasses.root}`]: {

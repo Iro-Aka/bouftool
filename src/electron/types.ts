@@ -5,13 +5,15 @@ import type { WakfuItem } from "src/wakfu/data/item";
 import type { TWakfuRecipeDisplay } from "src/wakfu/data/types";
 import type { TSearchItemsPayload } from "src/wakfu/search/types";
 import type { EnumAbilities } from "src/wakfu/types/ability";
+import type { WakfuStats } from "src/wakfu/types/action";
 import type { WakfuBreed } from "src/wakfu/types/breed";
+import type { TWakfuItemDisplay } from "src/wakfu/types/items";
 import type { WakfuEquipmentPosition } from "src/wakfu/types/itemType";
 import type { WakfuLang } from "src/wakfu/types/utils";
 
 export enum ElectronEvents {
   AppReady = "app:ready",
-  OpenUrl = "app:open-url",
+  OpenWebEncyclopedia = "app:open-web-encyclopedia",
   SearchItems = "search:items",
   GetItemById = "data:get-item-by-id",
   GetItemTypeLabels = "data:get-itemtype-labels",
@@ -24,6 +26,7 @@ export enum ElectronEvents {
   BuildSetInfo = "build:set-info",
   BuildEquipItem = "build:equip",
   BuildUnequipItem = "build:unequip",
+  BuildCompareItem = "build:compare",
   BuildSetPreferences = "build:set-preferences",
   BuildAddAbilityLevel = "build:add-ability-level",
   BuildRemoveAbilityLevel = "build:remove-ability-level",
@@ -32,7 +35,7 @@ export enum ElectronEvents {
 
 export type ElectronEventsMain = {
   [ElectronEvents.AppReady]: undefined;
-  [ElectronEvents.OpenUrl]: { url: string };
+  [ElectronEvents.OpenWebEncyclopedia]: { itemTypeId: number; itemId: number };
   [ElectronEvents.SearchItems]: TSearchItemsPayload;
   [ElectronEvents.GetItemById]: { id: number };
   [ElectronEvents.GetItemTypeLabels]: undefined;
@@ -44,6 +47,7 @@ export type ElectronEventsMain = {
   [ElectronEvents.GetBuild]: { buildId: number };
   [ElectronEvents.BuildEquipItem]: { buildId: number; itemId: number; position?: WakfuEquipmentPosition };
   [ElectronEvents.BuildUnequipItem]: { buildId: number; position: WakfuEquipmentPosition };
+  [ElectronEvents.BuildCompareItem]: { buildId: number; itemId: number };
   [ElectronEvents.BuildSetPreferences]: { buildId: number; preferences: Partial<TWakfuBuildPreferences> };
   [ElectronEvents.BuildAddAbilityLevel]: { buildId: number; ability: EnumAbilities; level: number };
   [ElectronEvents.BuildRemoveAbilityLevel]: { buildId: number; ability: EnumAbilities; level: number };
@@ -56,7 +60,7 @@ export type ElectronEventsMain = {
 
 export type ElectronEventsRenderer = {
   [ElectronEvents.AppReady]: { version: string; lang: WakfuLang };
-  [ElectronEvents.OpenUrl]: undefined;
+  [ElectronEvents.OpenWebEncyclopedia]: undefined;
   [ElectronEvents.SearchItems]: ReturnType<WakfuItem["toDisplay"]>[];
   [ElectronEvents.GetItemById]: ReturnType<WakfuItem["toDisplay"]>;
   [ElectronEvents.GetItemTypeLabels]: Record<number, string>;
@@ -66,8 +70,13 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.CreateBuild]: { buildId: number };
   [ElectronEvents.BuildDelete]: undefined;
   [ElectronEvents.GetBuild]: ReturnType<WakfuBuild["toDisplay"]>;
-  [ElectronEvents.BuildEquipItem]: undefined | WakfuEquipmentPosition[];
+  [ElectronEvents.BuildEquipItem]: undefined | { itemId: number; position: WakfuEquipmentPosition[] };
   [ElectronEvents.BuildUnequipItem]: undefined;
+  [ElectronEvents.BuildCompareItem]: {
+    sourceItems: TWakfuItemDisplay[];
+    targetItem: TWakfuItemDisplay;
+    stats: Record<WakfuStats, number>;
+  }[];
   [ElectronEvents.BuildSetPreferences]: undefined;
   [ElectronEvents.BuildAddAbilityLevel]: undefined;
   [ElectronEvents.BuildRemoveAbilityLevel]: undefined;

@@ -4,6 +4,7 @@ import { RarityIcon } from "src/front/components/Wakfu/RarityIcon";
 import type { TWakfuItemDisplay } from "src/wakfu/types/items";
 import { Rarity } from "src/wakfu/types/rarity";
 import { ItemTypeIcon } from "../../../components/Wakfu/ItemTypeIcon";
+import { SearchItemsCompare } from "./compare";
 import { EquipmentEffectLabel } from "./effect";
 import { SearchItemsEncyclopedia } from "./encyclopedia";
 import { SearchEquipmentsItemEquip } from "./equip";
@@ -12,10 +13,11 @@ import { ItemCard, itemCardClasses } from "./styles";
 
 export type SearchEquipmentsItemProps = {
   item: TWakfuItemDisplay;
-  onEquipItem?: (itemId: number) => void;
+  hideButtons?: boolean;
+  buildId?: number;
 };
 
-export const SearchEquipmentsItem = ({ item, onEquipItem }: SearchEquipmentsItemProps) => {
+export const SearchEquipmentsItem = ({ item, buildId, hideButtons }: SearchEquipmentsItemProps) => {
   return (
     <ItemCard className={itemCardClasses.root} rarity={item.rarity}>
       <Stack sx={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", pb: 0.5 }}>
@@ -44,12 +46,14 @@ export const SearchEquipmentsItem = ({ item, onEquipItem }: SearchEquipmentsItem
             <img src={`wakfu/items/${item.gfxId}.png`} alt={item.title ?? "item"} width={58} height={58} />
           </Box>
           <Typography variant="caption">Niv. {item.level}</Typography>
-          <StackGrid columns={2} gap={0.5}>
-            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
-            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
-            <SearchItemsEncyclopedia itemId={item.id} itemTypeId={item.itemTypeId} />
-            <SearchItemsRecipes item={item} recipes={item.recipes} />
-          </StackGrid>
+          {!hideButtons && (
+            <StackGrid columns={2} gap={0.5}>
+              <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+              <SearchItemsCompare itemId={item.id} buildId={buildId} />
+              <SearchItemsEncyclopedia itemId={item.id} itemTypeId={item.itemTypeId} />
+              <SearchItemsRecipes item={item} recipes={item.recipes} />
+            </StackGrid>
+          )}
         </Stack>
         <Stack sx={{ flex: 1 }}>
           {item.equipEffectsLabels.map((effectLabel, index) => (

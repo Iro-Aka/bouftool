@@ -4,20 +4,21 @@ import { SearchItemsPreferencesProvider } from "./contexts/preferences";
 import { SearchItemsProvider } from "./contexts/search";
 import { SearchItemsFilters } from "./filters";
 import { SearchItemsList } from "./list";
+import { ModalCompareItem } from "./ModalCompareItem";
 import { ModalItemRecipeProvider } from "./ModalItemRecipe/context";
 import { SearchItemsPreferences } from "./preferences";
 
 export type TSearchEquipmentsProps = {
   controlled?: boolean;
-  onEquipItem?: (itemId: number) => void;
+  buildId?: number;
 };
 
-export const SearchEquipments = ({ controlled, onEquipItem }: TSearchEquipmentsProps) => {
+export const SearchEquipments = ({ controlled, buildId }: TSearchEquipmentsProps) => {
   return (
     <Stack sx={{ flex: 1, p: 1, gap: 1, overflow: "hidden" }}>
-      <SearchItemsFiltersProvider controlled={controlled}>
-        <SearchItemsPreferencesProvider controlled={controlled}>
-          <ModalItemRecipeProvider>
+      <ModalItemRecipeProvider>
+        <SearchItemsFiltersProvider controlled={controlled}>
+          <SearchItemsPreferencesProvider controlled={controlled}>
             <Stack
               sx={{
                 p: 1,
@@ -30,11 +31,12 @@ export const SearchEquipments = ({ controlled, onEquipItem }: TSearchEquipmentsP
               <SearchItemsFilters />
             </Stack>
             <SearchItemsProvider>
-              <SearchItemsList onEquipItem={onEquipItem} />
+              <SearchItemsList buildId={buildId} />
             </SearchItemsProvider>
-          </ModalItemRecipeProvider>
-        </SearchItemsPreferencesProvider>
-      </SearchItemsFiltersProvider>
+          </SearchItemsPreferencesProvider>
+        </SearchItemsFiltersProvider>
+      </ModalItemRecipeProvider>
+      <ModalCompareItem />
     </Stack>
   );
 };

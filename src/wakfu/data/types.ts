@@ -10,7 +10,14 @@ export type TWakfuRecipeDisplay = {
   level: number;
   recipeCategoryId: number;
   recipeCategoryLabel: string;
-  ingredients: { itemId: number; itemLabel: string; itemRarity: number; itemGfxId: number; quantity: number }[];
+  ingredients: {
+    itemId: number;
+    itemLabel: string;
+    itemRarity: number;
+    itemTypeId: number;
+    itemGfxId: number;
+    quantity: number;
+  }[];
   result: { itemId: number; itemLabel: string; itemGfxId: number; quantity: number };
 };
 

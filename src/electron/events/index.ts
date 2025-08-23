@@ -1,4 +1,5 @@
 import { shell } from "electron";
+import { DefaultEncyclopediaBaseUrl, EncyclopediaBaseUrlsMap } from "src/wakfu/constants/encyclopedia";
 import { WakfuData } from "src/wakfu/data";
 import { searchItems } from "src/wakfu/search";
 import { ElectronEvents } from "../types";
@@ -16,8 +17,9 @@ export const registerElectronEvents = () => {
     });
   });
 
-  manager.register(ElectronEvents.OpenUrl, (reply, { url }) => {
-    shell.openExternal(url);
+  manager.register(ElectronEvents.OpenWebEncyclopedia, (reply, { itemTypeId, itemId }) => {
+    const url = EncyclopediaBaseUrlsMap.get(itemTypeId) ?? DefaultEncyclopediaBaseUrl;
+    shell.openExternal(`${url}${itemId}`);
     reply(undefined);
   });
 

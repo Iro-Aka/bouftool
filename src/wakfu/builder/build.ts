@@ -199,6 +199,11 @@ export class WakfuBuild {
     return !isWakfuBuildEquippedPositionStatus(item);
   }
 
+  public getEquippedItem(position: WakfuEquipmentPosition): WakfuItem | null {
+    const item = this.items[position];
+    return isWakfuBuildEquippedPositionStatus(item) ? null : item;
+  }
+
   public unequipItem(position: WakfuEquipmentPosition): boolean {
     const item = this.items[position];
     if (isWakfuBuildEquippedPositionStatus(item)) {
@@ -300,6 +305,47 @@ export class WakfuBuild {
   public setBonuses(bonuses: TWakfuBuild["bonuses"]): void {
     this.bonuses = bonuses;
     this.saveBuild();
+  }
+
+  public getItemStats(item: WakfuItem) {
+    const stats = initializeStats();
+    for (const stat of Object.values(WakfuStats)) {
+      if (!isWakfuStats(stat)) {
+        continue;
+      }
+      const value = item.getStats(stat);
+      switch (stat) {
+        case WakfuStats.Mastery:
+          stats[WakfuStats.MasteryFire] = stats[WakfuStats.MasteryFire] + value;
+          stats[WakfuStats.MasteryWater] = stats[WakfuStats.MasteryWater] + value;
+          stats[WakfuStats.MasteryEarth] = stats[WakfuStats.MasteryEarth] + value;
+          stats[WakfuStats.MasteryAir] = stats[WakfuStats.MasteryAir] + value;
+          break;
+        case WakfuStats.Resistance:
+          stats[WakfuStats.ResistanceFire] = stats[WakfuStats.ResistanceFire] + value;
+          stats[WakfuStats.ResistanceWater] = stats[WakfuStats.ResistanceWater] + value;
+          stats[WakfuStats.ResistanceEarth] = stats[WakfuStats.ResistanceEarth] + value;
+          stats[WakfuStats.ResistanceAir] = stats[WakfuStats.ResistanceAir] + value;
+          break;
+        default:
+          stats[stat] = stats[stat] + value;
+          break;
+      }
+    }
+    const masteryXElem = item.getMasteryXElements();
+    if (masteryXElem) {
+      for (let i = 0; i < masteryXElem.count; i++) {
+        stats[this.preferences.mastery[i]] = stats[this.preferences.mastery[i]] + masteryXElem.value;
+      }
+    }
+    const resistanceXElem = item.getResistanceXElements();
+    if (resistanceXElem) {
+      for (let i = 0; i < resistanceXElem.count; i++) {
+        stats[this.preferences.resistance[i]] = stats[this.preferences.resistance[i]] + resistanceXElem.value;
+      }
+    }
+    floorEveryValues(stats);
+    return stats;
   }
 
   public getEquipmentsStats() {

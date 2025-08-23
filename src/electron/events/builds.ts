@@ -1,5 +1,9 @@
 import { WakfuBuild } from "src/wakfu/builder/build";
+import { initializeStats } from "src/wakfu/builder/utils";
 import { WakfuData } from "src/wakfu/data";
+import type { WakfuItem } from "src/wakfu/data/item";
+import { isWakfuStats, WakfuStats } from "src/wakfu/types/action";
+import type { TWakfuItemDisplay } from "src/wakfu/types/items";
 import { ElectronEvents } from "../types";
 import { ElectronEventManager } from "./manager";
 
@@ -63,7 +67,7 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
       if (itemType.equipmentPositions.length > 1 && build.isEquipped(position)) {
         position = itemType.equipmentPositions[1];
         if (build.isEquipped(position)) {
-          reply(itemType.equipmentPositions);
+          reply({ itemId: itemId, position: itemType.equipmentPositions });
           return;
         }
       }
@@ -81,6 +85,55 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     build.unequipItem(position);
     ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
     reply(undefined);
+  });
+
+  manager.register(ElectronEvents.BuildCompareItem, (reply, { buildId, itemId }) => {
+    const build = WakfuBuild.getBuildById(buildId);
+    if (!build) {
+      throw new Error(`Build with ID ${buildId} not found`);
+    }
+    const targetItem = WakfuData.getInstance().getItemById(itemId);
+    if (!targetItem) {
+      throw new Error(`Item with ID ${itemId} not found`);
+    }
+    const itemType = targetItem.getItemType();
+    if (!itemType) {
+      throw new Error(`Item with ID ${itemId} has no type`);
+    }
+    const results: {
+      sourceItems: TWakfuItemDisplay[];
+      targetItem: TWakfuItemDisplay;
+      stats: Record<WakfuStats, number>;
+    }[] = [];
+    for (const position of itemType.equipmentPositions) {
+      const sourceItem = build.getEquippedItem(position);
+      if (!sourceItem) {
+        continue;
+      }
+      const sourceItems: WakfuItem[] = [sourceItem];
+      for (const disabledPosition of itemType.equipmentDisabledPositions) {
+        const disabledItem = build.getEquippedItem(disabledPosition);
+        if (disabledItem) {
+          sourceItems.push(disabledItem);
+        }
+      }
+      const stats = initializeStats();
+      const targetItemStats = build.getItemStats(targetItem);
+      const sourceItemsStats = sourceItems.map((item) => build.getItemStats(item));
+      for (const stat of Object.values(WakfuStats)) {
+        if (!isWakfuStats(stat)) {
+          continue;
+        }
+        stats[stat] = targetItemStats[stat];
+        stats[stat] = Math.floor(stats[stat] - sourceItemsStats.reduce((acc, itemStats) => acc + itemStats[stat], 0));
+      }
+      results.push({
+        sourceItems: sourceItems.map((item) => item.toDisplay()),
+        targetItem: targetItem.toDisplay(),
+        stats,
+      });
+    }
+    reply(results);
   });
 
   manager.register(ElectronEvents.BuildSetPreferences, (reply, { buildId, preferences }) => {
