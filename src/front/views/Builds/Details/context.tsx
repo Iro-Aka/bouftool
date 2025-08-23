@@ -3,6 +3,9 @@ import { createContext, type ReactNode, useContext, useEffect } from "react";
 import { ElectronEvents, type ElectronEventsRenderer } from "src/electron/types";
 import { Loading } from "src/front/components/Loading";
 import { useElectronEvent } from "src/front/hooks/electron";
+import { WakfuLevelsRange } from "src/wakfu/types/utils";
+import { SearchItemsFiltersProvider } from "../../SearchEquipments/contexts/filters";
+import { SearchItemsPreferencesProvider } from "../../SearchEquipments/contexts/preferences";
 
 const context = createContext<ElectronEventsRenderer[ElectronEvents.GetBuild] | undefined>(undefined);
 
@@ -34,5 +37,12 @@ export const BuildDetailsProvider = ({ buildId, children }: TBuildDetailsProvide
       </Loading>
     );
   }
-  return <context.Provider value={response}>{children}</context.Provider>;
+  const levelsRange = WakfuLevelsRange.find((range) => range.min <= response.level && range.max >= response.level);
+  return (
+    <SearchItemsFiltersProvider defaultFilters={{ levels: levelsRange ?? { min: 1, max: 245 } }}>
+      <SearchItemsPreferencesProvider>
+        <context.Provider value={response}>{children}</context.Provider>
+      </SearchItemsPreferencesProvider>
+    </SearchItemsFiltersProvider>
+  );
 };

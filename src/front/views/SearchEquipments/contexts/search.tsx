@@ -9,6 +9,19 @@ import type { TSearchItemsPreferences } from "../preferences/logics";
 import { useSearchItemsFiltersContext } from "./filters";
 import { useSearchItemsPreferencesContext } from "./preferences";
 
+// biome-ignore lint/complexity/noStaticOnlyClass: This class is a simple state holder
+export class SearchItemsBehavior {
+  private static skipNextTimeout = false;
+
+  public static shouldSkipNextTimeout(): boolean {
+    return SearchItemsBehavior.skipNextTimeout;
+  }
+
+  public static setSkipNextTimeout(value: boolean): void {
+    SearchItemsBehavior.skipNextTimeout = value;
+  }
+}
+
 const formatFilters = (filters: TSearchItemsFiltersForm): TSearchItemsFilters => {
   const stats: TSearchItemsFilters["stats"] = [];
   for (const wakfuStats of Object.values(WakfuStats)) {
@@ -68,12 +81,21 @@ export const SearchItemsProvider = ({ children }: TSearchItemsProviderProps) => 
   const { preferences } = useSearchItemsPreferencesContext();
   const [searchItems, items] = useElectronEvent(ElectronEvents.SearchItems);
 
+  useLayoutEffect(() => {
+    SearchItemsBehavior.setSkipNextTimeout(true);
+  }, []);
+
   // biome-ignore lint/correctness/useExhaustiveDependencies: Only depends on filters and preferences
   useLayoutEffect(() => {
-    const timeout = setTimeout(() => {
+    if (SearchItemsBehavior.shouldSkipNextTimeout()) {
       searchItems({ filters: formatFilters(filters), sort: formatPreferences(preferences) });
-    }, 750);
-    return () => clearTimeout(timeout);
+      SearchItemsBehavior.setSkipNextTimeout(false);
+    } else {
+      const timeout = setTimeout(() => {
+        searchItems({ filters: formatFilters(filters), sort: formatPreferences(preferences) });
+      }, 750);
+      return () => clearTimeout(timeout);
+    }
   }, [filters, preferences]);
 
   return <SearchContext.Provider value={{ items: items ?? [] }}>{children}</SearchContext.Provider>;

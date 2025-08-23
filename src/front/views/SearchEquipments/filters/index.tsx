@@ -9,14 +9,6 @@ import { ItemTypeFilters } from "./itemTypes";
 import { RarityFilters } from "./rarities/rarity";
 import { StatsFilters, StatsFiltersCards } from "./stats";
 
-export const initialSearchItemsFilters = {
-  title: "",
-  rarities: [],
-  itemTypes: [],
-  levels: { min: 1, max: 245 },
-  stats: {},
-};
-
 export type TSearchItemsFiltersForm = {
   title: string;
   rarities: number[];
@@ -26,7 +18,7 @@ export type TSearchItemsFiltersForm = {
 };
 
 export const SearchItemsFilters = () => {
-  const { filters, setFilters } = useSearchItemsFiltersContext();
+  const { filters, setFilters, resetFilters } = useSearchItemsFiltersContext();
 
   return (
     <Stack sx={{ flexDirection: "row", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
@@ -49,7 +41,7 @@ export const SearchItemsFilters = () => {
       <ItemTypeFilters value={filters.itemTypes} onChange={(itemTypes) => setFilters({ ...filters, itemTypes })} />
       <StatsFilters value={filters.stats} onChange={(stats) => setFilters({ ...filters, stats })} />
       <StatsFiltersCards value={filters.stats} onChange={(stats) => setFilters({ ...filters, stats })} />
-      <Button variant="push" onClick={() => setFilters(initialSearchItemsFilters)} sx={{ minWidth: 0 }}>
+      <Button variant="push" onClick={resetFilters} sx={{ minWidth: 0 }}>
         <ReplayIcon />
       </Button>
     </Stack>
