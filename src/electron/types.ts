@@ -2,6 +2,7 @@ import type { IpcRendererEvent } from "electron";
 import type { WakfuBuild } from "src/wakfu/builder/build";
 import type { TWakfuBuild, TWakfuBuildPreferences } from "src/wakfu/builder/types";
 import type { WakfuItem } from "src/wakfu/data/item";
+import type { TWakfuRecipeDisplay } from "src/wakfu/data/types";
 import type { TSearchItemsPayload } from "src/wakfu/search/types";
 import type { EnumAbilities } from "src/wakfu/types/ability";
 import type { WakfuBreed } from "src/wakfu/types/breed";
@@ -10,10 +11,12 @@ import type { WakfuLang } from "src/wakfu/types/utils";
 
 export enum ElectronEvents {
   AppReady = "app:ready",
+  OpenUrl = "app:open-url",
   SearchItems = "search:items",
   GetItemById = "data:get-item-by-id",
   GetItemTypeLabels = "data:get-itemtype-labels",
   GetItemTypesByEquipmentPosition = "data:get-itemtypes-by-equipment-position",
+  GetItemRecipes = "data:get-item-recipes",
   GetAllBuilds = "build:get-all",
   CreateBuild = "build:create",
   BuildDelete = "build:delete",
@@ -29,10 +32,12 @@ export enum ElectronEvents {
 
 export type ElectronEventsMain = {
   [ElectronEvents.AppReady]: undefined;
+  [ElectronEvents.OpenUrl]: { url: string };
   [ElectronEvents.SearchItems]: TSearchItemsPayload;
   [ElectronEvents.GetItemById]: { id: number };
   [ElectronEvents.GetItemTypeLabels]: undefined;
   [ElectronEvents.GetItemTypesByEquipmentPosition]: { position: WakfuEquipmentPosition };
+  [ElectronEvents.GetItemRecipes]: { itemId: number };
   [ElectronEvents.GetAllBuilds]: undefined;
   [ElectronEvents.CreateBuild]: undefined;
   [ElectronEvents.BuildDelete]: { buildId: number };
@@ -51,10 +56,12 @@ export type ElectronEventsMain = {
 
 export type ElectronEventsRenderer = {
   [ElectronEvents.AppReady]: { version: string; lang: WakfuLang };
+  [ElectronEvents.OpenUrl]: undefined;
   [ElectronEvents.SearchItems]: ReturnType<WakfuItem["toDisplay"]>[];
   [ElectronEvents.GetItemById]: ReturnType<WakfuItem["toDisplay"]>;
   [ElectronEvents.GetItemTypeLabels]: Record<number, string>;
   [ElectronEvents.GetItemTypesByEquipmentPosition]: number[];
+  [ElectronEvents.GetItemRecipes]: TWakfuRecipeDisplay[];
   [ElectronEvents.GetAllBuilds]: ReturnType<typeof WakfuBuild.getBuilds>;
   [ElectronEvents.CreateBuild]: { buildId: number };
   [ElectronEvents.BuildDelete]: undefined;

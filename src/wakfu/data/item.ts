@@ -176,6 +176,9 @@ export class WakfuItem {
       gfxId: this.item.gfxId,
       equipEffectsLabels: this.item.equipEffectsLabels,
       title: this.getTitle(),
+      recipes: WakfuData.getInstance()
+        .getRecipesByItemId(this.item.id)
+        .map((recipe) => recipe.id),
     };
   }
 }

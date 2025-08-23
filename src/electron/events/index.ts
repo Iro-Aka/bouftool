@@ -1,3 +1,4 @@
+import { shell } from "electron";
 import { WakfuData } from "src/wakfu/data";
 import { searchItems } from "src/wakfu/search";
 import { ElectronEvents } from "../types";
@@ -13,6 +14,11 @@ export const registerElectronEvents = () => {
       version: wakfuData.getVersion(),
       lang: wakfuData.getLang(),
     });
+  });
+
+  manager.register(ElectronEvents.OpenUrl, (reply, { url }) => {
+    shell.openExternal(url);
+    reply(undefined);
   });
 
   manager.register(ElectronEvents.SearchItems, (reply, { filters, sort }) => {

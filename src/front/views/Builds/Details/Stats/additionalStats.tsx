@@ -135,7 +135,7 @@ export const BuildDetailsAdditionalStats = () => {
         value={build.stats[WakfuStats.Armor].toLocaleString("fr-FR")}
         statsColor="#218246"
       />
-      <Tooltip title={<MasteryTooltip />} placement="top" arrow>
+      <Tooltip title={<MasteryTooltip />} placement="top" arrow disableInteractive>
         <BuildStats
           stats={WakfuStats.Mastery}
           label="Maîtrise cumulée"

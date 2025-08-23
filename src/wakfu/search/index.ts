@@ -1,5 +1,6 @@
 import { WakfuData } from "../data";
 import type { WakfuItem } from "../data/item";
+import type { TWakfuItemDisplay } from "../types/items";
 import { searchItemsItemTypesFilter } from "./filters/itemTypes";
 import { searchItemsLevelsFilter } from "./filters/levels";
 import { searchItemsRaritiesFilter } from "./filters/rarities";
@@ -7,7 +8,7 @@ import { searchItemsStatsFilter } from "./filters/stats";
 import { searchItemsTitleFilter } from "./filters/title";
 import { searchItemsSortLevel } from "./sort/level";
 import { searchItemsSortWeight } from "./sort/weight";
-import type { TSearchItemsFilters, TSearchItemsResult, TSearchItemsSort } from "./types";
+import type { TSearchItemsFilters, TSearchItemsSort } from "./types";
 
 const ItemFiltersMap: {
   [Key in keyof TSearchItemsFilters]: (
@@ -34,7 +35,7 @@ const isItemFiltered = (item: WakfuItem, filters: TSearchItemsFilters) => {
   return true;
 };
 
-export const searchItems = (filters: TSearchItemsFilters, sort: TSearchItemsSort): TSearchItemsResult[] => {
+export const searchItems = (filters: TSearchItemsFilters, sort: TSearchItemsSort): TWakfuItemDisplay[] => {
   const wakfuData = WakfuData.getInstance();
   const items = wakfuData.getItems();
   const itemWeightCache: Record<number, number> = {};

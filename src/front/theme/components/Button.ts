@@ -36,6 +36,9 @@ export const themeButton = {
             backgroundColor: theme.palette.mode === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)",
           },
         },
+        "&:disabled img": {
+          filter: "brightness(0.3)",
+        },
       }),
     },
     {

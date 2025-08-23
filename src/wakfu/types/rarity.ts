@@ -8,3 +8,7 @@ export enum Rarity {
   Memory = 6,
   Epic = 7,
 }
+
+export const isRarity = (value: unknown): value is Rarity => {
+  return typeof value === "number" && value in Rarity;
+};

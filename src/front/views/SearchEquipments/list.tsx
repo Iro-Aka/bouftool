@@ -39,10 +39,10 @@ export const SearchItemsList = ({ onEquipItem }: TSearchItemsListProps) => {
       );
     }
     return (
-      128 + // Base card height
+      164 + // Base card height
       16 + // Added padding
-      (highestEffectsCounts > 3 ? 20 : 0) + // Added height for the fourth effect only
-      Math.max(0, highestEffectsCounts - 4) * 24 // Added height for effects beyond the fourth
+      (highestEffectsCounts > 4 ? 10 : 0) + // Added height for the fourth effect only
+      Math.max(0, highestEffectsCounts - 5) * 24 // Added height for effects beyond the fourth
     );
   };
 

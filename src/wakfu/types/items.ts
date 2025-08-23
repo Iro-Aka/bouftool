@@ -40,6 +40,7 @@ export type TWakfuItemDisplay = {
   gfxId: number;
   equipEffectsLabels: string[];
   title: string;
+  recipes: number[];
 };
 
 export const loadWakfuItemFromJson = (json: unknown): TWakfuItem => {

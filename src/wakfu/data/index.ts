@@ -12,11 +12,15 @@ import {
   WakfuEquipmentPosition,
   WakfuItemTypeId,
 } from "../types/itemType";
+import { loadWakfuJobItemFromJson, type TWakfuJobItem } from "../types/jobsItems";
 import { loadWakfuRecipeCategoryFromJson } from "../types/recipeCategory";
+import { loadWakfuRecipeIngredientFromJson } from "../types/recipeIngredients";
+import { loadWakfuRecipeResultFromJson } from "../types/recipeResults";
+import { loadWakfuRecipeFromJson } from "../types/recipes";
 import { loadWakfuStateFromJson } from "../types/state";
 import { WakfuLang } from "../types/utils";
 import { WakfuItem } from "./item";
-import { isWakfuGamedata, type TWakfuGamedata } from "./types";
+import { isWakfuGamedata, type TWakfuGamedata, type TWakfuGamedataRecipe } from "./types";
 
 export const ItemTypesOverrideLevel: Record<number, number> = {
   [WakfuItemTypeId.Pet]: 50,
@@ -45,6 +49,9 @@ export class WakfuData {
   private statesMap: Map<number, TWakfuDescription> = new Map();
   private items: WakfuItem[] = [];
   private itemsMap: Map<number, WakfuItem> = new Map();
+  private recipesMap: Map<number, TWakfuGamedataRecipe> = new Map();
+  private recipesMapByItem: Map<number, TWakfuGamedataRecipe[]> = new Map();
+  private jobsItemsMap: Map<number, TWakfuJobItem> = new Map();
 
   public static async initialize() {
     if (!WakfuData.instance) {
@@ -121,6 +128,60 @@ export class WakfuData {
     }
   }
 
+  private async fetchAndBuildRecipes() {
+    const recipes = await fetchWakfuGamedata(this.version, WakfuGamedataTypes.Recipes, loadWakfuRecipeFromJson);
+    for (const recipe of recipes) {
+      this.recipesMap.set(recipe.id, {
+        id: recipe.id,
+        level: recipe.level,
+        recipeCategoryId: recipe.categoryId,
+        ingredients: [],
+        result: { itemId: 0, quantity: 0 },
+      });
+    }
+    const recipeResults = await fetchWakfuGamedata(
+      this.version,
+      WakfuGamedataTypes.RecipeResults,
+      loadWakfuRecipeResultFromJson,
+    );
+    for (const recipeResult of recipeResults) {
+      const recipe = this.recipesMap.get(recipeResult.recipeId);
+      if (recipe) {
+        recipe.result = { itemId: recipeResult.productedItemId, quantity: recipeResult.productedItemQuantity };
+      }
+    }
+    const recipeIngredients = await fetchWakfuGamedata(
+      this.version,
+      WakfuGamedataTypes.RecipeIngredients,
+      loadWakfuRecipeIngredientFromJson,
+    );
+    for (const ingredient of recipeIngredients) {
+      const recipe = this.recipesMap.get(ingredient.recipeId);
+      if (recipe) {
+        recipe.ingredients[ingredient.ingredientOrder] = { itemId: ingredient.itemId, quantity: ingredient.quantity };
+      }
+    }
+    this.recipesMapByItem = new Map<number, TWakfuGamedataRecipe[]>();
+    for (const recipe of this.recipesMap.values()) {
+      recipe.ingredients = recipe.ingredients.filter((ingredient) => ingredient !== null);
+      const itemId = recipe.result.itemId;
+      if (!this.recipesMapByItem.has(itemId)) {
+        this.recipesMapByItem.set(itemId, []);
+      }
+      // biome-ignore lint/style/noNonNullAssertion: Will never be undefined
+      this.recipesMapByItem.get(itemId)!.push(recipe);
+    }
+  }
+
+  private async fetchAndBuildJobsItems() {
+    const jobsResources = await fetchWakfuGamedata(
+      this.version,
+      WakfuGamedataTypes.JobsItems,
+      loadWakfuJobItemFromJson,
+    );
+    this.jobsItemsMap = new Map<number, TWakfuJobItem>(jobsResources.map((item) => [item.id, item]));
+  }
+
   private async fetchAndBuildItems() {
     const items = await fetchWakfuGamedata(this.version, WakfuGamedataTypes.Items, loadWakfuItemFromJson);
     this.items = [];
@@ -155,6 +216,8 @@ export class WakfuData {
     await this.fetchAndBuildItemTypes();
     await this.fetchAndBuildStates();
     await this.fetchAndBuildRecipeCategories();
+    await this.fetchAndBuildRecipes();
+    await this.fetchAndBuildJobsItems();
     await this.fetchAndBuildItems();
     await this.saveGamedata();
   }
@@ -167,7 +230,18 @@ export class WakfuData {
     this.itemTypesMap = new Map(parsedData.itemTypes.map(({ id, ...data }) => [id, { id, ...data }]));
     this.itemTypeLabelsMap = new Map(parsedData.itemTypeLabels.map(({ id, description }) => [id, description]));
     this.recipeCategoryMap = new Map(parsedData.recipeCategories.map(({ id, description }) => [id, description]));
+    this.recipesMap = new Map(parsedData.recipes.map((recipe) => [recipe.id, recipe]));
+    this.recipesMapByItem = new Map<number, TWakfuGamedataRecipe[]>();
+    for (const recipe of this.recipesMap.values()) {
+      const itemId = recipe.result.itemId;
+      if (!this.recipesMapByItem.has(itemId)) {
+        this.recipesMapByItem.set(itemId, []);
+      }
+      // biome-ignore lint/style/noNonNullAssertion: Will never be undefined
+      this.recipesMapByItem.get(itemId)!.push(recipe);
+    }
     this.statesMap = new Map(parsedData.states.map(({ id, description }) => [id, description]));
+    this.jobsItemsMap = new Map(parsedData.jobsItems.map((item) => [item.id, item]));
     this.items = parsedData.items.map((item) => new WakfuItem(item, this.lang));
     this.itemsMap = new Map(this.items.map((item) => [item.getId(), item]));
   }
@@ -180,7 +254,9 @@ export class WakfuData {
       itemTypes: Array.from(this.itemTypesMap.entries()).map(([_id, data]) => data),
       itemTypeLabels: Array.from(this.itemTypeLabelsMap.entries()).map(([id, description]) => ({ id, description })),
       recipeCategories: Array.from(this.recipeCategoryMap.entries()).map(([id, description]) => ({ id, description })),
+      recipes: Array.from(this.recipesMap.entries()).map(([_id, recipe]) => recipe),
       states: Array.from(this.statesMap.entries()).map(([id, description]) => ({ id, description })),
+      jobsItems: Array.from(this.jobsItemsMap.entries()).map(([_id, jobItem]) => jobItem),
       items: this.items.map((item) => item.item),
     } satisfies TWakfuGamedata;
     await fs.mkdir(path.dirname(WakfuData.filePath), { recursive: true });
@@ -237,11 +313,27 @@ export class WakfuData {
     return this.itemsMap.get(id);
   }
 
+  public getJobItemById(id: number): TWakfuJobItem | undefined {
+    return this.jobsItemsMap.get(id);
+  }
+
   public getItemTypesMap() {
     return this.itemTypesMap;
   }
 
   public getItemTypeLabels() {
     return this.itemTypeLabelsMap;
+  }
+
+  public getRecipeCategoryLabel(id: number): TWakfuDescription | undefined {
+    return this.recipeCategoryMap.get(id);
+  }
+
+  public getRecipeById(id: number): TWakfuGamedataRecipe | undefined {
+    return this.recipesMap.get(id);
+  }
+
+  public getRecipesByItemId(itemId: number): TWakfuGamedataRecipe[] {
+    return this.recipesMapByItem.get(itemId) || [];
   }
 }

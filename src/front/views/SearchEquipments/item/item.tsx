@@ -5,7 +5,9 @@ import type { TWakfuItemDisplay } from "src/wakfu/types/items";
 import { Rarity } from "src/wakfu/types/rarity";
 import { ItemTypeIcon } from "../../../components/Wakfu/ItemTypeIcon";
 import { EquipmentEffectLabel } from "./effect";
+import { SearchItemsEncyclopedia } from "./encyclopedia";
 import { SearchEquipmentsItemEquip } from "./equip";
+import { SearchItemsRecipes } from "./recipes";
 import { ItemCard, itemCardClasses } from "./styles";
 
 export type SearchEquipmentsItemProps = {
@@ -45,8 +47,8 @@ export const SearchEquipmentsItem = ({ item, onEquipItem }: SearchEquipmentsItem
           <StackGrid columns={2} gap={0.5}>
             <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
             <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
-            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
-            <SearchEquipmentsItemEquip onEquipItem={onEquipItem} itemId={item.id} />
+            <SearchItemsEncyclopedia itemId={item.id} itemTypeId={item.itemTypeId} />
+            <SearchItemsRecipes item={item} recipes={item.recipes} />
           </StackGrid>
         </Stack>
         <Stack sx={{ flex: 1 }}>

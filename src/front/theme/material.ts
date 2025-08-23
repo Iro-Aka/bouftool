@@ -5,6 +5,7 @@ import "@fontsource/roboto/700.css";
 import { createTheme } from "@mui/material/styles";
 import { themeButton } from "./components/Button";
 import { themeButtonGroup } from "./components/ButtonGroup";
+import { themeDialog } from "./components/Dialog";
 import { themeToggleButtonGroup } from "./components/ToggleButtonGroup";
 import { themeTooltip } from "./components/Tooltip";
 import { darkThemePalette, lightThemePalette } from "./palette";
@@ -36,6 +37,7 @@ export const theme = createTheme({
     MuiToggleButtonGroup: themeToggleButtonGroup,
     MuiButtonGroup: themeButtonGroup,
     MuiButton: themeButton,
+    MuiDialog: themeDialog,
     MuiTooltip: themeTooltip,
   },
 });
