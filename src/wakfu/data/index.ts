@@ -5,7 +5,7 @@ import { fetchWakfuGamedata, fetchWakfuGamedataVersion, WakfuGamedataTypes } fro
 import { WakfuParserItemEffects } from "../parser/Item";
 import { loadWakfuActionFromJson } from "../types/action";
 import type { TWakfuDescription } from "../types/description";
-import { loadWakfuItemFromJson } from "../types/items";
+import { loadWakfuItemFromJson, type TWakfuItem } from "../types/items";
 import {
   loadWakfuItemTypeFromJson,
   type TWakfuItemType,
@@ -184,8 +184,13 @@ export class WakfuData {
 
   private async fetchAndBuildItems() {
     const items = await fetchWakfuGamedata(this.version, WakfuGamedataTypes.Items, loadWakfuItemFromJson);
+    const enchantments: TWakfuItem[] = [];
     this.items = [];
     for (const item of items) {
+      if (item.itemTypeId === WakfuItemTypeId.Enchantment) {
+        enchantments.push(item);
+        continue;
+      }
       if (item.equipEffects.length > 0) {
         const realLevel = item.level;
         item.level = ItemIdOverrideLevel[item.id] || ItemTypesOverrideLevel[item.itemTypeId] || item.level || 100;

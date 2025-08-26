@@ -1,7 +1,8 @@
 import { isArrayOf, isNumber, isObject, isString } from "src/types/utils";
+import type { WakfuStats } from "../types/action";
 import { isWakfuDescription, type TWakfuDescription } from "../types/description";
 import { isWakfuItemParsed, type TWakfuItemParsed } from "../types/items";
-import { isWakfuEquipmentPosition, type TWakfuItemType } from "../types/itemType";
+import { isWakfuEquipmentPosition, type TWakfuItemType, type WakfuEquipmentPosition } from "../types/itemType";
 import { isWakfuJobItem, type TWakfuJobItem } from "../types/jobsItems";
 import { isWakfuLang, type WakfuLang } from "../types/utils";
 
@@ -19,6 +20,17 @@ export type TWakfuRecipeDisplay = {
     quantity: number;
   }[];
   result: { itemId: number; itemLabel: string; itemGfxId: number; quantity: number };
+};
+
+export type TWakfuEnchantments = {
+  shardLevelingCurve: number[];
+  shardLevelRequirement: number[];
+  enchantments: {
+    stats: WakfuStats;
+    values: number[];
+    color: number;
+    doubleBonusPosition: WakfuEquipmentPosition[];
+  }[];
 };
 
 export type TWakfuGamedataRecipe = {

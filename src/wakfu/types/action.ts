@@ -46,6 +46,17 @@ export enum WakfuStats {
   Barrier,
 }
 
+export type TWakfuStatsMastery =
+  | WakfuStats.MasteryFire
+  | WakfuStats.MasteryWater
+  | WakfuStats.MasteryEarth
+  | WakfuStats.MasteryAir;
+export type TWakfuStatsResistance =
+  | WakfuStats.ResistanceFire
+  | WakfuStats.ResistanceWater
+  | WakfuStats.ResistanceEarth
+  | WakfuStats.ResistanceAir;
+
 export type TWakfuStatsElementalMastery =
   | WakfuStats.MasteryFire
   | WakfuStats.MasteryWater

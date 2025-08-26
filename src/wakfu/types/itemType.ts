@@ -48,6 +48,7 @@ export enum WakfuItemTypeId {
   Mount = 611,
   Emblem = 646,
   Enchantment = 811,
+  Sublimation = 812,
 }
 
 export const isWakfuEquipmentPosition = (value: unknown): value is WakfuEquipmentPosition => {
