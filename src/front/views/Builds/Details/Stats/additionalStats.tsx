@@ -82,7 +82,7 @@ const MasteryTooltip = () => {
           <StatsIcon>{EnumWakfuStat.CriticalMastery}</StatsIcon>
           <Typography variant="caption">
             <span style={{ color: getStatsColor(criticalMastery) }}>{criticalMastery.toLocaleString("fr-FR")}</span>
-            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.CriticalMastery, criticalMastery)}
+            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.CriticalMastery)}
           </Typography>
         </StackRow>
       )}
@@ -91,7 +91,7 @@ const MasteryTooltip = () => {
           <StatsIcon>{EnumWakfuStat.RearMastery}</StatsIcon>
           <Typography variant="caption">
             <span style={{ color: getStatsColor(rearMastery) }}>{rearMastery.toLocaleString("fr-FR")}</span>
-            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.RearMastery, rearMastery)}
+            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.RearMastery)}
           </Typography>
         </StackRow>
       )}
@@ -100,7 +100,7 @@ const MasteryTooltip = () => {
           <StatsIcon>{EnumWakfuStat.BerserkMastery}</StatsIcon>
           <Typography variant="caption">
             <span style={{ color: getStatsColor(berserkMastery) }}>{berserkMastery.toLocaleString("fr-FR")}</span>
-            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.BerserkMastery, berserkMastery)}
+            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.BerserkMastery)}
           </Typography>
         </StackRow>
       )}
@@ -109,7 +109,7 @@ const MasteryTooltip = () => {
           <StatsIcon>{EnumWakfuStat.HealingMastery}</StatsIcon>
           <Typography variant="caption">
             <span style={{ color: getStatsColor(healingMastery) }}>{healingMastery.toLocaleString("fr-FR")}</span>
-            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.HealingMastery, healingMastery)}
+            {getWakfuStatEffectLabel(EnumWakfuLang.French, EnumWakfuStat.HealingMastery)}
           </Typography>
         </StackRow>
       )}

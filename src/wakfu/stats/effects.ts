@@ -34,6 +34,14 @@ export const WakfuStatEffects: Partial<Record<EnumWakfuStat, (stat: WakfuStats) 
     stat.add(EnumWakfuStat.Armor, Math.floor((healthPoint * percentHp) / 100));
     stat.delete(EnumWakfuStat.PercentHealthPointToArmor);
   },
+  [EnumWakfuStat.ElementalResistance]: (stat) => {
+    const elementalResistance = stat.get(EnumWakfuStat.ElementalResistance);
+    stat.add(EnumWakfuStat.FireResistance, elementalResistance);
+    stat.add(EnumWakfuStat.WaterResistance, elementalResistance);
+    stat.add(EnumWakfuStat.EarthResistance, elementalResistance);
+    stat.add(EnumWakfuStat.AirResistance, elementalResistance);
+    stat.delete(EnumWakfuStat.ElementalResistance);
+  },
   [EnumWakfuStat.ElementalMastery]: (stat) => {
     const elementMastery = stat.get(EnumWakfuStat.ElementalMastery);
     stat.add(EnumWakfuStat.FireMastery, elementMastery);
