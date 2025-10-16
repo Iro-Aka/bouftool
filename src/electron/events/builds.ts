@@ -185,7 +185,7 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     if (!build) {
       throw new Error(`Build with ID ${buildId} not found`);
     }
-    build.getAbilities().addAbilityLevel(ability, level);
+    build.addAbilityLevel(ability, level);
     ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
     reply(undefined);
   });
@@ -195,7 +195,7 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     if (!build) {
       throw new Error(`Build with ID ${buildId} not found`);
     }
-    build.getAbilities().removeAbilityLevel(ability, level);
+    build.removeAbilityLevel(ability, level);
     ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
     reply(undefined);
   });

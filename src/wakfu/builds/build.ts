@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { WakfuAbilities } from "../abilities";
+import type { EnumAbilities } from "../abilities/types";
 import type { WakfuItem } from "../items";
 import { EnumWakfuEquipmentPosition } from "../itemTypes/types";
 import { WakfuStats } from "../stats";
@@ -283,6 +284,16 @@ export class WakfuBuild {
 
   public setElementalPreferences(preferences: TElementalPreferences) {
     this.elementalPreferences = preferences;
+    this.save();
+  }
+
+  public addAbilityLevel(abilityId: EnumAbilities, level: number = 1) {
+    this.abilities.addAbilityLevel(abilityId, level);
+    this.save();
+  }
+
+  public removeAbilityLevel(abilityId: EnumAbilities, level: number = 1) {
+    this.abilities.removeAbilityLevel(abilityId, level);
     this.save();
   }
 

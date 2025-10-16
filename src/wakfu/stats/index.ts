@@ -83,13 +83,13 @@ export class WakfuStats {
     const delta = new WakfuStats();
     for (const other of others) {
       for (const stat of Object.values(EnumWakfuStat)) {
-        const diff = other.get(stat) - this.get(stat);
+        const diff = this.get(stat) - other.get(stat);
         if (diff !== 0) {
           delta.set(stat, diff);
         }
       }
       for (const state of Object.values(EnumWakfuState)) {
-        const diff = other.get(state) - this.get(state);
+        const diff = this.get(state) - other.get(state);
         if (diff !== 0) {
           delta.set(state, diff);
         }
