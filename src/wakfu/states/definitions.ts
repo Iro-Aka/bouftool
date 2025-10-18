@@ -167,7 +167,7 @@ export const WakfuStatesDefinitions: Record<EnumWakfuState, TWakfuStateDefinitio
   [EnumWakfuState.Fortification]: {
     id: 2505,
     levelMax: 100,
-    effects: [{ value: 0, levelScaling: 0.1 }],
+    effects: [{ value: 0, levelScaling: 0.01 }],
   },
   [EnumWakfuState.PacteAnatharI]: {
     id: 7069,

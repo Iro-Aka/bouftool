@@ -1,7 +1,7 @@
 import { WakfuStatIcons } from "../stats/icons";
 import { EnumWakfuStat } from "../stats/types";
 import { WakfuStatesDefinitions } from "./definitions";
-import { EnumWakfuState } from "./types";
+import { EnumWakfuState, type TWakfuStateDefinition } from "./types";
 
 const tagStatIcon = (stat: EnumWakfuStat) => `{icon ${WakfuStatIcons[stat]}}`;
 const tagState = (state: EnumWakfuState) => `{state ${WakfuStatesDefinitions[state].id}}`;
@@ -61,4 +61,21 @@ export const WakfuStateDescriptions: Record<EnumWakfuState, string> = {
   [EnumWakfuState.DofusPrismatique]: "Accorde +2 PA un tour sur deux",
   [EnumWakfuState.DofusTurquoise]:
     "Pour chaque coup critique occasionnée :\n1% Dommages infligés et soins réalisés pendant 3 tours.\nCumulable 10 fois.",
+};
+
+export const getWakfuStateEffectLabel = (
+  state: EnumWakfuState,
+  level: number,
+  effects: TWakfuStateDefinition["effects"],
+) => {
+  let rawText = WakfuStateDescriptions[state];
+  for (const effect of effects) {
+    const value = effect.value + effect.levelScaling * level;
+    if (value % 1 === 0) {
+      rawText = rawText.replace("%d", String(value));
+    } else {
+      rawText = rawText.replace("%d", value.toFixed(2));
+    }
+  }
+  return rawText;
 };

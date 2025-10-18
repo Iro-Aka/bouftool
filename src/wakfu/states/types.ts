@@ -44,6 +44,10 @@ export enum EnumWakfuState {
   DofusTurquoise = "DofusTurquoise",
 }
 
+export const isWakfuState = (value: string): value is EnumWakfuState => {
+  return EnumWakfuState[value as keyof typeof EnumWakfuState] !== undefined;
+};
+
 export type TWakfuStateDefinition = {
   id: number;
   levelMax: number;

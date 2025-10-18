@@ -1,15 +1,22 @@
-import type { EnumWakfuStat } from "src/wakfu/stats/types";
+import type { WakfuItem } from "src/wakfu/items";
+import { isWakfuState } from "src/wakfu/states/types";
+import { isWakfuStat } from "src/wakfu/stats/types";
 import { cardItemClasses } from "../styles";
 import { CardItemStatsRow } from "./row";
+import { CardItemStatsRowState } from "./state";
 
 export type TCardItemStatsProps = {
-  stats: Partial<Record<EnumWakfuStat, number>>;
+  stats: ReturnType<WakfuItem["toObject"]>["stats"];
 };
 
 export const CardItemStats = ({ stats }: TCardItemStatsProps) => {
   const statsRows = [];
   for (const [stat, value] of Object.entries(stats)) {
-    statsRows.push(<CardItemStatsRow key={stat} stat={stat as EnumWakfuStat} value={value} />);
+    if (isWakfuStat(stat)) {
+      statsRows.push(<CardItemStatsRow key={stat} stat={stat} value={value} />);
+    } else if (isWakfuState(stat)) {
+      statsRows.push(<CardItemStatsRowState key={stat} state={stat} level={value} />);
+    }
   }
 
   return <div className={cardItemClasses.stats}>{statsRows}</div>;

@@ -12,6 +12,7 @@ export const cardItemClasses = {
   gfx: `${Prefix}-gfx`,
   stats: `${Prefix}-stats`,
   statsRow: `${Prefix}-statsRow`,
+  stateLabel: `${Prefix}-stateLabel`,
   shiny: `${Prefix}-shiny`,
 };
 
@@ -91,6 +92,11 @@ export const CardItemRoot = styled("div", { shouldForwardProp: (prop) => prop !=
       "&:nth-of-type(2n+1)": {
         backgroundColor: theme.palette.surface[150],
       },
+    },
+    [`& .${cardItemClasses.stateLabel}`]: {
+      color: "#F4D89E",
+      fontWeight: 450,
+      textDecoration: "underline",
     },
     [`& .${cardItemClasses.shiny}`]: {
       position: "absolute",
