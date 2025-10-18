@@ -1,0 +1,49 @@
+import { Typography } from "@mui/material";
+import type { WakfuItem } from "src/wakfu/items";
+import { StackGrid } from "../../Layout/StackGrid";
+import { ItemTypeIcon } from "../ItemTypeIcon";
+import { RarityIcon } from "../RarityIcon";
+import { SearchItemsCompare } from "./actions/compare";
+import { SearchItemsEncyclopedia } from "./actions/encyclopedia";
+import { SearchEquipmentsItemEquip } from "./actions/equip";
+import { SearchItemsRecipes } from "./actions/recipes";
+import { CardItemDisplayedRarity } from "./constants";
+import { CardItemStats } from "./stats";
+import { CardItemRoot, cardItemClasses } from "./styles";
+
+export type TCardItemProps = {
+  item: ReturnType<WakfuItem["toObject"]>;
+  buildId?: string;
+  displayActions?: boolean;
+};
+
+export const CardItem = ({ item, buildId, displayActions }: TCardItemProps) => {
+  return (
+    <CardItemRoot className={cardItemClasses.root} rarity={item.rarity}>
+      <div className={cardItemClasses.header}>
+        <Typography variant="subtitle2">{item.title.fr}</Typography>
+        <div className={cardItemClasses.headerIcons}>
+          {CardItemDisplayedRarity.has(item.rarity) && <RarityIcon height={24}>{item.rarity}</RarityIcon>}
+          <ItemTypeIcon height={24}>{item.itemType.id}</ItemTypeIcon>
+        </div>
+      </div>
+      <div className={cardItemClasses.content}>
+        <div className={cardItemClasses.gfxAndActions}>
+          <div className={cardItemClasses.gfx}>
+            <img src={`wakfu/items/${item.gfxId}.png`} alt={item.title.fr ?? "item"} width={58} height={58} />
+          </div>
+          <Typography variant="caption">Niv. {item.level}</Typography>
+          {displayActions && (
+            <StackGrid columns={2} gap={0.5}>
+              <SearchEquipmentsItemEquip buildId={buildId} itemId={item.id} />
+              <SearchItemsCompare itemId={item.id} buildId={buildId} />
+              <SearchItemsEncyclopedia itemId={item.id} itemTypeId={item.itemType.id} />
+              <SearchItemsRecipes item={item} />
+            </StackGrid>
+          )}
+        </div>
+        <CardItemStats stats={item.stats} />
+      </div>
+    </CardItemRoot>
+  );
+};

@@ -1,8 +1,8 @@
 import { type BoxProps, Tooltip } from "@mui/material";
 import clsx from "clsx";
-import { SearchEquipmentsItem } from "src/front/views/SearchEquipments/item/item";
 import type { TWakfuBuildStuffDisplay } from "src/wakfu/builds/types";
 import type { EnumWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
+import { CardItem } from "../CardItem";
 import { ItemIcon } from "../ItemIcon";
 import { ItemSlotBox, itemSlotClasses } from "./styles";
 
@@ -29,13 +29,7 @@ export const ItemSlot = ({
 }: TItemSlotProps) => {
   return (
     <Tooltip
-      title={
-        disableTooltip || item.disabled || item.item === null ? (
-          ""
-        ) : (
-          <SearchEquipmentsItem item={item.item} hideButtons />
-        )
-      }
+      title={disableTooltip || item.disabled || item.item === null ? "" : <CardItem item={item.item} />}
       slotProps={{ tooltip: { sx: { bgcolor: "transparent", maxWidth: "unset", width: 376, p: 0 } } }}
       disableInteractive
       placement="right"

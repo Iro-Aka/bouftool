@@ -1,3 +1,7 @@
+import { EnumWakfuRarity } from "src/wakfu/items/rarity";
+
+export const CardItemDisplayedRarity = new Set([EnumWakfuRarity.Epic, EnumWakfuRarity.Relic]);
+
 export const RarityBorders: Record<number, string> = {
   0: "Tooltip-Borders-Old",
   1: "Tooltip-Borders-Common",

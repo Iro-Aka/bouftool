@@ -1,6 +1,6 @@
 import { Button } from "@mui/material";
+import { useModalItemRecipeContext } from "src/front/views/SearchEquipments/ModalItemRecipe/context";
 import type { WakfuItem } from "src/wakfu/items";
-import { useModalItemRecipeContext } from "../ModalItemRecipe/context";
 
 export type TSearchItemsRecipesProps = {
   item: ReturnType<WakfuItem["toObject"]>;

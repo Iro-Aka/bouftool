@@ -1,9 +1,9 @@
 import { Box } from "@mui/material";
 import { useLayoutEffect, useRef } from "react";
 import { VariableSizeGrid } from "react-window";
+import { CardItem } from "src/front/components/Wakfu/CardItem";
 import { useResizeObserver } from "src/front/hooks/useResizeObserver";
 import { useSearchItemsContext } from "./contexts/search";
-import { SearchEquipmentsItem } from "./item/item";
 
 export type TSearchItemsListProps = {
   buildId?: string;
@@ -85,9 +85,10 @@ export const SearchItemsList = ({ buildId }: TSearchItemsListProps) => {
                 [`&:nth-of-type(-n+${columnCount})`]: { pt: "2px" },
                 [`&:nth-of-type(${columnCount}n)`]: { pr: "2px" },
                 [`&:nth-of-type(${columnCount}n+1)`]: { pl: "2px" },
+                "& > div": { height: "100%" },
               }}
             >
-              <SearchEquipmentsItem item={item} buildId={buildId} />
+              <CardItem item={item} buildId={buildId} displayActions />
             </Box>
           );
         }}

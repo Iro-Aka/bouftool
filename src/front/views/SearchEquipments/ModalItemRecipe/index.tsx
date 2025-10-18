@@ -10,7 +10,7 @@ import { RecipeIngredient } from "./Ingredient";
 
 export type TModalItemRecipeProps = {
   open: boolean;
-  item: ReturnType<WakfuItem["toObject"]> | null;
+  item: Pick<ReturnType<WakfuItem["toObject"]>, "id" | "gfxId" | "rarity" | "title"> | null;
   onClose: () => void;
 };
 
