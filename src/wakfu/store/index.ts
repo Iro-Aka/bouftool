@@ -162,6 +162,9 @@ export class WakfuStore {
 
   private loadJobItems(jobItems: TWakfuGamedataTypes[EnumWakfuGamedataType.JobsItems][]) {
     for (const item of jobItems) {
+      if (this.items.has(item.definition.id)) {
+        continue;
+      }
       const itemType = this.itemTypes.get(item.definition.itemTypeId);
       if (!itemType) {
         continue;

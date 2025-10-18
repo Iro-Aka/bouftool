@@ -53,6 +53,8 @@ export const searchItems = (
       }
       return comparison;
     },
-    (item) => item.toObject(),
+    (item) => {
+      return item.toObject();
+    },
   );
 };
