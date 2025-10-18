@@ -8,7 +8,7 @@ import type { WakfuRecipe } from "src/wakfu/recipes/recipe";
 import type { WakfuStats } from "src/wakfu/stats";
 import type { TElementalPreferences } from "src/wakfu/stats/types";
 import type { EnumWakfuLang } from "src/wakfu/utils/types";
-import type { EnumStatConstraintType } from "../wakfu/optimization/types";
+import type { OptimizationConfig } from "../wakfu/optimization/optimizationLauncher";
 import type { TSearchItemsPayload } from "./searchItems/types";
 
 export enum ElectronEvents {
@@ -63,31 +63,7 @@ export type ElectronEventsMain = {
     buildId: string;
     bonuses: Record<EnumWakfuStatsBonuses, boolean>;
   };
-  [ElectronEvents.BuildOptimize]: {
-    buildId: string;
-    config: {
-      statConstraints: Array<{
-        stat: string;
-        value: number;
-        type: EnumStatConstraintType;
-        penalty?: number;
-      }>;
-      statWeights: Array<{
-        stat: string;
-        weight: number;
-      }>;
-      levelConstraints: {
-        minLevel: number;
-        maxLevel: number;
-      };
-      excludeItemTypes: number[];
-      excludeRarities: number[];
-      preserveEquipment: {
-        keepAll: boolean;
-        keepSlots: string[];
-      };
-    };
-  };
+  [ElectronEvents.BuildOptimize]: { buildId: string; config: OptimizationConfig };
   [ElectronEvents.BuildOptimizeProgress]: undefined;
   [ElectronEvents.BuildOptimizeResult]: undefined;
 };

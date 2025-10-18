@@ -144,6 +144,7 @@ export const BuildOptimizer = () => {
   }, [progressData]);
 
   useEffect(() => {
+    console.log("Received optimization results:", resultsData);
     if (resultsData && Array.isArray(resultsData) && resultsData.length > 0) {
       setOptimizationResults(resultsData);
       setShowResultsModal(true);
@@ -225,7 +226,7 @@ export const BuildOptimizer = () => {
     };
 
     setIsOptimizing(true);
-    setProgress({ current: 0, total: 5000 * 3 });
+    setProgress({ current: 0, total: 4000 * 4 });
 
     try {
       await sendElectronEvent(ElectronEvents.BuildOptimize, {

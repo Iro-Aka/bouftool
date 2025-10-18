@@ -77,7 +77,7 @@ export const DEFAULT_ALGORITHM_PARAMS = {
   acceptanceThreshold: 0.02,
   tabuListSize: 400,
   solutionCount: 5,
-  runs: 1,
+  runs: 4,
 } as const;
 
 export enum EnumStatConstraintType {

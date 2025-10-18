@@ -1,21 +1,9 @@
 import { WakfuBuild } from "src/wakfu/builds/build";
 import { WakfuCharacter } from "src/wakfu/builds/character";
 import type { WakfuItem } from "src/wakfu/items";
-import { EnumWakfuRarity } from "src/wakfu/items/rarity";
-import type { EnumWakfuEquipmentPosition, EnumWakfuItemType } from "src/wakfu/itemTypes/types";
-import {
-  EnumConstraintType,
-  EquipmentConflictConstraint,
-  LocalSearchOptimizer,
-  MaxItemsPerRarityConstraint,
-  MaxStatConstraint,
-  MinStatConstraint,
-  NoDuplicateRingConstraint,
-} from "src/wakfu/optimization";
-import { EnumStatConstraintType, type TBuildOptimizationConfig } from "src/wakfu/optimization/types";
 import type { WakfuStats } from "src/wakfu/stats";
-import type { EnumWakfuStat } from "src/wakfu/stats/types";
 import { WakfuStore } from "src/wakfu/store";
+import { lauchOptimization } from "../../wakfu/optimization/optimizationLauncher";
 import { ElectronEvents } from "../types";
 import { ElectronEventManager } from "./manager";
 
@@ -218,86 +206,6 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
 
     reply(undefined);
 
-    setImmediate(() => {
-      try {
-        const statWeights: Partial<Record<EnumWakfuStat, number>> = {};
-        for (const weight of config.statWeights) {
-          statWeights[weight.stat as EnumWakfuStat] = weight.weight;
-        }
-
-        const optimizationConfig: TBuildOptimizationConfig = {
-          statWeights: statWeights as Record<EnumWakfuStat, number>,
-          elementalPreferences: build.getElementalPreferences(),
-          levelConstraints: {
-            minLevel: config.levelConstraints.minLevel,
-            maxLevel: config.levelConstraints.maxLevel,
-          },
-          itemFilters: {
-            excludeItemTypes: config.excludeItemTypes as EnumWakfuItemType[],
-            excludeRarities: config.excludeRarities as EnumWakfuRarity[],
-          },
-          preserveEquipment: {
-            keepAll: config.preserveEquipment.keepAll,
-            keepSlots: config.preserveEquipment.keepSlots as EnumWakfuEquipmentPosition[],
-          },
-        };
-
-        const optimizer = new LocalSearchOptimizer(build, optimizationConfig);
-
-        for (const constraint of config.statConstraints) {
-          if (constraint.type === EnumStatConstraintType.MinBlocking) {
-            optimizer.addConstraint(
-              new MinStatConstraint(constraint.stat as EnumWakfuStat, constraint.value, EnumConstraintType.Blocking),
-            );
-          } else if (constraint.type === EnumStatConstraintType.MaxBlocking) {
-            optimizer.addConstraint(
-              new MaxStatConstraint(constraint.stat as EnumWakfuStat, constraint.value, EnumConstraintType.Blocking),
-            );
-          } else {
-            optimizer.addConstraint(
-              new MinStatConstraint(
-                constraint.stat as EnumWakfuStat,
-                constraint.value,
-                EnumConstraintType.Objective,
-                constraint.penalty ?? 1000,
-              ),
-            );
-          }
-        }
-
-        optimizer.addConstraint(new NoDuplicateRingConstraint(EnumConstraintType.Blocking));
-        optimizer.addConstraint(new EquipmentConflictConstraint(EnumConstraintType.Blocking));
-        optimizer.addConstraint(new MaxItemsPerRarityConstraint(EnumWakfuRarity.Epic, 1, EnumConstraintType.Blocking));
-        optimizer.addConstraint(new MaxItemsPerRarityConstraint(EnumWakfuRarity.Relic, 1, EnumConstraintType.Blocking));
-
-        const results = optimizer.optimize((progress) => {
-          ElectronEventManager.send(ElectronEvents.BuildOptimizeProgress, {
-            currentIteration: progress.currentIteration,
-            totalIterations: progress.totalIterations,
-            bestScore: progress.bestScore,
-          });
-        });
-
-        const formattedResults = results.map((result) => {
-          const equipment: Record<string, ReturnType<WakfuItem["toObject"]> | null> = {};
-          for (const [position, item] of Object.entries(result.equipment)) {
-            equipment[position] = item ? item.toObject() : null;
-          }
-
-          return {
-            equipment,
-            score: result.score,
-            valid: result.valid,
-            meetsObjectives: result.meetsObjectives,
-            violations: result.violations,
-          };
-        });
-
-        ElectronEventManager.send(ElectronEvents.BuildOptimizeResult, formattedResults);
-      } catch (error) {
-        console.error("Optimization error:", error);
-        ElectronEventManager.send(ElectronEvents.BuildOptimizeResult, []);
-      }
-    });
+    lauchOptimization(build, config);
   });
 };

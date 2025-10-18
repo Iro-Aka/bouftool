@@ -47,6 +47,37 @@ export class RandomizedLocalSearch {
     return BuildCandidate.empty(this.build, this.config.statWeights);
   }
 
+  // private createGreedyInitialCandidate(): BuildCandidate {
+  //   const itemScorer = new ItemScorer(this.config.statWeights, this.config.elementalPreferences);
+  //   const candidate = BuildCandidate.empty(this.build, this.config.statWeights);
+
+  //   const scoredItemsByPosition = new Map<EnumWakfuEquipmentPosition, Array<{ item: WakfuItem; score: number }>>();
+
+  //   for (const [position, items] of this.availableItemsByPosition.entries()) {
+  //     if (this.shouldPreserveSlot(position)) {
+  //       const currentItem = this.build.getEquippedItem(position);
+  //       if (currentItem) {
+  //         candidate.equipItem(position, currentItem);
+  //       }
+  //       continue;
+  //     }
+
+  //     const scoredItems = itemScorer.scoreItems(items);
+
+  //     scoredItems.sort((a, b) => b.score - a.score);
+  //     scoredItemsByPosition.set(position, scoredItems);
+  //   }
+
+  //   for (const [position, scoredItems] of scoredItemsByPosition.entries()) {
+  //     if (scoredItems.length > 0) {
+  //       const bestItem = scoredItems[0].item;
+  //       candidate.equipItem(position, bestItem);
+  //     }
+  //   }
+
+  //   return candidate;
+  // }
+
   private initializeAvailableItems(): void {
     const buildLevel = this.build.getLevel();
     const minLevel = this.config.levelConstraints?.minLevel ?? 0;
@@ -89,7 +120,9 @@ export class RandomizedLocalSearch {
     const maxIterations = this.config.algorithm?.maxIterations ?? DEFAULT_ALGORITHM_PARAMS.maxIterations;
     const solutionCount = this.config.algorithm?.solutionCount ?? DEFAULT_ALGORITHM_PARAMS.solutionCount;
 
+    console.log("Initial candidate creation");
     const initialCandidate = this.createInitialCandidate();
+    console.log("Initial candidate score:", initialCandidate.getScore());
     let currentCandidate = initialCandidate;
 
     const topSolutions: BuildCandidate[] = [initialCandidate];
