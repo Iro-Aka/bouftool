@@ -49,13 +49,12 @@ export const ModalItemRecipe = ({ open, item, onClose }: TModalItemRecipeProps) 
               sx={{
                 minWidth: 0,
                 p: 1,
-                aspectRatio: "1",
                 bgcolor: "surface.150",
                 "&:hover": { bgcolor: "surface.250" },
               }}
               onClick={onAddToCraft}
             >
-              <img height={22} src={`wakfu/RecipeIcon.png`} alt="Recipe Icon" />
+              Crafter <img height={22} style={{ paddingLeft: 4 }} src={`wakfu/RecipeIcon.png`} alt="Recipe Icon" />
             </Button>
           </Tooltip>
         </StackRow>

@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ElectronEvents, ElectronEventsMain, ElectronEventsRenderer } from "src/electron/types";
 
+export type SendElectronEvent<E extends ElectronEvents> = (
+  args: ElectronEventsMain[E],
+) => Promise<ElectronEventsRenderer[E]>;
+
 // biome-ignore lint/suspicious/noExplicitAny: Generic record
 const ElectronPendingRequests: Record<string, (value: any) => void> = {};
 

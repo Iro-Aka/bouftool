@@ -38,7 +38,12 @@ export enum ElectronEvents {
   BuildOptimizeProgress = "build:optimize-progress",
   BuildOptimizeResult = "build:optimize-result",
   CraftManagerAddItem = "craftmanager:add-item",
+  CraftManagerRemoveItem = "craftmanager:remove-item",
+  CraftManagerSetItemQuantity = "craftmanager:set-item-quantity",
   CraftManagerGetItems = "craftmanager:get-items",
+  CraftManagerMarkIngredientAsCrafted = "craftmanager:mark-ingredient-as-crafted",
+  CraftManagerUnmarkIngredientAsCrafted = "craftmanager:unmark-ingredient-as-crafted",
+  CraftManagerMarkAllIngredientsById = "craftmanager:mark-all-ingredients-by-id",
 }
 
 export type ElectronEventsMain = {
@@ -70,7 +75,12 @@ export type ElectronEventsMain = {
   [ElectronEvents.BuildOptimizeProgress]: undefined;
   [ElectronEvents.BuildOptimizeResult]: undefined;
   [ElectronEvents.CraftManagerAddItem]: { itemId: number };
+  [ElectronEvents.CraftManagerRemoveItem]: { itemId: number };
+  [ElectronEvents.CraftManagerSetItemQuantity]: { itemId: number; quantity: number };
   [ElectronEvents.CraftManagerGetItems]: undefined;
+  [ElectronEvents.CraftManagerMarkIngredientAsCrafted]: { itemId: number; path: number[] };
+  [ElectronEvents.CraftManagerUnmarkIngredientAsCrafted]: { itemId: number; path: number[] };
+  [ElectronEvents.CraftManagerMarkAllIngredientsById]: { ingredientId: number };
 };
 
 export type ElectronEventsRenderer = {
@@ -113,7 +123,12 @@ export type ElectronEventsRenderer = {
     violations: string[];
   }>;
   [ElectronEvents.CraftManagerAddItem]: undefined;
+  [ElectronEvents.CraftManagerRemoveItem]: undefined;
+  [ElectronEvents.CraftManagerSetItemQuantity]: undefined;
   [ElectronEvents.CraftManagerGetItems]: TCraftItem[];
+  [ElectronEvents.CraftManagerMarkIngredientAsCrafted]: undefined;
+  [ElectronEvents.CraftManagerUnmarkIngredientAsCrafted]: undefined;
+  [ElectronEvents.CraftManagerMarkAllIngredientsById]: undefined;
 };
 
 export type TElectronPackage<Payload> = {

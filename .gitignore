@@ -92,9 +92,11 @@ typings/
 out/
 
 CLAUDE.md
+.claude/
 
 .yarn/
 
 # Bouftool
 characters/
 gamedata/
+craftManager.json
