@@ -1,6 +1,7 @@
-import { Box, CssBaseline, Stack, ThemeProvider, Typography } from "@mui/material";
+import { CssBaseline, Stack, ThemeProvider, Typography } from "@mui/material";
 import { useEffect } from "react";
 import { type ElectronAPI, ElectronEvents } from "src/electron/types";
+import { AppContainer } from "./components/AppContainer";
 import { Loading } from "./components/Loading";
 import { ModalConfirmationProvider } from "./components/Modal/Confirmation";
 import { useElectronEvent } from "./hooks/electron";
@@ -24,17 +25,7 @@ export const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box
-        sx={(theme) => ({
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "stretch",
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          bgcolor: theme.palette.background.default,
-        })}
-      >
+      <AppContainer>
         {response === null ? (
           <Loading>
             <Typography variant="body1">Loading...</Typography>
@@ -49,7 +40,7 @@ export const App = () => {
             </NavigationProvider>
           </ModalConfirmationProvider>
         )}
-      </Box>
+      </AppContainer>
     </ThemeProvider>
   );
 };

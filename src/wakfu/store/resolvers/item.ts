@@ -1,4 +1,5 @@
 import type { JSONSchema } from "json-schema-to-ts";
+import { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
 import { WakfuI18nSchema } from "./i18n";
 
 const WakfuEffectSchema = {
@@ -108,6 +109,32 @@ export const WakfuItemSchema = {
                 femaleGfxId: { type: "number" },
               },
               required: ["gfxId", "femaleGfxId"],
+            },
+            shardsParameters: {
+              type: "object",
+              properties: {
+                color: { type: "number" },
+                doubleBonusPosition: { type: "array", items: { type: "number" } },
+                shardLevelingCurve: { type: "array", items: { type: "number" } },
+                shardLevelRequirement: { type: "array", items: { type: "number" } },
+              },
+              required: ["color", "doubleBonusPosition", "shardLevelingCurve", "shardLevelRequirement"],
+            },
+            sublimationParameters: {
+              type: "object",
+              properties: {
+                slotColorPattern: {
+                  type: "array",
+                  items: {
+                    type: "number",
+                    enum: Object.values(EnumWakfuEnchantmentColor).filter((v) => typeof v === "number"),
+                  },
+                  maxItems: 3,
+                },
+                isEpic: { type: "boolean" },
+                isRelic: { type: "boolean" },
+              },
+              required: ["slotColorPattern", "isEpic", "isRelic"],
             },
             properties: {
               type: "array",

@@ -6,6 +6,7 @@ export const boufFieldClasses = {
   root: `${Prefix}-root`,
   label: `${Prefix}-label`,
   input: `${Prefix}-input`,
+  inputWithoutLabel: `${Prefix}-inputWithoutLabel`,
 };
 
 export const BoufFieldRoot = styled(FormControl)(({ theme }) => ({
@@ -24,6 +25,9 @@ export const BoufFieldRoot = styled(FormControl)(({ theme }) => ({
       },
       [`& .${inputBaseClasses.input}`]: {
         padding: theme.spacing(0.25, 0),
+      },
+      [`&.${boufFieldClasses.inputWithoutLabel}`]: {
+        marginTop: 0,
       },
     },
   },

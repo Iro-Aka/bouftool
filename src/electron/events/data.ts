@@ -44,4 +44,46 @@ export const registerElectronDataEvents = (manager: ElectronEventManager) => {
     }
     reply(item.getRecipes().map((recipe) => recipe.toObject()));
   });
+
+  manager.register(ElectronEvents.GetEnchantments, (reply) => {
+    const store = WakfuStore.getInstance();
+    const shardLevelingCurve = store.getEnchantmentShardLevelingCurve();
+    const shardLevelRequirement = store.getEnchantmentShardLevelRequirement();
+    reply({
+      shardLevelingCurve: shardLevelingCurve,
+      shardLevelRequirement: shardLevelRequirement,
+      enchantments: store.getEnchantments(
+        null,
+        (a, b) => a.getColor() - b.getColor(),
+        (enchantment) => ({
+          id: enchantment.getId(),
+          color: enchantment.getColor(),
+          label: enchantment.getLabel(),
+          doubleBonusPositions: Array.from(enchantment.getDoubleBonusPositions()),
+          effects: shardLevelRequirement.map((_, index) => enchantment.getEffectValue(index + 1)),
+        }),
+      ),
+      sublimations: store.getSublimations(
+        null,
+        (a, b) => {
+          const diff = a.getEffectId() - b.getEffectId();
+          if (diff !== 0) {
+            return diff;
+          }
+          return a.getName().fr.localeCompare(b.getName().fr);
+        },
+        (sublimation) => ({
+          id: sublimation.getId(),
+          name: sublimation.getName(),
+          level: sublimation.getLevel(),
+          maxLevel: sublimation.getMaxLevel(),
+          gfxId: sublimation.getGfxId(),
+          effectId: sublimation.getEffectId(),
+          colorPattern: sublimation.getColorPattern(),
+          rarityEpic: sublimation.isRarityEpic(),
+          rarityRelic: sublimation.isRarityRelic(),
+        }),
+      ),
+    });
+  });
 };

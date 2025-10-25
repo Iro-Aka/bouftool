@@ -1,9 +1,30 @@
 import type { TWakfuAbilities } from "../abilities/types";
 import type { EnumWakfuBreed } from "../breed/types";
+import type { WakfuEnchantment } from "../enchantment";
+import type { EnchantableEquipmentPositions } from "../enchantment/constants";
+import type { EnumWakfuEnchantmentColor } from "../enchantment/types";
 import type { WakfuItem } from "../items";
 import type { EnumWakfuEquipmentPosition } from "../itemTypes/types";
 import type { TElementalPreferences, TWakfuStats } from "../stats/types";
+import type { WakfuSublimation } from "../sublimation";
 import type { EnumWakfuStatsBonuses } from "./bonus";
+
+export type TWakfuBuildEnchantmentSlot = {
+  level: number;
+  enchantment: WakfuEnchantment;
+};
+
+export type TWakfuBuildEnchantments = {
+  [K in (typeof EnchantableEquipmentPositions)[number]]: {
+    enchantments: [
+      TWakfuBuildEnchantmentSlot | null,
+      TWakfuBuildEnchantmentSlot | null,
+      TWakfuBuildEnchantmentSlot | null,
+      TWakfuBuildEnchantmentSlot | null,
+    ];
+    sublimation: WakfuSublimation | null;
+  };
+};
 
 export type TWakfuCharacterDisplay = {
   id: string;
@@ -54,6 +75,13 @@ export type TWakfuBuildDisplay = {
   elementalPreferences: TElementalPreferences;
   stuff: TWakfuBuildStuffDisplay;
   stats: TWakfuStats;
+  enchantments: Record<
+    keyof TWakfuBuildEnchantments,
+    {
+      enchantments: ({ id: number; level: number; color: EnumWakfuEnchantmentColor } | null)[];
+      sublimation: null | { id: number };
+    }
+  >;
 };
 
 export type TWakfuBuildRaw = {
@@ -70,4 +98,11 @@ export type TWakfuBuildRaw = {
   };
   elementalPreferences: TElementalPreferences;
   bonuses: Record<EnumWakfuStatsBonuses, boolean>;
+  enchantments: Record<
+    (typeof EnchantableEquipmentPositions)[number],
+    {
+      enchantments: (null | { id: number; level: number })[];
+      sublimation: number | null;
+    }
+  >;
 };

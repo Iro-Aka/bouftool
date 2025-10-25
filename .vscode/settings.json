@@ -5,5 +5,10 @@
     "source.fixAll.biome": "explicit"
   },
   "git.ignoreLimitWarning": true,
-  "editor.tabSize": 2
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  }
 }

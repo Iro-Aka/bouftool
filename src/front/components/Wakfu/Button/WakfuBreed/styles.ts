@@ -13,6 +13,10 @@ export const ButtonWakfuBreedRoot = styled(ButtonBase)(({ theme }) => ({
     border: `1px solid ${theme.palette.border.light}`,
     borderRadius: "8px",
     overflow: "hidden",
+    transition: "transform 0.2s ease-in-out",
+    "&:hover": {
+      transform: "scale(1.075)",
+    },
     "&:hover:after": {
       position: "absolute",
       content: '""',

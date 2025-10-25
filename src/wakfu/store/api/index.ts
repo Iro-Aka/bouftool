@@ -44,7 +44,16 @@ export class WakfuAPI<GamedataTypes extends EnumWakfuGamedataType[]> {
     if (!validator) {
       throw new Error(`No validator found for type ${type}`);
     }
-    if (isArray(data) && data.every((item) => validator(item))) {
+    if (
+      isArray(data) &&
+      data.every((item) => {
+        const v = validator(item);
+        if (!v) {
+          console.error("Validation errors for item:", item, validator.errors);
+        }
+        return v;
+      })
+    ) {
       return data as TWakfuGamedataTypes[Type][];
     } else {
       throw new Error(`Invalid data for ${type}`);

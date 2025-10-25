@@ -131,6 +131,6 @@ export const isWakfuItemTypeId = (value: number): value is EnumWakfuItemType => 
   return Object.values(EnumWakfuItemType).includes(value as EnumWakfuItemType);
 };
 
-export const isWakfuEquipmentPosition = (value: string): value is EnumWakfuEquipmentPosition => {
+export const isWakfuEquipmentPosition = (value: unknown): value is EnumWakfuEquipmentPosition => {
   return Object.values(EnumWakfuEquipmentPosition).includes(value as EnumWakfuEquipmentPosition);
 };

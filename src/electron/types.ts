@@ -3,12 +3,14 @@ import type { EnumAbilities } from "src/wakfu/abilities/types";
 import type { EnumWakfuStatsBonuses } from "src/wakfu/builds/bonus";
 import type { TWakfuBuildDisplay, TWakfuCharacterDisplay } from "src/wakfu/builds/types";
 import type { TCraftItem } from "src/wakfu/craftManager/types";
+import type { EnchantableEquipmentPositions } from "src/wakfu/enchantment/constants";
+import type { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
 import type { WakfuItem } from "src/wakfu/items";
 import type { EnumWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
 import type { WakfuRecipe } from "src/wakfu/recipes/recipe";
 import type { WakfuStats } from "src/wakfu/stats";
 import type { TElementalPreferences } from "src/wakfu/stats/types";
-import type { EnumWakfuLang } from "src/wakfu/utils/types";
+import type { EnumWakfuLang, TWakfuI18n } from "src/wakfu/utils/types";
 import type { OptimizationConfig } from "../wakfu/optimization/optimizationLauncher";
 import type { TSearchItemsPayload } from "./searchItems/types";
 
@@ -20,6 +22,7 @@ export enum ElectronEvents {
   GetItemTypeLabels = "data:get-itemtype-labels",
   GetItemTypesByEquipmentPosition = "data:get-itemtypes-by-equipment-position",
   GetItemRecipes = "data:get-item-recipes",
+  GetEnchantments = "data:get-enchantments",
   GetAllBuilds = "build:get-all",
   BuildCreate = "build:create",
   BuildDelete = "build:delete",
@@ -34,6 +37,7 @@ export enum ElectronEvents {
   BuildAddAbilityLevel = "build:add-ability-level",
   BuildRemoveAbilityLevel = "build:remove-ability-level",
   BuildSetBonuses = "build:set-bonuses",
+  BuildAssignEnchantment = "build:assign-enchantment",
   BuildOptimize = "build:optimize",
   BuildOptimizeProgress = "build:optimize-progress",
   BuildOptimizeResult = "build:optimize-result",
@@ -54,6 +58,7 @@ export type ElectronEventsMain = {
   [ElectronEvents.GetItemTypeLabels]: undefined;
   [ElectronEvents.GetItemTypesByEquipmentPosition]: { position: EnumWakfuEquipmentPosition };
   [ElectronEvents.GetItemRecipes]: { itemId: number };
+  [ElectronEvents.GetEnchantments]: undefined;
   [ElectronEvents.BuildCreateCharacter]: { name: string; breed: number };
   [ElectronEvents.BuildEditCharacter]: { characterId: string; name: string; breed: number };
   [ElectronEvents.GetAllBuilds]: undefined;
@@ -70,6 +75,13 @@ export type ElectronEventsMain = {
   [ElectronEvents.BuildSetBonuses]: {
     buildId: string;
     bonuses: Record<EnumWakfuStatsBonuses, boolean>;
+  };
+  [ElectronEvents.BuildAssignEnchantment]: {
+    buildId: string;
+    equipmentPosition: (typeof EnchantableEquipmentPositions)[number];
+    slotPosition: number;
+    enchantmentId: number | null;
+    enchantmentLevel: number;
   };
   [ElectronEvents.BuildOptimize]: { buildId: string; config: OptimizationConfig };
   [ElectronEvents.BuildOptimizeProgress]: undefined;
@@ -91,6 +103,28 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.GetItemTypeLabels]: Record<number, string>;
   [ElectronEvents.GetItemTypesByEquipmentPosition]: number[];
   [ElectronEvents.GetItemRecipes]: ReturnType<WakfuRecipe["toObject"]>[];
+  [ElectronEvents.GetEnchantments]: {
+    shardLevelingCurve: number[];
+    shardLevelRequirement: number[];
+    enchantments: {
+      id: number;
+      color: EnumWakfuEnchantmentColor;
+      label: TWakfuI18n;
+      doubleBonusPositions: EnumWakfuEquipmentPosition[];
+      effects: number[];
+    }[];
+    sublimations: {
+      id: number;
+      name: TWakfuI18n;
+      level: number;
+      maxLevel: number;
+      gfxId: number;
+      effectId: number;
+      colorPattern: EnumWakfuEnchantmentColor[];
+      rarityEpic: boolean;
+      rarityRelic: boolean;
+    }[];
+  };
   [ElectronEvents.BuildCreateCharacter]: { characterId: string };
   [ElectronEvents.BuildEditCharacter]: undefined;
   [ElectronEvents.GetAllBuilds]: TWakfuCharacterDisplay[];
@@ -109,6 +143,7 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildRemoveAbilityLevel]: undefined;
   [ElectronEvents.BuildSetInfo]: undefined;
   [ElectronEvents.BuildSetBonuses]: undefined;
+  [ElectronEvents.BuildAssignEnchantment]: undefined;
   [ElectronEvents.BuildOptimize]: undefined;
   [ElectronEvents.BuildOptimizeProgress]: {
     currentIteration: number;

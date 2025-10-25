@@ -198,6 +198,19 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     reply(undefined);
   });
 
+  manager.register(
+    ElectronEvents.BuildAssignEnchantment,
+    (reply, { buildId, enchantmentId, enchantmentLevel, equipmentPosition, slotPosition }) => {
+      const build = WakfuBuild.getById(buildId);
+      if (!build) {
+        throw new Error(`Build with ID ${buildId} not found`);
+      }
+      build.assignEnchantment(equipmentPosition, slotPosition, enchantmentId, enchantmentLevel);
+      ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
+      reply(undefined);
+    },
+  );
+
   manager.register(ElectronEvents.BuildOptimize, (reply, { buildId, config }) => {
     const build = WakfuBuild.getById(buildId);
     if (!build) {

@@ -6,6 +6,7 @@ import { createTheme } from "@mui/material/styles";
 import { themeButton } from "./components/Button";
 import { themeButtonGroup } from "./components/ButtonGroup";
 import { themeDialog } from "./components/Dialog";
+import { themeSlider } from "./components/Slider";
 import { themeToggleButtonGroup } from "./components/ToggleButtonGroup";
 import { themeTooltip } from "./components/Tooltip";
 import { darkThemePalette, lightThemePalette } from "./palette";
@@ -25,6 +26,7 @@ declare module "@mui/material/styles" {
 }
 
 export const theme = createTheme({
+  breakpoints: {},
   colorSchemes: {
     dark: {
       palette: darkThemePalette,
@@ -38,6 +40,7 @@ export const theme = createTheme({
     MuiButtonGroup: themeButtonGroup,
     MuiButton: themeButton,
     MuiDialog: themeDialog,
+    MuiSlider: themeSlider,
     MuiTooltip: themeTooltip,
   },
 });

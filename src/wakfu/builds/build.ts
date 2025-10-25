@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { WakfuAbilities } from "../abilities";
 import type { EnumAbilities } from "../abilities/types";
+import type { EnchantableEquipmentPositions } from "../enchantment/constants";
 import type { WakfuItem } from "../items";
 import { EnumWakfuEquipmentPosition } from "../itemTypes/types";
 import { WakfuStats } from "../stats";
@@ -13,11 +14,55 @@ import { EnumWakfuStatsBonuses, StatsBonuses } from "./bonus";
 import { WakfuCharacter } from "./character";
 import type {
   TWakfuBuildDisplay,
+  TWakfuBuildEnchantments,
   TWakfuBuildMinimalDisplay,
   TWakfuBuildRaw,
   TWakfuBuildStuff,
   TWakfuBuildStuffDisplay,
 } from "./types";
+
+const DefaultEnchantments: TWakfuBuildEnchantments = {
+  [EnumWakfuEquipmentPosition.Head]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.Shoulders]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.Neck]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.Chest]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.LeftHand]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.RightHand]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.Belt]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.Legs]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.Back]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+  [EnumWakfuEquipmentPosition.FirstWeapon]: {
+    enchantments: [null, null, null, null],
+    sublimation: null,
+  },
+};
 
 const DefaultStuff: TWakfuBuildStuff = {
   [EnumWakfuEquipmentPosition.Accessory]: { preferences: null, item: null, disabled: 0 },
@@ -58,6 +103,7 @@ export class WakfuBuild {
   private stuff: TWakfuBuildStuff = DefaultStuff;
   private elementalPreferences: TElementalPreferences = DefaultElementalPreferences;
   private bonuses: Record<EnumWakfuStatsBonuses, boolean> = DefaultStatsBonuses;
+  private enchantments: TWakfuBuildEnchantments = DefaultEnchantments;
   private fileHandler: FileHandler<TWakfuBuildRaw>;
 
   private static getFilePath(characterId: string, buildId: string): string {
@@ -120,12 +166,25 @@ export class WakfuBuild {
         ),
         elementalPreferences: this.elementalPreferences,
         bonuses: this.bonuses,
+        enchantments: Object.entries(this.enchantments).reduce<TWakfuBuildRaw["enchantments"]>(
+          (acc, [position, enchantmentData]) => {
+            acc[position as keyof TWakfuBuildRaw["enchantments"]] = {
+              enchantments: enchantmentData.enchantments.map((e) =>
+                e ? { id: e.enchantment.getId(), level: e.level } : null,
+              ),
+              sublimation: enchantmentData.sublimation ? enchantmentData.sublimation.getId() : null,
+            };
+            return acc;
+          },
+          {} as TWakfuBuildRaw["enchantments"],
+        ),
       } satisfies TWakfuBuildRaw,
       skipTimeout,
     );
   }
 
   private async load() {
+    const store = WakfuStore.getInstance();
     const result = await this.fileHandler.read();
     this.id = result.id;
     this.name = result.name;
@@ -134,13 +193,33 @@ export class WakfuBuild {
     this.stuff = Object.values(EnumWakfuEquipmentPosition).reduce((acc, position) => {
       acc[position] = {
         preferences: result.stuff[position].preferences,
-        item: result.stuff[position].item ? WakfuStore.getInstance().getItemById(result.stuff[position].item) : null,
+        item: result.stuff[position].item ? store.getItemById(result.stuff[position].item) : null,
         disabled: result.stuff[position].disabled,
       };
       return acc;
     }, {} as TWakfuBuildStuff);
     this.elementalPreferences = result.elementalPreferences;
     this.bonuses = result.bonuses;
+    if (result.enchantments) {
+      this.enchantments = Object.entries(result.enchantments).reduce((acc, [position, enchantmentData]) => {
+        acc[position as keyof TWakfuBuildEnchantments] = {
+          enchantments: [
+            enchantmentData.enchantments[0] || null,
+            enchantmentData.enchantments[1] || null,
+            enchantmentData.enchantments[2] || null,
+            enchantmentData.enchantments[3] || null,
+          ].map((e) => {
+            const enchantment = e ? store.getEnchantmentById(e.id) : null;
+            if (e && enchantment) {
+              return { enchantment, level: e.level };
+            }
+            return null;
+          }) as TWakfuBuildEnchantments[keyof TWakfuBuildEnchantments]["enchantments"],
+          sublimation: enchantmentData.sublimation ? store.getSublimationById(enchantmentData.sublimation) : null,
+        };
+        return acc;
+      }, {} as TWakfuBuildEnchantments);
+    }
   }
 
   public delete() {
@@ -212,6 +291,18 @@ export class WakfuBuild {
     for (const bonus of Object.values(EnumWakfuStatsBonuses)) {
       if (this.bonuses[bonus]) {
         stats.merge(StatsBonuses[bonus]);
+      }
+    }
+    for (const [position, enchantments] of Object.entries(this.enchantments)) {
+      for (const enchantmentData of enchantments.enchantments) {
+        if (enchantmentData) {
+          stats.merge(
+            enchantmentData.enchantment.getEffect(
+              enchantmentData.level,
+              position as (typeof EnchantableEquipmentPositions)[number],
+            ),
+          );
+        }
       }
     }
     for (const position of Object.values(EnumWakfuEquipmentPosition)) {
@@ -297,6 +388,24 @@ export class WakfuBuild {
     this.save();
   }
 
+  public assignEnchantment(
+    position: (typeof EnchantableEquipmentPositions)[number],
+    slot: number,
+    enchantmentId: number | null,
+    enchantmentLevel: number,
+  ) {
+    if (!enchantmentId) {
+      this.enchantments[position].enchantments[slot] = null;
+    } else {
+      const enchantment = WakfuStore.getInstance().getEnchantmentById(enchantmentId);
+      if (!enchantment) {
+        throw new Error(`Enchantment with ID ${enchantmentId} not found`);
+      }
+      this.enchantments[position].enchantments[slot] = { enchantment, level: enchantmentLevel };
+    }
+    this.save();
+  }
+
   public toDisplay(): TWakfuBuildDisplay {
     return {
       id: this.id,
@@ -316,6 +425,18 @@ export class WakfuBuild {
         return acc;
       }, {} as TWakfuBuildStuffDisplay),
       stats: this.getStats().toObject(),
+      enchantments: Object.entries(this.enchantments).reduce<TWakfuBuildDisplay["enchantments"]>(
+        (acc, [position, enchantmentData]) => {
+          acc[position as keyof TWakfuBuildDisplay["enchantments"]] = {
+            enchantments: enchantmentData.enchantments.map((e) =>
+              e ? { id: e.enchantment.getId(), level: e.level, color: e.enchantment.getColor() } : null,
+            ),
+            sublimation: enchantmentData.sublimation ? { id: enchantmentData.sublimation.getId() } : null,
+          };
+          return acc;
+        },
+        {} as TWakfuBuildDisplay["enchantments"],
+      ),
     };
   }
 

@@ -1,3 +1,6 @@
+import { WakfuEnchantment } from "../enchantment";
+import { fromBonusPositionToEquipmentPosition, fromEquipmentEffectToEnchantmentEffect } from "../enchantment/mapping";
+import { isWakfuEnchantmentColor } from "../enchantment/types";
 import { WakfuItem } from "../items";
 import { WakfuBaseItem } from "../items/base";
 import { WakfuItemType } from "../itemTypes";
@@ -10,8 +13,12 @@ import {
 import { WakfuRecipe } from "../recipes/recipe";
 import { WakfuRecipeCategory } from "../recipes/recipeCategory";
 import { WakfuStats } from "../stats";
+import type { WakfuSublimation } from "../sublimation";
+import { createWakfuSublimationFromGamedata } from "../sublimation/mapping";
+import { DefaultWakfuI18n } from "../utils/constants";
 import { EnumWakfuLang } from "../utils/types";
 import { WakfuAPI } from "./api";
+import { ExcludeEnchantments } from "./constants";
 import { WakfuFile } from "./file";
 import { EnumWakfuGamedataType, type TPickWakfuGamedata, type TWakfuGamedataTypes } from "./types";
 
@@ -53,6 +60,12 @@ export class WakfuStore {
   private jobItems: Map<number, WakfuBaseItem> = new Map();
   private recipeCategories: Map<number, WakfuRecipeCategory> = new Map();
   private recipes: Map<number, WakfuRecipe> = new Map();
+  private enchantment = {
+    shardLevelingCurve: [] as number[],
+    shardLevelRequirement: [] as number[],
+    enchantments: new Map<number, WakfuEnchantment>(),
+    sublimations: new Map<number, WakfuSublimation>(),
+  };
 
   public static async initialize() {
     if (!WakfuStore.instance) {
@@ -134,29 +147,67 @@ export class WakfuStore {
   private loadItems(items: TWakfuGamedataTypes[EnumWakfuGamedataType.Items][]) {
     for (const item of items) {
       const itemType = this.itemTypes.get(item.definition.item.baseParameters.itemTypeId);
-      if (!itemType || item.definition.equipEffects.length === 0) {
+      if (!itemType) {
         continue;
       }
-      this.items.set(
-        item.definition.item.id,
-        new WakfuItem({
-          id: item.definition.item.id || 1,
-          level: item.definition.item.level,
-          itemType: itemType,
-          rarity: item.definition.item.baseParameters.rarity,
-          gfxId: item.definition.item.graphicParameters.gfxId,
-          stats: WakfuStats.fromGamedata(
-            ItemIdOverrideLevel[item.definition.item.id] ||
-              ItemTypesOverrideLevel[item.definition.item.baseParameters.itemTypeId] ||
-              item.definition.item.level ||
-              100,
-            item.definition.equipEffects,
-          ),
-          recipes: [],
-          title: item.title,
-          description: item.description,
-        }),
-      );
+      switch (itemType.getId()) {
+        case EnumWakfuItemType.Enchantment: {
+          if (
+            ExcludeEnchantments.has(item.definition.item.id) ||
+            !item.definition.item.shardsParameters ||
+            !isWakfuEnchantmentColor(item.definition.item.shardsParameters.color)
+          ) {
+            break;
+          }
+          if (this.enchantment.shardLevelingCurve.length === 0) {
+            this.enchantment.shardLevelingCurve = item.definition.item.shardsParameters.shardLevelingCurve;
+            this.enchantment.shardLevelRequirement = item.definition.item.shardsParameters.shardLevelRequirement;
+          }
+          this.enchantment.enchantments.set(
+            item.definition.item.id,
+            new WakfuEnchantment(
+              item.definition.item.id,
+              item.title ?? DefaultWakfuI18n,
+              item.definition.item.shardsParameters.color,
+              fromBonusPositionToEquipmentPosition(item.definition.item.shardsParameters.doubleBonusPosition),
+              fromEquipmentEffectToEnchantmentEffect(item.definition.equipEffects),
+            ),
+          );
+          break;
+        }
+        case EnumWakfuItemType.Sublimation: {
+          if (!item.definition.item.sublimationParameters) {
+            break;
+          }
+          this.enchantment.sublimations.set(item.definition.item.id, createWakfuSublimationFromGamedata(item));
+          break;
+        }
+        default: {
+          if (item.definition.equipEffects.length === 0) {
+            break;
+          }
+          this.items.set(
+            item.definition.item.id,
+            new WakfuItem({
+              id: item.definition.item.id || 1,
+              level: item.definition.item.level,
+              itemType: itemType,
+              rarity: item.definition.item.baseParameters.rarity,
+              gfxId: item.definition.item.graphicParameters.gfxId,
+              stats: WakfuStats.fromGamedata(
+                ItemIdOverrideLevel[item.definition.item.id] ||
+                  ItemTypesOverrideLevel[item.definition.item.baseParameters.itemTypeId] ||
+                  item.definition.item.level ||
+                  100,
+                item.definition.equipEffects,
+              ),
+              recipes: [],
+              title: item.title,
+              description: item.description,
+            }),
+          );
+        }
+      }
     }
   }
 
@@ -318,5 +369,37 @@ export class WakfuStore {
 
   public getRecipeById(id: number) {
     return this.recipes.get(id) || null;
+  }
+
+  public getEnchantmentShardLevelingCurve() {
+    return this.enchantment.shardLevelingCurve;
+  }
+
+  public getEnchantmentShardLevelRequirement() {
+    return this.enchantment.shardLevelRequirement;
+  }
+
+  public getEnchantments<T = WakfuEnchantment>(
+    filter: ((enchantment: WakfuEnchantment) => boolean) | null = null,
+    sort: ((a: WakfuEnchantment, b: WakfuEnchantment) => number) | null = null,
+    transform: ((enchantment: WakfuEnchantment) => T) | null = null,
+  ): T[] {
+    return this.getFilterSortTransform(this.enchantment.enchantments.values(), filter, sort, transform);
+  }
+
+  public getEnchantmentById(id: number) {
+    return this.enchantment.enchantments.get(id) || null;
+  }
+
+  public getSublimations<T = WakfuSublimation>(
+    filter: ((sublimation: WakfuSublimation) => boolean) | null = null,
+    sort: ((a: WakfuSublimation, b: WakfuSublimation) => number) | null = null,
+    transform: ((sublimation: WakfuSublimation) => T) | null = null,
+  ): T[] {
+    return this.getFilterSortTransform(this.enchantment.sublimations.values(), filter, sort, transform);
+  }
+
+  public getSublimationById(id: number) {
+    return this.enchantment.sublimations.get(id) || null;
   }
 }
