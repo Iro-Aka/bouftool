@@ -38,6 +38,7 @@ export enum ElectronEvents {
   BuildRemoveAbilityLevel = "build:remove-ability-level",
   BuildSetBonuses = "build:set-bonuses",
   BuildAssignEnchantment = "build:assign-enchantment",
+  BuildAssignSublimation = "build:assign-sublimation",
   BuildOptimize = "build:optimize",
   BuildOptimizeProgress = "build:optimize-progress",
   BuildOptimizeResult = "build:optimize-result",
@@ -83,6 +84,11 @@ export type ElectronEventsMain = {
     slotPosition: number;
     enchantmentId: number | null;
     enchantmentLevel: number;
+  };
+  [ElectronEvents.BuildAssignSublimation]: {
+    buildId: string;
+    equipmentPosition: (typeof EnchantableEquipmentPositions)[number];
+    sublimationId: number | null;
   };
   [ElectronEvents.BuildOptimize]: { buildId: string; config: OptimizationConfig };
   [ElectronEvents.BuildOptimizeProgress]: undefined;
@@ -146,6 +152,7 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildSetInfo]: undefined;
   [ElectronEvents.BuildSetBonuses]: undefined;
   [ElectronEvents.BuildAssignEnchantment]: undefined;
+  [ElectronEvents.BuildAssignSublimation]: undefined;
   [ElectronEvents.BuildOptimize]: undefined;
   [ElectronEvents.BuildOptimizeProgress]: {
     currentIteration: number;

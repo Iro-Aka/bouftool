@@ -1,8 +1,8 @@
 import { Slider, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useBuildDetailsContext } from "../../context";
+import { useEnchantmentContext } from "../context";
 import type { TWakfuEnchantment } from "../types";
-import { useEnchantmentContext } from "./context";
 import { ListEnchantmentsRow } from "./row";
 import { ListEnchantmentsRoot, listEnchantmentsClasses } from "./styles";
 

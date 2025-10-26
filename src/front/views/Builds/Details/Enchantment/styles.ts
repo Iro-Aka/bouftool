@@ -16,7 +16,7 @@ export const BuildEnchantmentRoot = styled("div")(({ theme }) => ({
     alignItems: "stretch",
     justifyContent: "space-evenly",
     padding: theme.spacing(2),
-    gap: theme.spacing(1),
+    gap: theme.spacing(2),
     overflow: "hidden",
   },
 }));
