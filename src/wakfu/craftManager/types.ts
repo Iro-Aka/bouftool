@@ -4,12 +4,14 @@ import type { WakfuRecipe } from "../recipes/recipe";
 export type TCraftedIngredientNode = {
   itemId: number;
   isCrafted: boolean;
+  selectedRecipeIndex: number;
   children: Map<number, TCraftedIngredientNode>;
 };
 
 export type TCraftedIngredientNodeRaw = {
   itemId: number;
   isCrafted: boolean;
+  selectedRecipeIndex: number;
   children: Record<number, TCraftedIngredientNodeRaw>;
 };
 
@@ -19,6 +21,12 @@ export type TWakfuCraftManagerRaw = {
     quantity: number;
     craftedIngredients: Record<number, TCraftedIngredientNodeRaw>;
   }[];
+};
+
+export type TWakfuCraftManagerItem = {
+  item: WakfuBaseItem;
+  quantity: number;
+  craftedIngredients: Map<number, TCraftedIngredientNode>;
 };
 
 export type TCraftItem = {
@@ -36,5 +44,6 @@ export type TCraftItem = {
     isCrafted: boolean;
   };
   quantity: number;
+  selectedRecipeIndex: number;
   craftedIngredients: Record<number, TCraftedIngredientNodeRaw>;
 };

@@ -1,7 +1,13 @@
 import type { WakfuBaseItem } from "../items/base";
 import { WakfuStore } from "../store";
 import { FileHandler } from "../utils/FileHandler";
-import type { TCraftedIngredientNode, TCraftedIngredientNodeRaw, TCraftItem, TWakfuCraftManagerRaw } from "./types";
+import type {
+  TCraftedIngredientNode,
+  TCraftedIngredientNodeRaw,
+  TCraftItem,
+  TWakfuCraftManagerItem,
+  TWakfuCraftManagerRaw,
+} from "./types";
 
 const DefaultCraftManagerData: TWakfuCraftManagerRaw = {
   itemsToCraft: [],
@@ -10,11 +16,7 @@ const DefaultCraftManagerData: TWakfuCraftManagerRaw = {
 export class WakfuCraftManager {
   private static instance: WakfuCraftManager | null = null;
   private fileHandler: FileHandler<TWakfuCraftManagerRaw>;
-  private itemsToCraft: {
-    item: WakfuBaseItem;
-    quantity: number;
-    craftedIngredients: Map<number, TCraftedIngredientNode>;
-  }[] = [];
+  private itemsToCraft: TWakfuCraftManagerItem[] = [];
 
   private constructor() {
     this.fileHandler = new FileHandler<TWakfuCraftManagerRaw>("craftManager.json");
@@ -28,6 +30,7 @@ export class WakfuCraftManager {
       result[key] = {
         itemId: value.itemId,
         isCrafted: value.isCrafted,
+        selectedRecipeIndex: value.selectedRecipeIndex,
         children: this.serializeCraftedIngredientsMap(value.children),
       };
     }
@@ -42,6 +45,7 @@ export class WakfuCraftManager {
       map.set(Number(key), {
         itemId: value.itemId,
         isCrafted: value.isCrafted,
+        selectedRecipeIndex: value.selectedRecipeIndex ?? 0,
         children: this.deserializeCraftedIngredientsMap(value.children),
       });
     }
@@ -74,6 +78,7 @@ export class WakfuCraftManager {
         node = {
           itemId: id,
           isCrafted: false,
+          selectedRecipeIndex: 0,
           children: new Map(),
         };
         currentMap.set(id, node);
@@ -173,6 +178,53 @@ export class WakfuCraftManager {
     return this.itemsToCraft;
   }
 
+  public setIngredientSelectedRecipe(path: number[], ingredientId: number, recipeIndex: number) {
+    if (path.length === 0) {
+      throw new Error("Path cannot be empty");
+    }
+
+    const rootItemId = path[0];
+    const itemToCraft = this.itemsToCraft.find((i) => i.item.getId() === rootItemId);
+    if (!itemToCraft) {
+      throw new Error(`Item with ID ${rootItemId} not found in craft list`);
+    }
+
+    const parentPath = path.slice(1);
+
+    const targetMap =
+      parentPath.length > 0
+        ? this.ensurePathExists(itemToCraft.craftedIngredients, parentPath)
+        : itemToCraft.craftedIngredients;
+
+    let node = targetMap.get(ingredientId);
+    if (!node) {
+      node = {
+        itemId: ingredientId,
+        isCrafted: false,
+        selectedRecipeIndex: recipeIndex,
+        children: new Map(),
+      };
+      targetMap.set(ingredientId, node);
+    } else {
+      const item =
+        WakfuStore.getInstance().getItemById(ingredientId) ?? WakfuStore.getInstance().getJobItemById(ingredientId);
+      if (item) {
+        const recipes = item.getRecipes();
+
+        if (recipeIndex < 0 || recipeIndex >= recipes.length) {
+          throw new Error(`Recipe index ${recipeIndex} out of bounds for item ${ingredientId}`);
+        }
+      }
+
+      node.selectedRecipeIndex = recipeIndex;
+      node.isCrafted = false;
+      node.children.clear();
+      this.createNodeWithChildren(ingredientId, false, recipeIndex);
+    }
+
+    this.save();
+  }
+
   private markNodeAndChildrenAsCrafted(node: TCraftedIngredientNode, isCrafted: boolean): void {
     node.isCrafted = isCrafted;
 
@@ -182,10 +234,11 @@ export class WakfuCraftManager {
       if (item) {
         const recipes = item.getRecipes();
         if (recipes.length > 0) {
-          const recipe = recipes[0];
+          const recipeIndex = node.selectedRecipeIndex ?? 0;
+          const recipe = recipes[recipeIndex];
           for (const ingredient of recipe.getIngredients()) {
             const ingredientId = ingredient.item.getId();
-            const childNode = this.createNodeWithChildren(ingredientId, true);
+            const childNode = this.createNodeWithChildren(ingredientId, true, 0);
             node.children.set(ingredientId, childNode);
           }
         }
@@ -197,10 +250,15 @@ export class WakfuCraftManager {
     }
   }
 
-  private createNodeWithChildren(itemId: number, isCrafted: boolean): TCraftedIngredientNode {
+  private createNodeWithChildren(
+    itemId: number,
+    isCrafted: boolean,
+    selectedRecipeIndex: number = 0,
+  ): TCraftedIngredientNode {
     const node: TCraftedIngredientNode = {
       itemId,
       isCrafted,
+      selectedRecipeIndex,
       children: new Map(),
     };
 
@@ -209,11 +267,12 @@ export class WakfuCraftManager {
       if (item) {
         const recipes = item.getRecipes();
         if (recipes.length > 0) {
-          const recipe = recipes[0];
+          const recipeIndex = selectedRecipeIndex ?? 0;
+          const recipe = recipes[recipeIndex];
           const ingredients = recipe.getIngredients();
           for (const ingredient of ingredients) {
             const ingredientId = ingredient.item.getId();
-            const childNode = this.createNodeWithChildren(ingredientId, true);
+            const childNode = this.createNodeWithChildren(ingredientId, true, 0);
             node.children.set(ingredientId, childNode);
           }
         }
@@ -242,7 +301,7 @@ export class WakfuCraftManager {
 
     let node = targetMap.get(ingredientId);
     if (!node) {
-      node = this.createNodeWithChildren(ingredientId, true);
+      node = this.createNodeWithChildren(ingredientId, true, 0);
       targetMap.set(ingredientId, node);
     } else {
       this.markNodeAndChildrenAsCrafted(node, true);
@@ -339,38 +398,74 @@ export class WakfuCraftManager {
     return craftedIds;
   }
 
-  private findAllNodesByIngredientId(
-    rootMap: Map<number, TCraftedIngredientNode>,
+  private findIngredientInRecipe(
+    item: WakfuBaseItem,
+    craftedIngredients: Map<number, TCraftedIngredientNode>,
     ingredientId: number,
     currentPath: number[] = [],
-  ): { map: Map<number, TCraftedIngredientNode>; path: number[] }[] {
-    const results: { map: Map<number, TCraftedIngredientNode>; path: number[] }[] = [];
+    selectedRecipeIndex: number = 0,
+  ): number[][] {
+    const paths: number[][] = [];
 
-    for (const [id, node] of rootMap.entries()) {
-      if (id === ingredientId) {
-        results.push({ map: rootMap, path: currentPath });
-      }
-
-      if (node.children.size > 0) {
-        const childResults = this.findAllNodesByIngredientId(node.children, ingredientId, [...currentPath, id]);
-        results.push(...childResults);
-      }
+    const recipes = item.getRecipes();
+    if (recipes.length === 0) {
+      return paths;
     }
 
-    return results;
+    const recipeIndex = Math.min(selectedRecipeIndex, recipes.length - 1);
+    const recipe = recipes[recipeIndex];
+    const ingredients = recipe.getIngredients();
+
+    for (const ingredient of ingredients) {
+      const ingredientItem = ingredient.item;
+      const ingredientItemId = ingredientItem.getId();
+
+      if (ingredientItemId === ingredientId) {
+        paths.push([...currentPath, ingredientItemId]);
+      }
+
+      const recipeIndexForChild = craftedIngredients.get(ingredientItemId)?.selectedRecipeIndex ?? 0;
+
+      const childPaths = this.findIngredientInRecipe(
+        ingredientItem,
+        craftedIngredients.get(ingredientItemId)?.children || new Map(),
+        ingredientId,
+        [...currentPath, ingredientItemId],
+        recipeIndexForChild,
+      );
+      paths.push(...childPaths);
+    }
+
+    return paths;
   }
 
   public markAllIngredientsById(ingredientId: number): void {
     for (const itemToCraft of this.itemsToCraft) {
-      const occurrences = this.findAllNodesByIngredientId(itemToCraft.craftedIngredients, ingredientId);
+      const rootItem = itemToCraft.item;
 
-      for (const { map } of occurrences) {
-        let node = map.get(ingredientId);
+      const paths = this.findIngredientInRecipe(rootItem, itemToCraft.craftedIngredients, ingredientId);
+
+      for (let i = 0; i < paths.length; i++) {
+        const path = paths[i];
+
+        const parentPath = path.slice(0, -1);
+        const targetMap =
+          parentPath.length > 0
+            ? this.ensurePathExists(itemToCraft.craftedIngredients, parentPath)
+            : itemToCraft.craftedIngredients;
+
+        let node = targetMap.get(ingredientId);
+
         if (!node) {
-          node = this.createNodeWithChildren(ingredientId, true);
-          map.set(ingredientId, node);
+          node = {
+            itemId: ingredientId,
+            isCrafted: true,
+            selectedRecipeIndex: 0,
+            children: new Map(),
+          };
+          targetMap.set(ingredientId, node);
         } else {
-          this.markNodeAndChildrenAsCrafted(node, true);
+          node.isCrafted = true;
         }
       }
     }
@@ -384,9 +479,14 @@ export class WakfuCraftManager {
       quantity: number,
       craftedIngredientsMap: Map<number, TCraftedIngredientNode>,
       isCraftedFromParent?: boolean,
+      selectedRecipeIndexFromParent?: number,
     ): TCraftItem => {
       const itemId = item.getId();
       const recipes = item.getRecipes();
+      const currentItemNode = craftedIngredientsMap.get(itemId);
+      const selectedRecipeIndex = selectedRecipeIndexFromParent ?? currentItemNode?.selectedRecipeIndex ?? 0;
+      const isCrafted = isCraftedFromParent !== undefined ? isCraftedFromParent : currentItemNode?.isCrafted || false;
+
       const recipesData = recipes.map((recipe) => {
         const recipeObj = {
           id: recipe.getId(),
@@ -406,6 +506,7 @@ export class WakfuCraftManager {
                 ingredient.quantity * quantity,
                 ingredientChildren,
                 ingredientNode?.isCrafted,
+                ingredientNode?.selectedRecipeIndex,
               );
             }
 
@@ -416,6 +517,7 @@ export class WakfuCraftManager {
                 isCrafted: ingredientNode?.isCrafted || false,
               },
               quantity: ingredient.quantity * quantity,
+              selectedRecipeIndex: ingredientNode?.selectedRecipeIndex ?? 0,
               craftedIngredients: this.serializeCraftedIngredientsMap(ingredientChildren),
             };
           }),
@@ -428,9 +530,6 @@ export class WakfuCraftManager {
         return recipeObj;
       });
 
-      const itemNode = craftedIngredientsMap.get(itemId);
-      const isCrafted = isCraftedFromParent !== undefined ? isCraftedFromParent : itemNode?.isCrafted || false;
-
       return {
         item: {
           ...item.toObject(),
@@ -438,12 +537,13 @@ export class WakfuCraftManager {
           isCrafted,
         },
         quantity,
+        selectedRecipeIndex,
         craftedIngredients: this.serializeCraftedIngredientsMap(craftedIngredientsMap),
       };
     };
 
     return this.itemsToCraft.map((itemToCraft) =>
-      processItem(itemToCraft.item, itemToCraft.quantity, itemToCraft.craftedIngredients),
+      processItem(itemToCraft.item, itemToCraft.quantity, itemToCraft.craftedIngredients, undefined),
     );
   }
 }

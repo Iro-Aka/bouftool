@@ -6,7 +6,7 @@ import { StackRow } from "../Layout/StackRow";
 
 export interface TreeNode {
   id: string;
-  label: string;
+  label: React.ReactNode;
   icon?: React.ReactNode;
   indicatorColor?: string;
   children?: TreeNode[];
@@ -19,6 +19,7 @@ interface TreeItemProps {
   node: TreeNode;
   isLast: boolean;
   depth: number;
+  disableCollapse?: boolean;
 }
 
 interface TreeViewProps {
@@ -26,11 +27,14 @@ interface TreeViewProps {
   sx?: SxProps<Theme>;
 }
 
-const TreeItem: React.FC<TreeItemProps> = ({ node, isLast, depth }) => {
+export const TreeItem: React.FC<TreeItemProps> = ({ node, isLast, depth, disableCollapse }) => {
   const [expanded, setExpanded] = useState(node.defaultExpanded ?? false);
   const hasChildren = node.children && node.children.length > 0;
 
   const handleToggle = () => {
+    if (disableCollapse) {
+      return;
+    }
     if (hasChildren) {
       setExpanded(!expanded);
     }
@@ -76,7 +80,6 @@ const TreeItem: React.FC<TreeItemProps> = ({ node, isLast, depth }) => {
         onClick={handleToggle}
         sx={{
           position: "relative",
-          zIndex: 1,
           borderRadius: 1,
           m: 1,
           cursor: "pointer",
@@ -101,7 +104,7 @@ const TreeItem: React.FC<TreeItemProps> = ({ node, isLast, depth }) => {
         <Box
           sx={{
             p: 1,
-            bgcolor: hasChildren ? "surface.100" : "surface.150",
+            bgcolor: hasChildren ? "surface.150" : "surface.250",
             borderRadius: 1,
             display: "flex",
             justifyContent: "space-between",
@@ -111,7 +114,7 @@ const TreeItem: React.FC<TreeItemProps> = ({ node, isLast, depth }) => {
           }}
         >
           <StackRow sx={{ "&&": { gap: 0 } }}>
-            {hasChildren ? (
+            {hasChildren && !disableCollapse ? (
               expanded ? (
                 <ExpandMore sx={{ color: "text.secondary", fontSize: 20 }} />
               ) : (
@@ -176,8 +179,6 @@ export const TreeView: React.FC<TreeViewProps> = ({ nodes, sx }) => {
   return (
     <Box
       sx={{
-        px: 1,
-        bgcolor: "background.default",
         ...sx,
       }}
     >

@@ -1,5 +1,5 @@
 import CheckIcon from "@mui/icons-material/Check";
-import { Box, Button, Stack } from "@mui/material";
+import { Button, Stack, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { ElectronEvents } from "src/electron/types";
 import { StackRow } from "src/front/components/Layout/StackRow";
@@ -17,7 +17,7 @@ type ShoppingCartItem = {
 const extractItemsWithoutRecipe = (craftItems: TCraftItem[]): ShoppingCartItem[] => {
   const itemsMap = new Map<number, ShoppingCartItem>();
 
-  const processItem = (craftItem: TCraftItem, depth = 0) => {
+  const processItem = (craftItem: TCraftItem) => {
     const { item, quantity } = craftItem;
 
     if (item.isCrafted) {
@@ -32,15 +32,9 @@ const extractItemsWithoutRecipe = (craftItems: TCraftItem[]): ShoppingCartItem[]
         itemsMap.set(item.id, { item, quantity });
       }
     } else {
-      //TODO: choose recipe
-      for (const ingredient of item.recipes[0].ingredients) {
-        processItem(ingredient, depth + 1);
+      for (const ingredient of item.recipes[craftItem.selectedRecipeIndex].ingredients) {
+        processItem(ingredient);
       }
-      // for (const recipe of item.recipes) {
-      //   for (const ingredient of recipe.ingredients) {
-      //     processItem(ingredient, depth + 1);
-      //   }
-      // }
     }
   };
 
@@ -75,13 +69,12 @@ export const ShoppingCart = () => {
         overflowY: "auto",
         p: 1,
         borderRadius: "8px",
-        border: "1px solid",
-        borderColor: "divider",
+        bgcolor: "surface.100",
       }}
     >
-      <Box>
+      <Typography variant="subtitle2">
         Ressources ({shoppingCartItems.length} différentes, {totalQuantity} en tout)
-      </Box>
+      </Typography>
       {shoppingCartItems.map((shoppingItem) => (
         <StackRow
           key={shoppingItem.item.id}

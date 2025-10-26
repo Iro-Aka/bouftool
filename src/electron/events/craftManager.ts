@@ -36,4 +36,9 @@ export const registerElectronCraftManagerEvents = (manager: ElectronEventManager
     WakfuCraftManager.getInstance().markAllIngredientsById(ingredientId);
     reply(undefined);
   });
+
+  manager.register(ElectronEvents.CraftManagerSetIngredientRecipe, (reply, { itemId, path, recipeIndex }) => {
+    WakfuCraftManager.getInstance().setIngredientSelectedRecipe(path, itemId, recipeIndex);
+    reply(undefined);
+  });
 };

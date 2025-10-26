@@ -48,6 +48,7 @@ export enum ElectronEvents {
   CraftManagerMarkIngredientAsCrafted = "craftmanager:mark-ingredient-as-crafted",
   CraftManagerUnmarkIngredientAsCrafted = "craftmanager:unmark-ingredient-as-crafted",
   CraftManagerMarkAllIngredientsById = "craftmanager:mark-all-ingredients-by-id",
+  CraftManagerSetIngredientRecipe = "craftmanager:set-ingredient-recipe",
 }
 
 export type ElectronEventsMain = {
@@ -93,6 +94,7 @@ export type ElectronEventsMain = {
   [ElectronEvents.CraftManagerMarkIngredientAsCrafted]: { itemId: number; path: number[] };
   [ElectronEvents.CraftManagerUnmarkIngredientAsCrafted]: { itemId: number; path: number[] };
   [ElectronEvents.CraftManagerMarkAllIngredientsById]: { ingredientId: number };
+  [ElectronEvents.CraftManagerSetIngredientRecipe]: { itemId: number; path: number[]; recipeIndex: number };
 };
 
 export type ElectronEventsRenderer = {
@@ -164,6 +166,7 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.CraftManagerMarkIngredientAsCrafted]: undefined;
   [ElectronEvents.CraftManagerUnmarkIngredientAsCrafted]: undefined;
   [ElectronEvents.CraftManagerMarkAllIngredientsById]: undefined;
+  [ElectronEvents.CraftManagerSetIngredientRecipe]: undefined;
 };
 
 export type TElectronPackage<Payload> = {

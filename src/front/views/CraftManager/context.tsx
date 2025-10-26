@@ -19,6 +19,10 @@ export type TCraftManagerContext = {
   items: TCraftItem[];
   treeNodes: TreeNode[];
   markAllIngredientsById: (ingredientId: number) => void;
+  recipeCraftItem: TCraftItem | null;
+  currentRecipeIndex: number;
+  onSelectRecipe: (recipeIndex: number) => void;
+  onCloseRecipeModal: () => void;
 };
 
 const Context = createContext<TCraftManagerContext | undefined>(undefined);
@@ -42,6 +46,7 @@ export const CraftManagerContextProvider = ({ children }: TItemToCraftProviderPr
   const [markIngredientAsCrafted] = useElectronEvent(ElectronEvents.CraftManagerMarkIngredientAsCrafted);
   const [unmarkIngredientAsCrafted] = useElectronEvent(ElectronEvents.CraftManagerUnmarkIngredientAsCrafted);
   const [markAllIngredients] = useElectronEvent(ElectronEvents.CraftManagerMarkAllIngredientsById);
+  const [setIngredientRecipe] = useElectronEvent(ElectronEvents.CraftManagerSetIngredientRecipe);
 
   const [items, SetItems] = useState<TCraftItem[]>([]);
 
@@ -106,17 +111,45 @@ export const CraftManagerContextProvider = ({ children }: TItemToCraftProviderPr
     [markAllIngredients, getItems],
   );
 
+  const [recipeCraftItem, setRecipeCraftItem] = useState<TCraftItem | null>(null);
+  const [recipePath, setRecipePath] = useState<number[]>([]);
+  const [currentRecipeIndex, setCurrentRecipeIndex] = useState(0);
+
+  const onSelectRecipe = useCallback(
+    (recipeIndex: number) => {
+      if (recipeCraftItem) {
+        setIngredientRecipe({ itemId: recipeCraftItem.item.id, path: recipePath, recipeIndex });
+        getItems(undefined);
+        setRecipeCraftItem(null);
+        setRecipePath([]);
+        setCurrentRecipeIndex(0);
+      }
+    },
+    [recipeCraftItem, recipePath, setIngredientRecipe, getItems],
+  );
+
+  const onCloseRecipeModal = useCallback(() => {
+    setRecipeCraftItem(null);
+    setRecipePath([]);
+    setCurrentRecipeIndex(0);
+  }, []);
+
   const treeNodes = useMemo(() => {
-    return craftItemsToTreeNodes(items, (first, craftItem, path) =>
-      ItemActions(
-        first,
-        craftItem,
-        () => removeItem(craftItem.item.id),
-        (quantity) => setItemQuantity(craftItem.item.id, quantity),
-        () => markAsCrafted(craftItem.item.id, path),
-        () => unmarkAsCrafted(craftItem.item.id, path),
-      ),
-    );
+    return craftItemsToTreeNodes(items, (first, craftItem, path, selectedRecipeIndex) => (
+      <ItemActions
+        isFirst={first}
+        craftItem={craftItem}
+        onRemove={() => removeItem(craftItem.item.id)}
+        onQuantityChange={(quantity) => setItemQuantity(craftItem.item.id, quantity)}
+        onMarkAsCrafted={() => markAsCrafted(craftItem.item.id, path)}
+        onUnmarkAsCrafted={() => unmarkAsCrafted(craftItem.item.id, path)}
+        openSelectRecipeModal={() => {
+          setRecipePath(path);
+          setCurrentRecipeIndex(selectedRecipeIndex);
+          setRecipeCraftItem(craftItem);
+        }}
+      />
+    ));
   }, [items, removeItem, setItemQuantity, markAsCrafted, unmarkAsCrafted]);
 
   const contextValue = useMemo(
@@ -124,8 +157,12 @@ export const CraftManagerContextProvider = ({ children }: TItemToCraftProviderPr
       items,
       treeNodes,
       markAllIngredientsById,
+      recipeCraftItem,
+      currentRecipeIndex,
+      onSelectRecipe,
+      onCloseRecipeModal,
     }),
-    [items, treeNodes, markAllIngredientsById],
+    [items, treeNodes, markAllIngredientsById, recipeCraftItem, currentRecipeIndex, onSelectRecipe, onCloseRecipeModal],
   );
 
   return <Context.Provider value={contextValue}>{children}</Context.Provider>;
