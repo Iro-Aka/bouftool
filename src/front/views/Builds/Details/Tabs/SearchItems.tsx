@@ -20,8 +20,6 @@ export const BuildSearchItems = () => {
     }
   }, [equipResponse]);
 
-  console.log(conflictPositions);
-
   return (
     <>
       <SearchEquipments buildId={build.id} controlled />

@@ -30,8 +30,6 @@ export const ModalCompareItemCard = ({ results }: TModalCompareItemCardProps) =>
   const { positiveValues, negativeValues } = splitStats(results.stats);
   const rowsLength = Math.max(positiveValues.length, negativeValues.length);
 
-  console.log(results.stats, positiveValues, negativeValues);
-
   return (
     <Stack sx={{ p: 1.5, gap: 1.5, bgcolor: "surface.100", borderRadius: "8px" }}>
       <StackRow sx={{ justifyContent: "space-between" }}>

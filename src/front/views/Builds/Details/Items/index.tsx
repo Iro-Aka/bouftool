@@ -16,7 +16,6 @@ export const BuildDetailsItems = () => {
     const levelsRange = WakfuLevelsRange.find((range) => range.min <= build.level && range.max >= build.level);
     const itemTypes = await sendElectronEvent(ElectronEvents.GetItemTypesByEquipmentPosition, { position });
     SearchItemsBehavior.setSkipNextTimeout(true);
-    console.log(itemTypes);
     setFilters((prev) => ({ ...prev, ...(levelsRange && { levels: levelsRange }), itemTypes }));
   };
 

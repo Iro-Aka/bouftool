@@ -4,7 +4,7 @@ import { ElectronEvents } from "src/electron/types";
 import { EnchantmentIcon } from "src/front/components/Wakfu/EnchantmentIcon";
 import { sendElectronEvent } from "src/front/hooks/electron";
 import type { EnchantableEquipmentPositions } from "src/wakfu/enchantment/constants";
-import { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
+import type { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
 import { useEnchantmentContext } from "../enchantments/context";
 import { equipmentsEnchantmentsClasses } from "./styles";
 
@@ -43,7 +43,7 @@ export const EnchantmentSlot = ({ buildId, position, slot, effect, enchantment }
     <Tooltip title={effect} placement="top" disableInteractive arrow>
       <EnchantmentIcon
         height={32}
-        color={enchantment ? enchantment.color : EnumWakfuEnchantmentColor.Yellow}
+        color={enchantment ? enchantment.color : undefined}
         isFull={Boolean(enchantment)}
         data-global-click="enchantmentSlot"
         onClick={handleClick}

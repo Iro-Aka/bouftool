@@ -9,17 +9,20 @@ export const equipmentsEnchantmentsClasses = {
   rowRedSelected: `${Prefix}-rowRedSelected`,
   rowBlueSelected: `${Prefix}-rowBlueSelected`,
   rowGreenSelected: `${Prefix}-rowGreenSelected`,
+  rowSubmlimation: `${Prefix}-rowSublimation`,
   slotHover: `${Prefix}-slotHover`,
 };
 
 export const EquipmentsEnchantmentsRoot = styled("div")(({ theme }) => ({
   [`&.${equipmentsEnchantmentsClasses.root}`]: {
+    flex: "0 1 auto",
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(1),
     padding: theme.spacing(1),
     backgroundColor: theme.palette.surface[100],
     borderRadius: "8px",
+    overflow: "hidden",
   },
   [`& .${equipmentsEnchantmentsClasses.scroll}`]: {
     flex: 1,
@@ -33,11 +36,21 @@ export const EquipmentsEnchantmentsRoot = styled("div")(({ theme }) => ({
   [`& .${equipmentsEnchantmentsClasses.row}`]: {
     display: "flex",
     flexDirection: "row",
-    alignItems: "center",
-    gap: theme.spacing(1),
-    padding: theme.spacing(1),
-    backgroundColor: theme.palette.surface[150],
+    alignItems: "stretch",
+    border: `1px solid ${theme.palette.border.light}`,
     borderRadius: "8px",
+    "& > div": {
+      padding: theme.spacing(1),
+    },
+    "& > div:first-of-type": {
+      borderTopLeftRadius: "8px",
+      borderBottomLeftRadius: "8px",
+      borderRight: `1px solid ${theme.palette.border.light}`,
+    },
+    "& > div:last-of-type": {
+      borderTopRightRadius: "8px",
+      borderBottomRightRadius: "8px",
+    },
     [`&.${equipmentsEnchantmentsClasses.rowRedSelected}`]: {
       boxShadow: `0 0 4px rgba(255, 0, 0, 1)`,
     },
@@ -46,6 +59,11 @@ export const EquipmentsEnchantmentsRoot = styled("div")(({ theme }) => ({
     },
     [`&.${equipmentsEnchantmentsClasses.rowGreenSelected}`]: {
       boxShadow: `0 0 4px rgba(0, 255, 0, 1)`,
+    },
+    [`& .${equipmentsEnchantmentsClasses.rowSubmlimation}`]: {
+      backgroundColor: theme.palette.surface[200],
+      flex: "0 1 240px",
+      overflow: "hidden",
     },
   },
   [`& .${equipmentsEnchantmentsClasses.slotHover}`]: {

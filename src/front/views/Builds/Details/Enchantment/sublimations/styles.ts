@@ -10,15 +10,17 @@ export const listSublimationsClasses = {
 
 export const ListSublimationsRoot = styled("div")(({ theme }) => ({
   [`&.${listSublimationsClasses.root}`]: {
+    flex: "0 1 432px",
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(1),
     backgroundColor: theme.palette.surface[100],
     padding: theme.spacing(1),
     borderRadius: "8px",
+    overflow: "hidden",
   },
   [`& .${listSublimationsClasses.row}`]: {
-    flex: "0 0 auto",
+    flex: 1,
     display: "flex",
     flexDirection: "row",
     alignItems: "stretch",
@@ -26,5 +28,12 @@ export const ListSublimationsRoot = styled("div")(({ theme }) => ({
     backgroundColor: theme.palette.surface[150],
     borderRadius: "8px",
     overflow: "hidden",
+    border: `1px solid ${theme.palette.border.light}`,
+    "& > div:first-of-type": {
+      borderRight: `1px solid ${theme.palette.border.light}`,
+    },
+    "& > div:last-of-type": {
+      borderLeft: `1px solid ${theme.palette.border.light}`,
+    },
   },
 }));

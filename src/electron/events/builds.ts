@@ -83,23 +83,18 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     if (forcedPosition) {
       build.equipItem(forcedPosition, item);
     } else {
-      console.log(1);
       const itemType = item.getItemType();
       if (!itemType) {
         throw new Error(`Item with ID ${itemId} has no type`);
       }
-      console.log(2);
       let position = itemType.getEquipmentPositions()[0];
       if (itemType.getEquipmentPositions().length > 1 && build.isEquipped(position)) {
-        console.log(3);
         position = itemType.getEquipmentPositions()[1];
         if (build.isEquipped(position)) {
-          console.log(4);
           reply({ itemId: itemId, position: itemType.getEquipmentPositions() });
           return;
         }
       }
-      console.log(5);
       build.equipItem(position, item);
     }
     ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());

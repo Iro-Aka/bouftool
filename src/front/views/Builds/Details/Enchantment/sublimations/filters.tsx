@@ -3,10 +3,7 @@ import clsx from "clsx";
 import type { Dispatch, SetStateAction } from "react";
 import { StackRow } from "src/front/components/Layout/StackRow";
 import { ItemIcon } from "src/front/components/Wakfu/ItemIcon";
-
-const BaseSublimationIconGfxId = 81228822;
-const EpicSublimationIconGfxId = 81224130;
-const RelicSublimationIconGfxId = 81224136;
+import { BaseSublimationIconGfxId, EpicSublimationIconGfxId, RelicSublimationIconGfxId } from "../constants";
 
 export type TListSublimationsFiltersProps = {
   filters: {

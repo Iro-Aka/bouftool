@@ -1,4 +1,3 @@
-import DropDownIcon from "@mui/icons-material/ArrowDropDown";
 import ModeLightIcon from "@mui/icons-material/LightMode";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import { Button, buttonClasses, Divider, Switch, Typography, useColorScheme } from "@mui/material";
@@ -40,7 +39,6 @@ export const Navbar = () => {
             color="inherit"
             className={Math.floor(currentView / 100) === 2 ? "Mui-selected" : ""}
             onClick={() => setCurrentView(NavigationView.EncyclopediaEquipment, undefined)}
-            endIcon={<DropDownIcon />}
           >
             <Typography variant="subtitle2" sx={{ textTransform: "none" }}>
               Encyclopédie

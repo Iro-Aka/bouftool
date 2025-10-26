@@ -23,14 +23,12 @@ export const registerElectronDataEvents = (manager: ElectronEventManager) => {
         break;
       }
       default: {
-        console.log("Position", position);
         const wakfuData = WakfuStore.getInstance();
         const itemTypes = wakfuData.getItemTypes(
           (itemType) => itemType.isPositionEnabled(position),
           null,
           (itemType) => itemType.getId(),
         );
-        console.log("ItemTypes", itemTypes);
         reply(itemTypes);
       }
     }
