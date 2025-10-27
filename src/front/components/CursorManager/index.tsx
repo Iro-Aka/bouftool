@@ -1,6 +1,5 @@
-import { Box } from "@mui/material";
-import { createContext, useContext, useEffect, useState } from "react";
-import { AvailableCursors, type TAvailableCursor } from "./cursors";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { useStableCallback } from "src/front/hooks/useStableCallback";
 
 const resizeCursorImage = (imageUrl: string, size: number = 32): Promise<string> => {
   return new Promise((resolve) => {
@@ -17,7 +16,7 @@ const resizeCursorImage = (imageUrl: string, size: number = 32): Promise<string>
   });
 };
 
-export type TCursorManagerContext = (cursor: TAvailableCursor | null) => void;
+export type TCursorManagerContext = (cursorUrl: string | null) => Promise<void>;
 
 const Context = createContext<TCursorManagerContext | undefined>(undefined);
 
@@ -34,33 +33,45 @@ export type TCursorManagerProps = {
 };
 
 export const CursorManager = ({ children }: TCursorManagerProps) => {
-  const [currentCursor, setCurrentCursor] = useState<TAvailableCursor | null>(null);
-  const [loadedCursor, setLoadedCursor] = useState<string>("auto");
+  const styleElementRef = useRef<HTMLStyleElement | null>(null);
+  const [currentCursor, setCurrentCursor] = useState<string | null>(null);
+
+  const setCursor = useStableCallback(async (cursorUrl: string | null) => {
+    if (cursorUrl === null) {
+      setCurrentCursor(null);
+    } else {
+      const resizedCursor = await resizeCursorImage(cursorUrl, 24);
+      setCurrentCursor(`url('${resizedCursor}') 12 12, auto`);
+    }
+  });
 
   useEffect(() => {
-    if (currentCursor) {
-      const cursorUrl = AvailableCursors[currentCursor];
-      resizeCursorImage(cursorUrl, 24).then((resizedCursor) => {
-        setLoadedCursor(`url('${resizedCursor}') 12 12, auto`);
-      });
-    } else {
-      setLoadedCursor("auto");
+    if (styleElementRef.current) {
+      if (currentCursor) {
+        styleElementRef.current.textContent = `
+          body * {
+            cursor: ${currentCursor} !important;
+          };
+          body *:hover {
+            cursor: ${currentCursor} !important;
+          };
+        `;
+      } else {
+        styleElementRef.current.textContent = "";
+      }
     }
   }, [currentCursor]);
 
-  return (
-    <Context.Provider value={setCurrentCursor}>
-      <Box
-        {...(currentCursor && {
-          sx: {
-            cursor: `${loadedCursor} !important`,
-            "& *": { cursor: `${loadedCursor} !important` },
-            "& *:hover": { cursor: `${loadedCursor} !important` },
-          },
-        })}
-      >
-        {children}
-      </Box>
-    </Context.Provider>
-  );
+  useEffect(() => {
+    const styleElement = document.createElement("style");
+    styleElement.setAttribute("type", "text/css");
+    document.head.appendChild(styleElement);
+    styleElementRef.current = styleElement;
+    return () => {
+      styleElementRef.current = null;
+      styleElement.remove();
+    };
+  }, []);
+
+  return <Context.Provider value={setCursor}>{children}</Context.Provider>;
 };

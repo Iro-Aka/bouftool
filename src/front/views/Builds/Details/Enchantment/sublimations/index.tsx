@@ -55,7 +55,7 @@ export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
         value={filters.text}
         onChange={(evt) => setFilters((prev) => ({ ...prev, text: evt.target.value }))}
       />
-      <Stack sx={{ flex: 1, mr: -1, overflow: "hidden" }} ref={setScrollContainer}>
+      <Stack sx={{ flex: 1, mx: -1, my: -0.5, overflow: "hidden" }} ref={setScrollContainer}>
         <FixedSizeList
           height={size.height}
           width={size.width}
@@ -69,7 +69,7 @@ export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
               return null;
             }
             return (
-              <Box key={item.id} style={style} sx={{ pr: 1 }}>
+              <Box key={item.id} style={style} sx={{ px: 1, py: 0.5 }}>
                 <ListSublimationsRow sublimation={item} />
               </Box>
             );

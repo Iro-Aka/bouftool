@@ -5,7 +5,7 @@ import { EnchantmentIcon } from "src/front/components/Wakfu/EnchantmentIcon";
 import { sendElectronEvent } from "src/front/hooks/electron";
 import type { EnchantableEquipmentPositions } from "src/wakfu/enchantment/constants";
 import type { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
-import { useEnchantmentContext } from "../enchantments/context";
+import { useEnchantmentContext } from "../context";
 import { equipmentsEnchantmentsClasses } from "./styles";
 
 export type TEnchantmentSlotProps = {

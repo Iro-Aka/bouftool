@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { ElectronEvents } from "src/electron/types";
 import { useElectronEvent } from "src/front/hooks/electron";
+import { EnchantmentProvider } from "./context";
 import { ListEnchantments } from "./enchantments";
-import { EnchantmentProvider } from "./enchantments/context";
 import { EquipmentsEnchantments } from "./equipments";
 import { BuildEnchantmentRoot, buildEnchantmentClasses } from "./styles";
 import { ListSublimations } from "./sublimations";

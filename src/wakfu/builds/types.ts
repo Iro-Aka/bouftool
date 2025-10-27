@@ -7,6 +7,7 @@ import type { WakfuItem } from "../items";
 import type { EnumWakfuEquipmentPosition } from "../itemTypes/types";
 import type { TElementalPreferences, TWakfuStats } from "../stats/types";
 import type { WakfuSublimation } from "../sublimation";
+import type { TWakfuI18n } from "../utils/types";
 import type { EnumWakfuStatsBonuses } from "./bonus";
 
 export type TWakfuBuildEnchantmentSlot = {
@@ -79,7 +80,7 @@ export type TWakfuBuildDisplay = {
     keyof TWakfuBuildEnchantments,
     {
       enchantments: ({ id: number; level: number; color: EnumWakfuEnchantmentColor } | null)[];
-      sublimation: null | { id: number };
+      sublimation: null | { id: number; name: TWakfuI18n; gfxId: number; colorPattern: EnumWakfuEnchantmentColor[] };
     }
   >;
 };

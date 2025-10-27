@@ -38,6 +38,7 @@ export enum ElectronEvents {
   BuildRemoveAbilityLevel = "build:remove-ability-level",
   BuildSetBonuses = "build:set-bonuses",
   BuildAssignEnchantment = "build:assign-enchantment",
+  BuildAssignSublimation = "build:assign-sublimation",
   BuildSerialize = "build:serialize",
   BuildDeserialize = "build:deserialize",
   BuildOptimize = "build:optimize",
@@ -85,6 +86,11 @@ export type ElectronEventsMain = {
     slotPosition: number;
     enchantmentId: number | null;
     enchantmentLevel: number;
+  };
+  [ElectronEvents.BuildAssignSublimation]: {
+    buildId: string;
+    equipmentPosition: (typeof EnchantableEquipmentPositions)[number];
+    sublimationId: number | null;
   };
   [ElectronEvents.BuildSerialize]: { buildId: string };
   [ElectronEvents.BuildDeserialize]: { characterId: string; serializedBuild: string };
@@ -150,6 +156,7 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildSetInfo]: undefined;
   [ElectronEvents.BuildSetBonuses]: undefined;
   [ElectronEvents.BuildAssignEnchantment]: undefined;
+  [ElectronEvents.BuildAssignSublimation]: undefined;
   [ElectronEvents.BuildSerialize]: { serializedBuild: string };
   [ElectronEvents.BuildDeserialize]: { buildId: string };
   [ElectronEvents.BuildOptimize]: undefined;

@@ -1,11 +1,11 @@
 import { ButtonBase, Typography } from "@mui/material";
 import { useCursorManager } from "src/front/components/CursorManager";
 import { StackRow } from "src/front/components/Layout/StackRow";
-import { EnchantmentIcon } from "src/front/components/Wakfu/EnchantmentIcon";
+import { EnchantmentIcon, getEnchantmentIconSrc } from "src/front/components/Wakfu/EnchantmentIcon";
 import { ItemTypeIcon } from "src/front/components/Wakfu/ItemTypeIcon";
 import { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
+import { useEnchantmentContext } from "../context";
 import type { TWakfuEnchantment } from "../types";
-import { useEnchantmentContext } from "./context";
 import { listEnchantmentsClasses } from "./styles";
 
 export type TListEnchantmentsRowProps = {
@@ -14,10 +14,15 @@ export type TListEnchantmentsRowProps = {
 };
 
 export const ListEnchantmentsRow = ({ enchantment, level }: TListEnchantmentsRowProps) => {
-  const { selectedEnchantment, setSelectedEnchantment } = useEnchantmentContext();
+  const { selectedEnchantment, setSelectedEnchantment, setSelectedSublimation } = useEnchantmentContext();
+  const bgOpacity = selectedEnchantment?.id === enchantment.id ? 0.3 : 0.1;
   const setCursor = useCursorManager();
 
-  const bgOpacity = selectedEnchantment?.id === enchantment.id ? 0.3 : 0.1;
+  const handleClick = () => {
+    setSelectedSublimation(null);
+    setSelectedEnchantment({ ...enchantment, level });
+    setCursor(getEnchantmentIconSrc(enchantment.color, true));
+  };
 
   return (
     <ButtonBase
@@ -30,16 +35,7 @@ export const ListEnchantmentsRow = ({ enchantment, level }: TListEnchantmentsRow
               ? `rgba(0, 150, 255, ${bgOpacity})`
               : `rgba(0, 255, 0, ${bgOpacity})`,
       }}
-      onClick={() => {
-        setSelectedEnchantment({ ...enchantment, level });
-        setCursor(
-          enchantment.color === EnumWakfuEnchantmentColor.Red
-            ? "EnchantmentRedFull"
-            : enchantment.color === EnumWakfuEnchantmentColor.Blue
-              ? "EnchantmentBlueFull"
-              : "EnchantmentGreenFull",
-        );
-      }}
+      onClick={handleClick}
       data-global-click="enchantmentItem"
     >
       <StackRow>

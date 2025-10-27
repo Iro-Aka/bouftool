@@ -1,11 +1,13 @@
 import { createContext, type Dispatch, type ReactNode, type SetStateAction, useContext, useState } from "react";
 import { useCursorManager } from "src/front/components/CursorManager";
 import { useGlobalClickListener } from "src/front/hooks/useGlobalClickListener";
-import type { TWakfuEnchantment } from "../types";
+import type { TWakfuEnchantment, TWakfuSublimation } from "./types";
 
 export type TEnchantmentContext = {
   selectedEnchantment: (TWakfuEnchantment & { level: number }) | null;
   setSelectedEnchantment: Dispatch<SetStateAction<TEnchantmentContext["selectedEnchantment"]>>;
+  selectedSublimation: TWakfuSublimation | null;
+  setSelectedSublimation: Dispatch<SetStateAction<TEnchantmentContext["selectedSublimation"]>>;
 };
 
 const Context = createContext<TEnchantmentContext | undefined>(undefined);
@@ -25,9 +27,10 @@ export type TEnchantmentProviderProps = {
 export const EnchantmentProvider = ({ children }: TEnchantmentProviderProps) => {
   const setCursor = useCursorManager();
   const [selectedEnchantment, setSelectedEnchantment] = useState<TEnchantmentContext["selectedEnchantment"]>(null);
+  const [selectedSublimation, setSelectedSublimation] = useState<TEnchantmentContext["selectedSublimation"]>(null);
 
   useGlobalClickListener({
-    excludeTags: ["enchantmentSlot", "enchantmentItem"],
+    excludeTags: ["enchantmentSlot", "enchantmentItem", "sublimationItem"],
     onClickAway: (evt) => {
       if (selectedEnchantment) {
         evt.preventDefault();
@@ -38,5 +41,23 @@ export const EnchantmentProvider = ({ children }: TEnchantmentProviderProps) => 
     },
   });
 
-  return <Context.Provider value={{ selectedEnchantment, setSelectedEnchantment }}>{children}</Context.Provider>;
+  useGlobalClickListener({
+    excludeTags: ["enchantmentItem", "sublimationSlot", "sublimationItem"],
+    onClickAway: (evt) => {
+      if (selectedSublimation) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        setSelectedSublimation(null);
+        setCursor(null);
+      }
+    },
+  });
+
+  return (
+    <Context.Provider
+      value={{ selectedEnchantment, setSelectedEnchantment, selectedSublimation, setSelectedSublimation }}
+    >
+      {children}
+    </Context.Provider>
+  );
 };

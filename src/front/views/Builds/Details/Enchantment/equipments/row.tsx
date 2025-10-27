@@ -1,14 +1,16 @@
 import { Typography } from "@mui/material";
 import { clsx } from "clsx";
+import { ElectronEvents } from "src/electron/types";
 import { StackRow } from "src/front/components/Layout/StackRow";
 import { EnchantmentIcon } from "src/front/components/Wakfu/EnchantmentIcon";
 import { ItemIcon } from "src/front/components/Wakfu/ItemIcon";
 import { ItemTypeIcon } from "src/front/components/Wakfu/ItemTypeIcon";
+import { sendElectronEvent } from "src/front/hooks/electron";
 import type { EnchantableEquipmentPositions } from "src/wakfu/enchantment/constants";
 import { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
 import { useBuildDetailsContext } from "../../context";
 import { BaseSublimationIconGfxId } from "../constants";
-import { useEnchantmentContext } from "../enchantments/context";
+import { useEnchantmentContext } from "../context";
 import type { TWakfuEnchantment } from "../types";
 import { EnchantmentSlot } from "./slot";
 import { equipmentsEnchantmentsClasses } from "./styles";
@@ -36,8 +38,8 @@ export type TBuildEnchantmentEquipmentsRowProps = {
 };
 
 export const EquipmentsEnchantmentsRow = ({ enchantments, position }: TBuildEnchantmentEquipmentsRowProps) => {
-  const { id, enchantments: buildEnchantments } = useBuildDetailsContext();
-  const { selectedEnchantment } = useEnchantmentContext();
+  const { id: buildId, enchantments: buildEnchantments } = useBuildDetailsContext();
+  const { selectedEnchantment, selectedSublimation } = useEnchantmentContext();
 
   const isHighlighted = (color: EnumWakfuEnchantmentColor) => {
     return selectedEnchantment?.color === color && selectedEnchantment.doubleBonusPositions.includes(position);
@@ -51,65 +53,48 @@ export const EquipmentsEnchantmentsRow = ({ enchantments, position }: TBuildEnch
         [equipmentsEnchantmentsClasses.rowGreenSelected]: isHighlighted(EnumWakfuEnchantmentColor.Green),
       })}
     >
-      <StackRow sx={{ bgcolor: "surface.150" }}>
+      <div className={equipmentsEnchantmentsClasses.rowEnchantments}>
         <ItemTypeIcon height={26}>{position}</ItemTypeIcon>
-        <EnchantmentSlot
-          buildId={id}
-          position={position}
-          slot={0}
-          effect={getCurrentEnchantmentEffect(
-            selectedEnchantment,
-            buildEnchantments[position].enchantments[0],
-            enchantments,
-          )}
-          enchantment={buildEnchantments[position].enchantments[0] ?? null}
-        />
-        <EnchantmentSlot
-          buildId={id}
-          position={position}
-          slot={1}
-          effect={getCurrentEnchantmentEffect(
-            selectedEnchantment,
-            buildEnchantments[position].enchantments[1],
-            enchantments,
-          )}
-          enchantment={buildEnchantments[position].enchantments[1] ?? null}
-        />
-        <EnchantmentSlot
-          buildId={id}
-          position={position}
-          slot={2}
-          effect={getCurrentEnchantmentEffect(
-            selectedEnchantment,
-            buildEnchantments[position].enchantments[2],
-            enchantments,
-          )}
-          enchantment={buildEnchantments[position].enchantments[2] ?? null}
-        />
-        <EnchantmentSlot
-          buildId={id}
-          position={position}
-          slot={3}
-          effect={getCurrentEnchantmentEffect(
-            selectedEnchantment,
-            buildEnchantments[position].enchantments[3],
-            enchantments,
-          )}
-          enchantment={buildEnchantments[position].enchantments[3] ?? null}
-        />
-      </StackRow>
-      <StackRow className={equipmentsEnchantmentsClasses.rowSubmlimation}>
-        <ItemIcon height={24} sx={{ filter: "grayscale(1) brightness(0.5)" }}>
-          {BaseSublimationIconGfxId}
+        {buildEnchantments[position].enchantments.map((e, index) => (
+          <EnchantmentSlot
+            // biome-ignore lint/suspicious/noArrayIndexKey: No better key available
+            key={index}
+            buildId={buildId}
+            position={position}
+            slot={index}
+            effect={getCurrentEnchantmentEffect(selectedEnchantment, e, enchantments)}
+            enchantment={e}
+          />
+        ))}
+      </div>
+      <StackRow
+        className={equipmentsEnchantmentsClasses.rowSublimation}
+        onClick={() => {
+          sendElectronEvent(ElectronEvents.BuildAssignSublimation, {
+            buildId,
+            equipmentPosition: position,
+            sublimationId: selectedSublimation?.id ?? null,
+          });
+        }}
+        data-global-click="sublimationSlot"
+      >
+        <ItemIcon
+          height={24}
+          className={clsx({
+            [equipmentsEnchantmentsClasses.sublimationIconDisabled]: !buildEnchantments[position].sublimation,
+          })}
+        >
+          {buildEnchantments[position].sublimation?.gfxId ?? BaseSublimationIconGfxId}
         </ItemIcon>
         <Typography variant="body2" noWrap>
-          Expert des Coups critiques III
+          {buildEnchantments[position].sublimation?.name.fr}
         </Typography>
       </StackRow>
       <StackRow sx={{ bgcolor: "surface.200" }}>
-        <EnchantmentIcon height={26} color={EnumWakfuEnchantmentColor.Red} isFull />
-        <EnchantmentIcon height={26} color={EnumWakfuEnchantmentColor.Red} isFull />
-        <EnchantmentIcon height={26} color={EnumWakfuEnchantmentColor.Red} isFull />
+        {buildEnchantments[position].sublimation?.colorPattern.map((color, index) => (
+          // biome-ignore lint/suspicious/noArrayIndexKey: No better key available
+          <EnchantmentIcon key={index} height={26} color={color} isFull />
+        ))}
       </StackRow>
     </div>
   );

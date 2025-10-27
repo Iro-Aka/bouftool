@@ -411,6 +411,19 @@ export class WakfuBuild {
     this.save();
   }
 
+  public assignSublimation(position: (typeof EnchantableEquipmentPositions)[number], sublimationId: number | null) {
+    if (!sublimationId) {
+      this.enchantments[position].sublimation = null;
+    } else {
+      const sublimation = WakfuStore.getInstance().getSublimationById(sublimationId);
+      if (!sublimation) {
+        throw new Error(`Sublimation with ID ${sublimationId} not found`);
+      }
+      this.enchantments[position].sublimation = sublimation;
+    }
+    this.save();
+  }
+
   public toDisplay(): TWakfuBuildDisplay {
     return {
       id: this.id,
@@ -436,7 +449,14 @@ export class WakfuBuild {
             enchantments: enchantmentData.enchantments.map((e) =>
               e ? { id: e.enchantment.getId(), level: e.level, color: e.enchantment.getColor() } : null,
             ),
-            sublimation: enchantmentData.sublimation ? { id: enchantmentData.sublimation.getId() } : null,
+            sublimation: enchantmentData.sublimation
+              ? {
+                  id: enchantmentData.sublimation.getId(),
+                  name: enchantmentData.sublimation.getName(),
+                  gfxId: enchantmentData.sublimation.getGfxId(),
+                  colorPattern: enchantmentData.sublimation.getColorPattern(),
+                }
+              : null,
           };
           return acc;
         },

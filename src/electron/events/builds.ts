@@ -206,6 +206,16 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     },
   );
 
+  manager.register(ElectronEvents.BuildAssignSublimation, (reply, { buildId, sublimationId, equipmentPosition }) => {
+    const build = WakfuBuild.getById(buildId);
+    if (!build) {
+      throw new Error(`Build with ID ${buildId} not found`);
+    }
+    build.assignSublimation(equipmentPosition, sublimationId);
+    ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
+    reply(undefined);
+  });
+
   manager.register(ElectronEvents.BuildSerialize, (reply, { buildId }) => {
     const build = WakfuBuild.getById(buildId);
     if (!build) {

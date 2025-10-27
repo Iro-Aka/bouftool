@@ -6,6 +6,7 @@ export const listSublimationsClasses = {
   root: `${Prefix}-root`,
   scroll: `${Prefix}-scroll`,
   row: `${Prefix}-row`,
+  rowSelected: `${Prefix}-rowSelected`,
 };
 
 export const ListSublimationsRoot = styled("div")(({ theme }) => ({
@@ -20,11 +21,13 @@ export const ListSublimationsRoot = styled("div")(({ theme }) => ({
     overflow: "hidden",
   },
   [`& .${listSublimationsClasses.row}`]: {
+    position: "relative",
+    width: "100%",
     flex: 1,
     display: "flex",
     flexDirection: "row",
     alignItems: "stretch",
-    justifyContent: "space-between",
+    justifyContent: "start",
     backgroundColor: theme.palette.surface[150],
     borderRadius: "8px",
     overflow: "hidden",
@@ -34,6 +37,18 @@ export const ListSublimationsRoot = styled("div")(({ theme }) => ({
     },
     "& > div:last-of-type": {
       borderLeft: `1px solid ${theme.palette.border.light}`,
+    },
+    "&:hover:before": {
+      content: '""',
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: theme.palette.action.hover,
+    },
+    [`&.${listSublimationsClasses.rowSelected}`]: {
+      boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
     },
   },
 }));
