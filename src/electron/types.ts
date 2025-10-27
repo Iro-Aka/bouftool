@@ -38,6 +38,8 @@ export enum ElectronEvents {
   BuildRemoveAbilityLevel = "build:remove-ability-level",
   BuildSetBonuses = "build:set-bonuses",
   BuildAssignEnchantment = "build:assign-enchantment",
+  BuildSerialize = "build:serialize",
+  BuildDeserialize = "build:deserialize",
   BuildOptimize = "build:optimize",
   BuildOptimizeProgress = "build:optimize-progress",
   BuildOptimizeResult = "build:optimize-result",
@@ -84,6 +86,8 @@ export type ElectronEventsMain = {
     enchantmentId: number | null;
     enchantmentLevel: number;
   };
+  [ElectronEvents.BuildSerialize]: { buildId: string };
+  [ElectronEvents.BuildDeserialize]: { characterId: string; serializedBuild: string };
   [ElectronEvents.BuildOptimize]: { buildId: string; config: OptimizationConfig };
   [ElectronEvents.BuildOptimizeProgress]: undefined;
   [ElectronEvents.BuildOptimizeResult]: undefined;
@@ -146,6 +150,8 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildSetInfo]: undefined;
   [ElectronEvents.BuildSetBonuses]: undefined;
   [ElectronEvents.BuildAssignEnchantment]: undefined;
+  [ElectronEvents.BuildSerialize]: { serializedBuild: string };
+  [ElectronEvents.BuildDeserialize]: { buildId: string };
   [ElectronEvents.BuildOptimize]: undefined;
   [ElectronEvents.BuildOptimizeProgress]: {
     currentIteration: number;

@@ -145,63 +145,59 @@ export class WakfuBuild {
     WakfuBuild.BuildsMap.set(id, this);
   }
 
-  private save(skipTimeout: boolean = false) {
-    return this.fileHandler.write(
-      {
-        id: this.id,
-        name: this.name,
-        level: this.level,
-        abilities: this.abilities.getAbilities(),
-        stuff: Object.values(EnumWakfuEquipmentPosition).reduce<TWakfuBuildRaw["stuff"]>(
-          (acc, position) => {
-            const equipment = this.stuff[position];
-            acc[position] = {
-              preferences: equipment.preferences,
-              item: equipment.item?.getId() ?? null,
-              disabled: equipment.disabled,
-            };
-            return acc;
-          },
-          {} as TWakfuBuildRaw["stuff"],
-        ),
-        elementalPreferences: this.elementalPreferences,
-        bonuses: this.bonuses,
-        enchantments: Object.entries(this.enchantments).reduce<TWakfuBuildRaw["enchantments"]>(
-          (acc, [position, enchantmentData]) => {
-            acc[position as keyof TWakfuBuildRaw["enchantments"]] = {
-              enchantments: enchantmentData.enchantments.map((e) =>
-                e ? { id: e.enchantment.getId(), level: e.level } : null,
-              ),
-              sublimation: enchantmentData.sublimation ? enchantmentData.sublimation.getId() : null,
-            };
-            return acc;
-          },
-          {} as TWakfuBuildRaw["enchantments"],
-        ),
-      } satisfies TWakfuBuildRaw,
-      skipTimeout,
-    );
+  private toRaw(): TWakfuBuildRaw {
+    return {
+      id: this.id,
+      name: this.name,
+      level: this.level,
+      abilities: this.abilities.getAbilities(),
+      stuff: Object.values(EnumWakfuEquipmentPosition).reduce<TWakfuBuildRaw["stuff"]>(
+        (acc, position) => {
+          const equipment = this.stuff[position];
+          acc[position] = {
+            preferences: equipment.preferences,
+            item: equipment.item?.getId() ?? null,
+            disabled: equipment.disabled,
+          };
+          return acc;
+        },
+        {} as TWakfuBuildRaw["stuff"],
+      ),
+      elementalPreferences: this.elementalPreferences,
+      bonuses: this.bonuses,
+      enchantments: Object.entries(this.enchantments).reduce<TWakfuBuildRaw["enchantments"]>(
+        (acc, [position, enchantmentData]) => {
+          acc[position as keyof TWakfuBuildRaw["enchantments"]] = {
+            enchantments: enchantmentData.enchantments.map((e) =>
+              e ? { id: e.enchantment.getId(), level: e.level } : null,
+            ),
+            sublimation: enchantmentData.sublimation ? enchantmentData.sublimation.getId() : null,
+          };
+          return acc;
+        },
+        {} as TWakfuBuildRaw["enchantments"],
+      ),
+    } satisfies TWakfuBuildRaw;
   }
 
-  private async load() {
+  private fromRaw(buildData: TWakfuBuildRaw, skipId: boolean = false) {
     const store = WakfuStore.getInstance();
-    const result = await this.fileHandler.read();
-    this.id = result.id;
-    this.name = result.name;
-    this.level = result.level;
-    this.abilities = new WakfuAbilities(result.level, result.abilities);
+    this.id = skipId ? randomUUID() : buildData.id;
+    this.name = buildData.name;
+    this.level = buildData.level;
+    this.abilities = new WakfuAbilities(buildData.level, buildData.abilities);
     this.stuff = Object.values(EnumWakfuEquipmentPosition).reduce((acc, position) => {
       acc[position] = {
-        preferences: result.stuff[position].preferences,
-        item: result.stuff[position].item ? store.getItemById(result.stuff[position].item) : null,
-        disabled: result.stuff[position].disabled,
+        preferences: buildData.stuff[position].preferences,
+        item: buildData.stuff[position].item ? store.getItemById(buildData.stuff[position].item) : null,
+        disabled: buildData.stuff[position].disabled,
       };
       return acc;
     }, {} as TWakfuBuildStuff);
-    this.elementalPreferences = result.elementalPreferences;
-    this.bonuses = result.bonuses;
-    if (result.enchantments) {
-      this.enchantments = Object.entries(result.enchantments).reduce((acc, [position, enchantmentData]) => {
+    this.elementalPreferences = buildData.elementalPreferences;
+    this.bonuses = buildData.bonuses;
+    if (buildData.enchantments) {
+      this.enchantments = Object.entries(buildData.enchantments).reduce((acc, [position, enchantmentData]) => {
         acc[position as keyof TWakfuBuildEnchantments] = {
           enchantments: [
             enchantmentData.enchantments[0] || null,
@@ -220,6 +216,15 @@ export class WakfuBuild {
         return acc;
       }, {} as TWakfuBuildEnchantments);
     }
+  }
+
+  private save(skipTimeout: boolean = false) {
+    return this.fileHandler.write(this.toRaw(), skipTimeout);
+  }
+
+  private async load() {
+    const result = await this.fileHandler.read();
+    this.fromRaw(result);
   }
 
   public delete() {
@@ -453,5 +458,20 @@ export class WakfuBuild {
         return acc;
       }, {} as TWakfuBuildStuffDisplay),
     };
+  }
+
+  public serializeToBase64(): string {
+    const buildData = this.toRaw();
+    const jsonString = JSON.stringify(buildData);
+    return Buffer.from(jsonString, "utf-8").toString("base64");
+  }
+
+  public static async deserializeFromBase64(character: WakfuCharacter, base64String: string): Promise<WakfuBuild> {
+    const jsonString = Buffer.from(base64String, "base64").toString("utf-8");
+    const buildData: TWakfuBuildRaw = JSON.parse(jsonString);
+    const build = new WakfuBuild(character, buildData.id, buildData.name, buildData.level);
+    build.fromRaw(buildData, true);
+    await build.save(true);
+    return build;
   }
 }

@@ -206,6 +206,25 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     },
   );
 
+  manager.register(ElectronEvents.BuildSerialize, (reply, { buildId }) => {
+    const build = WakfuBuild.getById(buildId);
+    if (!build) {
+      throw new Error(`Build with ID ${buildId} not found`);
+    }
+
+    const serializedBuild = build.serializeToBase64();
+    reply({ serializedBuild });
+  });
+
+  manager.register(ElectronEvents.BuildDeserialize, async (reply, { characterId, serializedBuild }) => {
+    const character = WakfuCharacter.getById(characterId);
+    if (!character) {
+      throw new Error(`Character with ID ${characterId} not found`);
+    }
+    const build = await WakfuBuild.deserializeFromBase64(character, serializedBuild);
+    reply({ buildId: build.getId() });
+  });
+
   manager.register(ElectronEvents.BuildOptimize, (reply, { buildId, config }) => {
     const build = WakfuBuild.getById(buildId);
     if (!build) {

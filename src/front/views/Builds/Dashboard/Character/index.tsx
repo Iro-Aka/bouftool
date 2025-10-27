@@ -20,6 +20,7 @@ export const Character = ({ character }: TCharacterProps) => {
   const { setCurrentView } = useNavigationContext();
   const openModalEditCharacter = useModalEditCharacterContext();
   const [createBuild, _, loading] = useElectronEvent(ElectronEvents.BuildCreate);
+  const [deserializeBuild] = useElectronEvent(ElectronEvents.BuildDeserialize);
 
   const handleClickCreateBuild = async () => {
     const build = await createBuild({ characterId: character.id });
@@ -35,6 +36,12 @@ export const Character = ({ character }: TCharacterProps) => {
       title: "Modifier le personnage",
       submitLabel: "Modifier",
     });
+  };
+
+  const handleClickPasteBuild = async () => {
+    const clipboardText = await navigator.clipboard.readText();
+    const result = await deserializeBuild({ characterId: character.id, serializedBuild: clipboardText });
+    setCurrentView(NavigationView.BuildDetails, { buildId: result.buildId });
   };
 
   return (
@@ -53,6 +60,9 @@ export const Character = ({ character }: TCharacterProps) => {
             loading={loading}
           >
             Nouveau Build
+          </Button>
+          <Button variant="push" onClick={handleClickPasteBuild}>
+            Importer
           </Button>
           <Button variant="push" onClick={handleClickEditCharacter}>
             <EditIcon />
