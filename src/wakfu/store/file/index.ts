@@ -5,7 +5,7 @@ import { isArray } from "src/types/utils";
 import { WakfuGamedataSchemas } from "../resolvers";
 import type { EnumWakfuGamedataType, TPickWakfuGamedata, TWakfuGamedataTypes } from "../types";
 
-export class WakfuFile<GamedataTypes extends EnumWakfuGamedataType[]> {
+export class WakfuFile<GamedataTypes extends readonly EnumWakfuGamedataType[]> {
   private static readonly FolderPath = "gamedata";
   private validators: Map<GamedataTypes[number], ValidateFunction>;
 

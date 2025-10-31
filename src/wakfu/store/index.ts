@@ -305,18 +305,44 @@ export class WakfuStore {
     this.loadRecipes(gamedata.recipes, gamedata.recipeIngredients, gamedata.recipeResults);
   }
 
+  private async loadFromApi(fileLoader: WakfuFile<typeof WakfuStore.GamedataToLoad>) {
+    const apiLoader = new WakfuAPI(...WakfuStore.GamedataToLoad);
+    const { version, gamedata } = await apiLoader.getGamedata();
+    this.loadStore(version, gamedata);
+    await fileLoader.saveGamedata(version, gamedata);
+  }
+
+  private compareVersion(versionA: string, versionB: string): boolean {
+    const versionAArray = versionA.split(".");
+    const versionBArray = versionB.split(".");
+
+    for (let i = 0; i < versionAArray.length; ++i) {
+      const versionANumber = Number.parseInt(versionAArray[i], 10);
+      const versionBNumber = Number.parseInt(versionBArray[i], 10);
+
+      if (versionANumber < versionBNumber) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   private async load() {
     const fileLoader = new WakfuFile(...WakfuStore.GamedataToLoad);
     try {
       const { version, gamedata } = await fileLoader.getGamedata();
-      this.loadStore(version, gamedata);
+      const apiVersion = await WakfuAPI.fetchVersion();
+      if (this.compareVersion(version, apiVersion)) {
+        console.info("New version, Load from API");
+        await this.loadFromApi(fileLoader);
+      } else {
+        this.loadStore(version, gamedata);
+      }
     } catch {
       console.warn("Failed to load from file, falling back to API...");
       try {
-        const apiLoader = new WakfuAPI(...WakfuStore.GamedataToLoad);
-        const { version, gamedata } = await apiLoader.getGamedata();
-        this.loadStore(version, gamedata);
-        await fileLoader.saveGamedata(version, gamedata);
+        await this.loadFromApi(fileLoader);
       } catch (error) {
         console.error("Failed to load from API:", error);
       }

@@ -1,8 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { useMemo, useState } from "react";
-import { FixedSizeList } from "react-window";
+import { type ReactElement, useMemo, useState } from "react";
+import { List, type RowComponentProps } from "react-window";
 import { BoufField } from "src/front/components/Input/BoufField";
-import { useResizeObserver } from "src/front/hooks/useResizeObserver";
 import { searchCompare } from "src/utils/search";
 import type { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
 import type { TWakfuI18n } from "src/wakfu/utils/types";
@@ -24,9 +23,25 @@ export type TListSublimationsProps = {
   }[];
 };
 
+const RowComponent = ({
+  index,
+  options,
+  style,
+}: RowComponentProps<{
+  options: TListSublimationsProps["sublimations"];
+}>): ReactElement => {
+  const item = options[index];
+  if (!item) {
+    return <div>Unknown</div>;
+  }
+  return (
+    <Box key={item.id} style={style} sx={{ px: 1, py: 0.5 }}>
+      <ListSublimationsRow sublimation={item} />
+    </Box>
+  );
+};
+
 export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
-  const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
-  const size = useResizeObserver(scrollContainer);
   const [filters, setFilters] = useState({
     text: "",
     rarityEpic: false,
@@ -55,26 +70,14 @@ export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
         value={filters.text}
         onChange={(evt) => setFilters((prev) => ({ ...prev, text: evt.target.value }))}
       />
-      <Stack sx={{ flex: 1, mx: -1, my: -0.5, overflow: "hidden" }} ref={setScrollContainer}>
-        <FixedSizeList
-          height={size.height}
-          width={size.width}
-          itemCount={options.length}
-          itemSize={50}
+      <Stack sx={{ flex: 1, mx: -1, my: -0.5, overflow: "hidden" }}>
+        <List
+          rowHeight={50}
+          rowCount={options.length}
           overscanCount={5}
-        >
-          {({ index, style }) => {
-            const item = options[index];
-            if (!item) {
-              return null;
-            }
-            return (
-              <Box key={item.id} style={style} sx={{ px: 1, py: 0.5 }}>
-                <ListSublimationsRow sublimation={item} />
-              </Box>
-            );
-          }}
-        </FixedSizeList>
+          rowProps={{ options }}
+          rowComponent={RowComponent}
+        />
       </Stack>
     </ListSublimationsRoot>
   );

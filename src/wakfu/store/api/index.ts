@@ -16,7 +16,7 @@ export class WakfuAPI<GamedataTypes extends EnumWakfuGamedataType[]> {
     }
   }
 
-  private async fetchData(url: string) {
+  private static async fetchData(url: string) {
     try {
       const response = await fetch(url);
       return response.json();
@@ -25,8 +25,8 @@ export class WakfuAPI<GamedataTypes extends EnumWakfuGamedataType[]> {
     }
   }
 
-  private async fetchVersion(): Promise<string> {
-    const data = await this.fetchData(WakfuAPI.VersionUrl);
+  public static async fetchVersion(): Promise<string> {
+    const data = await WakfuAPI.fetchData(WakfuAPI.VersionUrl);
     if (data && typeof data === "object" && "version" in data && typeof data.version === "string") {
       return data.version;
     } else {
@@ -39,7 +39,7 @@ export class WakfuAPI<GamedataTypes extends EnumWakfuGamedataType[]> {
     version: string,
   ): Promise<TWakfuGamedataTypes[Type][]> {
     const url = WakfuAPI.GamedataUrl.replace("{version}", version).replace("{type}", type);
-    const data = await this.fetchData(url);
+    const data = await WakfuAPI.fetchData(url);
     const validator = this.validators.get(type);
     if (!validator) {
       throw new Error(`No validator found for type ${type}`);
@@ -64,7 +64,7 @@ export class WakfuAPI<GamedataTypes extends EnumWakfuGamedataType[]> {
     version: string;
     gamedata: TPickWakfuGamedata<GamedataTypes>;
   }> {
-    const version = await this.fetchVersion();
+    const version = await WakfuAPI.fetchVersion();
     const gamedata = {} as TPickWakfuGamedata<GamedataTypes>;
     for (const gdType of this.validators.keys()) {
       gamedata[gdType] = await this.fetchGamedataByType(gdType, version);
