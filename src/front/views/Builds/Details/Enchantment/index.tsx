@@ -21,7 +21,10 @@ export const BuildEnchantment = () => {
   return (
     <EnchantmentProvider>
       <BuildEnchantmentRoot className={buildEnchantmentClasses.root}>
-        <EquipmentsEnchantments enchantments={enchantment.enchantments} />
+        <EquipmentsEnchantments
+          enchantments={enchantment.enchantments}
+          shardLevelRequirement={enchantment.shardLevelRequirement}
+        />
         <ListEnchantments
           shardLevelRequirement={enchantment.shardLevelRequirement}
           enchantments={enchantment.enchantments}

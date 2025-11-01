@@ -195,12 +195,12 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
 
   manager.register(
     ElectronEvents.BuildAssignEnchantment,
-    (reply, { buildId, enchantmentId, enchantmentLevel, equipmentPosition, slotPosition }) => {
+    (reply, { buildId, enchantmentId, enchantmentLevel, equipmentPosition, slotPosition, anyColor }) => {
       const build = WakfuBuild.getById(buildId);
       if (!build) {
         throw new Error(`Build with ID ${buildId} not found`);
       }
-      build.assignEnchantment(equipmentPosition, slotPosition, enchantmentId, enchantmentLevel);
+      build.assignEnchantment(equipmentPosition, slotPosition, enchantmentId, enchantmentLevel, anyColor);
       ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
       reply(undefined);
     },
@@ -212,6 +212,26 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
       throw new Error(`Build with ID ${buildId} not found`);
     }
     build.assignSublimation(equipmentPosition, sublimationId);
+    ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
+    reply(undefined);
+  });
+
+  manager.register(ElectronEvents.BuildAssignUniqueSublimation, (reply, { buildId, sublimationId }) => {
+    const build = WakfuBuild.getById(buildId);
+    if (!build) {
+      throw new Error(`Build with ID ${buildId} not found`);
+    }
+    build.assignUniqueSublimation(sublimationId);
+    ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
+    reply(undefined);
+  });
+
+  manager.register(ElectronEvents.BuildUnassignUniqueSublimation, (reply, { buildId, rarity }) => {
+    const build = WakfuBuild.getById(buildId);
+    if (!build) {
+      throw new Error(`Build with ID ${buildId} not found`);
+    }
+    build.unassignUniqueSublimation(rarity);
     ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
     reply(undefined);
   });

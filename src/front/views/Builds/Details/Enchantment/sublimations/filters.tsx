@@ -29,6 +29,7 @@ export const ListSublimationsFilters = ({ filters, setFilters }: TListSublimatio
           "Mui-selected": !filters.rarityEpic && !filters.rarityRelic,
         })}
         onClick={() => setFilters((prev) => ({ ...prev, rarityEpic: false, rarityRelic: false }))}
+        data-global-click="sublimationItem"
       >
         <ItemIcon width={26}>{BaseSublimationIconGfxId}</ItemIcon>
       </Button>
@@ -38,6 +39,7 @@ export const ListSublimationsFilters = ({ filters, setFilters }: TListSublimatio
           "Mui-selected": filters.rarityEpic,
         })}
         onClick={() => setFilters((prev) => ({ ...prev, rarityEpic: true, rarityRelic: false }))}
+        data-global-click="sublimationItem"
       >
         <ItemIcon width={26}>{EpicSublimationIconGfxId}</ItemIcon>
       </Button>
@@ -47,6 +49,7 @@ export const ListSublimationsFilters = ({ filters, setFilters }: TListSublimatio
           "Mui-selected": filters.rarityRelic,
         })}
         onClick={() => setFilters((prev) => ({ ...prev, rarityEpic: false, rarityRelic: true }))}
+        data-global-click="sublimationItem"
       >
         <ItemIcon width={26}>{RelicSublimationIconGfxId}</ItemIcon>
       </Button>

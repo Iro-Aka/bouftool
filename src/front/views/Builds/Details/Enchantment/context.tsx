@@ -3,6 +3,8 @@ import { useCursorManager } from "src/front/components/CursorManager";
 import { useGlobalClickListener } from "src/front/hooks/useGlobalClickListener";
 import type { TWakfuEnchantment, TWakfuSublimation } from "./types";
 
+const CommonExcludeTags = ["enchantmentItem", "sublimationItem"];
+
 export type TEnchantmentContext = {
   selectedEnchantment: (TWakfuEnchantment & { level: number }) | null;
   setSelectedEnchantment: Dispatch<SetStateAction<TEnchantmentContext["selectedEnchantment"]>>;
@@ -30,7 +32,7 @@ export const EnchantmentProvider = ({ children }: TEnchantmentProviderProps) => 
   const [selectedSublimation, setSelectedSublimation] = useState<TEnchantmentContext["selectedSublimation"]>(null);
 
   useGlobalClickListener({
-    excludeTags: ["enchantmentSlot", "enchantmentItem", "sublimationItem"],
+    excludeTags: [...CommonExcludeTags, "enchantmentSlot"],
     onClickAway: (evt) => {
       if (selectedEnchantment) {
         evt.preventDefault();
@@ -42,9 +44,33 @@ export const EnchantmentProvider = ({ children }: TEnchantmentProviderProps) => 
   });
 
   useGlobalClickListener({
-    excludeTags: ["enchantmentItem", "sublimationSlot", "sublimationItem"],
+    excludeTags: [...CommonExcludeTags, "sublimationSlot"],
     onClickAway: (evt) => {
-      if (selectedSublimation) {
+      if (selectedSublimation && !selectedSublimation.rarityEpic && !selectedSublimation.rarityRelic) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        setSelectedSublimation(null);
+        setCursor(null);
+      }
+    },
+  });
+
+  useGlobalClickListener({
+    excludeTags: [...CommonExcludeTags, "epicSublimationSlot"],
+    onClickAway: (evt) => {
+      if (selectedSublimation?.rarityEpic) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        setSelectedSublimation(null);
+        setCursor(null);
+      }
+    },
+  });
+
+  useGlobalClickListener({
+    excludeTags: [...CommonExcludeTags, "relicSublimationSlot"],
+    onClickAway: (evt) => {
+      if (selectedSublimation?.rarityRelic) {
         evt.preventDefault();
         evt.stopPropagation();
         setSelectedSublimation(null);

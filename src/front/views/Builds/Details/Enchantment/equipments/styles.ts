@@ -1,4 +1,6 @@
 import { styled } from "@mui/material";
+import { RarityBorders } from "src/front/components/Wakfu/CardItem/constants";
+import { EnumWakfuRarity } from "src/wakfu/items/rarity";
 
 const Prefix = "EquipmentsEnchantments";
 
@@ -14,13 +16,18 @@ export const equipmentsEnchantmentsClasses = {
   rowEnchantmentsBlueSelected: `${Prefix}-rowEnchantmentsBlueSelected`,
   rowEnchantmentsGreenSelected: `${Prefix}-rowEnchantmentsGreenSelected`,
   rowSublimation: `${Prefix}-rowSublimation`,
+  rowSublimationHover: `${Prefix}-rowSublimationHover`,
+  rowSublimationEpic: `${Prefix}-rowSublimationEpic`,
+  rowSublimationEpicHover: `${Prefix}-rowSublimationEpicHover`,
+  rowSublimationRelic: `${Prefix}-rowSublimationRelic`,
+  rowSublimationRelicHover: `${Prefix}-rowSublimationRelicHover`,
   sublimationIconDisabled: `${Prefix}-sublimationIconDisabled`,
   slotHover: `${Prefix}-slotHover`,
 };
 
 export const EquipmentsEnchantmentsRoot = styled("div")(({ theme }) => ({
   [`&.${equipmentsEnchantmentsClasses.root}`]: {
-    flex: 1,
+    flex: "1 1 560px",
     display: "flex",
     flexDirection: "column",
     alignItems: "stretch",
@@ -29,6 +36,7 @@ export const EquipmentsEnchantmentsRoot = styled("div")(({ theme }) => ({
     padding: theme.spacing(1),
     backgroundColor: theme.palette.surface[100],
     borderRadius: "8px",
+    overflow: "hidden",
   },
   [`& .${equipmentsEnchantmentsClasses.scroll}`]: {
     flex: 1,
@@ -92,12 +100,61 @@ export const EquipmentsEnchantmentsRoot = styled("div")(({ theme }) => ({
       },
     },
     [`& .${equipmentsEnchantmentsClasses.rowSublimation}`]: {
-      flex: 1,
       backgroundColor: theme.palette.surface[200],
-      [`& .${equipmentsEnchantmentsClasses.sublimationIconDisabled}`]: {
-        filter: "grayscale(100%) opacity(50%)",
+      flex: 1,
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      [`&.${equipmentsEnchantmentsClasses.rowSublimationHover}`]: {
+        "&:hover": {
+          boxShadow: `0 0 4px rgba(255, 255, 255, 0.8)`,
+          cursor: "pointer",
+        },
       },
     },
+  },
+  [`& .${equipmentsEnchantmentsClasses.rowSublimationEpic}, & .${equipmentsEnchantmentsClasses.rowSublimationRelic}`]: {
+    padding: theme.spacing(1),
+    gap: theme.spacing(1),
+    display: "flex",
+    alignItems: "center",
+    [`&.${equipmentsEnchantmentsClasses.rowSublimationEpicHover}, &.${equipmentsEnchantmentsClasses.rowSublimationRelicHover}`]:
+      {
+        "&:hover": {
+          cursor: "pointer",
+        },
+      },
+  },
+  [`& .${equipmentsEnchantmentsClasses.rowSublimationEpic}`]: {
+    borderImageSource: `url(wakfu/${RarityBorders[EnumWakfuRarity.Epic]}.png)`,
+    borderImageSlice: "26",
+    borderImageWidth: "26px",
+    borderImageOutset: "8px",
+    borderImageRepeat: "round",
+    backgroundColor: "rgba(204, 57, 144, 0.3)",
+    [`&.${equipmentsEnchantmentsClasses.rowSublimationEpicHover}`]: {
+      "&:hover": {
+        backgroundColor: "rgba(204, 57, 144, 0.4)",
+      },
+    },
+  },
+  [`& .${equipmentsEnchantmentsClasses.rowSublimationRelic}`]: {
+    borderImageSource: `url(wakfu/${RarityBorders[EnumWakfuRarity.Relic]}.png)`,
+    borderImageSlice: "26",
+    borderImageWidth: "26px",
+    borderImageOutset: "8px",
+    borderImageRepeat: "round",
+    backgroundColor: "rgba(87, 32, 137, 0.3)",
+    [`&.${equipmentsEnchantmentsClasses.rowSublimationRelicHover}`]: {
+      "&:hover": {
+        backgroundColor: "rgba(87, 32, 137, 0.4)",
+      },
+    },
+  },
+  [`& .${equipmentsEnchantmentsClasses.sublimationIconDisabled}`]: {
+    filter: "grayscale(100%) opacity(50%)",
   },
   [`& .${equipmentsEnchantmentsClasses.slotHover}`]: {
     "&:hover": {

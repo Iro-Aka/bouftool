@@ -64,11 +64,11 @@ export const registerElectronDataEvents = (manager: ElectronEventManager) => {
       sublimations: store.getSublimations(
         null,
         (a, b) => {
-          const diff = a.getEffectId() - b.getEffectId();
+          const diff = a.getName().fr.localeCompare(b.getName().fr);
           if (diff !== 0) {
             return diff;
           }
-          return a.getName().fr.localeCompare(b.getName().fr);
+          return a.getEffectId() - b.getEffectId();
         },
         (sublimation) => ({
           id: sublimation.getId(),

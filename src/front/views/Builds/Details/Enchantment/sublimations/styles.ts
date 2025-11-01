@@ -11,7 +11,7 @@ export const listSublimationsClasses = {
 
 export const ListSublimationsRoot = styled("div")(({ theme }) => ({
   [`&.${listSublimationsClasses.root}`]: {
-    flex: "0 1 432px",
+    flex: "1 1 432px",
     display: "flex",
     flexDirection: "column",
     gap: theme.spacing(1),

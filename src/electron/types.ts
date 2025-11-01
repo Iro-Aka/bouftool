@@ -6,6 +6,7 @@ import type { TCraftItem } from "src/wakfu/craftManager/types";
 import type { EnchantableEquipmentPositions } from "src/wakfu/enchantment/constants";
 import type { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
 import type { WakfuItem } from "src/wakfu/items";
+import type { EnumWakfuRarity } from "src/wakfu/items/rarity";
 import type { EnumWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
 import type { WakfuRecipe } from "src/wakfu/recipes/recipe";
 import type { WakfuStats } from "src/wakfu/stats";
@@ -39,6 +40,8 @@ export enum ElectronEvents {
   BuildSetBonuses = "build:set-bonuses",
   BuildAssignEnchantment = "build:assign-enchantment",
   BuildAssignSublimation = "build:assign-sublimation",
+  BuildAssignUniqueSublimation = "build:assign-unique-sublimation",
+  BuildUnassignUniqueSublimation = "build:unassign-unique-sublimation",
   BuildSerialize = "build:serialize",
   BuildDeserialize = "build:deserialize",
   BuildOptimize = "build:optimize",
@@ -86,11 +89,20 @@ export type ElectronEventsMain = {
     slotPosition: number;
     enchantmentId: number | null;
     enchantmentLevel: number;
+    anyColor?: boolean;
   };
   [ElectronEvents.BuildAssignSublimation]: {
     buildId: string;
     equipmentPosition: (typeof EnchantableEquipmentPositions)[number];
     sublimationId: number | null;
+  };
+  [ElectronEvents.BuildAssignUniqueSublimation]: {
+    buildId: string;
+    sublimationId: number;
+  };
+  [ElectronEvents.BuildUnassignUniqueSublimation]: {
+    buildId: string;
+    rarity: EnumWakfuRarity.Epic | EnumWakfuRarity.Relic;
   };
   [ElectronEvents.BuildSerialize]: { buildId: string };
   [ElectronEvents.BuildDeserialize]: { characterId: string; serializedBuild: string };
@@ -157,6 +169,8 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildSetBonuses]: undefined;
   [ElectronEvents.BuildAssignEnchantment]: undefined;
   [ElectronEvents.BuildAssignSublimation]: undefined;
+  [ElectronEvents.BuildAssignUniqueSublimation]: undefined;
+  [ElectronEvents.BuildUnassignUniqueSublimation]: undefined;
   [ElectronEvents.BuildSerialize]: { serializedBuild: string };
   [ElectronEvents.BuildDeserialize]: { buildId: string };
   [ElectronEvents.BuildOptimize]: undefined;

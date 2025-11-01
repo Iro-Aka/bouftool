@@ -1,6 +1,6 @@
 import { Box, Stack, Typography } from "@mui/material";
-import { type ReactElement, useMemo, useState } from "react";
-import { List, type RowComponentProps } from "react-window";
+import { type ReactElement, useEffect, useMemo, useState } from "react";
+import { List, type RowComponentProps, useListRef } from "react-window";
 import { BoufField } from "src/front/components/Input/BoufField";
 import { searchCompare } from "src/utils/search";
 import type { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
@@ -42,6 +42,7 @@ const RowComponent = ({
 };
 
 export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
+  const listRef = useListRef(null);
   const [filters, setFilters] = useState({
     text: "",
     rarityEpic: false,
@@ -58,6 +59,11 @@ export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
       ),
     [sublimations, filters],
   );
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: Reset scroll on filter change
+  useEffect(() => {
+    listRef.current?.scrollToRow({ align: "start", index: 0 });
+  }, [filters]);
 
   return (
     <ListSublimationsRoot className={listSublimationsClasses.root}>
@@ -77,6 +83,7 @@ export const ListSublimations = ({ sublimations }: TListSublimationsProps) => {
           overscanCount={5}
           rowProps={{ options }}
           rowComponent={RowComponent}
+          listRef={listRef}
         />
       </Stack>
     </ListSublimationsRoot>

@@ -10,6 +10,7 @@ export const listEnchantmentsClasses = {
 
 export const ListEnchantmentsRoot = styled("div")(({ theme }) => ({
   [`&.${listEnchantmentsClasses.root}`]: {
+    flex: "1 1 272px",
     display: "flex",
     flexDirection: "column",
     backgroundColor: theme.palette.surface[100],
