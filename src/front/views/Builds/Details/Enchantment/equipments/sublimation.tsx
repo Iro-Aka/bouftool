@@ -22,7 +22,7 @@ const isPatternSegmentRespected = (
 ) => {
   for (let i = 0; i < sublimation.colorPattern.length; i++) {
     const enchantment = enchantments[startIndex + i];
-    if (!enchantment || enchantment.color !== sublimation.colorPattern[i]) {
+    if (!enchantment || (enchantment.color !== sublimation.colorPattern[i] && !enchantment.anyColor)) {
       return false;
     }
   }
