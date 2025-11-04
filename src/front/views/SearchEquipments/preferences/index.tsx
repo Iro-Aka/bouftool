@@ -1,5 +1,7 @@
 import TuneIcon from "@mui/icons-material/Tune";
 import { StackRow, stackRowClasses } from "src/front/components/Layout/StackRow";
+import { TooltipInfo } from "src/front/components/TooltipInfo";
+import { I18n } from "src/front/i18n";
 import { useSearchItemsPreferencesContext } from "../contexts/preferences";
 import { SearchItemsMasteryPreferences } from "./mastery";
 import { SearchItemsResistancePreferences } from "./resistance";
@@ -19,6 +21,7 @@ export const SearchItemsPreferences = () => {
         flexWrap: "wrap",
       }}
     >
+      <TooltipInfo title={<I18n library="HelperTooltip" message="SearchItemsPreferences" />} />
       <TuneIcon />
       <SearchItemsMasteryPreferences value={preferences.mastery} dispatchPreferences={dispatchPreferences} />
       <SearchItemsResistancePreferences value={preferences.resistance} dispatchPreferences={dispatchPreferences} />

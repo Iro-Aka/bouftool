@@ -9,6 +9,9 @@ export const themeTooltip = {
     }),
     arrow: ({ theme }) => ({
       color: theme.palette.surface[200],
+      "&:before": {
+        border: `1px solid ${theme.palette.border.light}`,
+      },
     }),
   },
 } satisfies Components<Theme>["MuiTooltip"];

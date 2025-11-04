@@ -157,7 +157,10 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildCreate]: { buildId: string };
   [ElectronEvents.BuildDelete]: undefined;
   [ElectronEvents.GetBuild]: TWakfuBuildDisplay;
-  [ElectronEvents.BuildEquipItem]: undefined | { itemId: number; position: EnumWakfuEquipmentPosition[] };
+  [ElectronEvents.BuildEquipItem]:
+    | undefined
+    | { itemId: number; availablePositions: EnumWakfuEquipmentPosition[] }
+    | { itemId: number; disablingItems: ReturnType<WakfuItem["toObject"]>[]; position: EnumWakfuEquipmentPosition };
   [ElectronEvents.BuildUnequipItem]: undefined;
   [ElectronEvents.BuildCompareItem]: {
     sourceItems: (ReturnType<WakfuItem["toObject"]> | EnumWakfuEquipmentPosition)[];

@@ -4,11 +4,14 @@ import type { WakfuItem } from "src/wakfu/items";
 import { type EnumWakfuEquipmentPosition, isWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
 import { WakfuStats } from "src/wakfu/stats";
 import { WakfuStore } from "src/wakfu/store";
-import { lauchOptimization } from "../../wakfu/optimization/optimizationLauncher";
-import { ElectronEvents } from "../types";
-import { ElectronEventManager } from "./manager";
+import { lauchOptimization } from "../../../wakfu/optimization/optimizationLauncher";
+import { ElectronEvents } from "../../types";
+import { ElectronEventManager } from "../manager";
+import { registerElectronBuildsEquipEvents } from "./equip";
 
 export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
+  registerElectronBuildsEquipEvents(manager);
+
   manager.register(ElectronEvents.BuildCreateCharacter, async (reply, { name, breed }) => {
     const character = await WakfuCharacter.create(name, breed);
     ElectronEventManager.send(ElectronEvents.GetAllBuilds, WakfuCharacter.getCharactersToDisplay());
@@ -68,36 +71,6 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     }
     build.setName(name);
     build.setLevel(level);
-    ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
-    reply(undefined);
-  });
-
-  manager.register(ElectronEvents.BuildEquipItem, (reply, { buildId, itemId, position: forcedPosition }) => {
-    const build = WakfuBuild.getById(buildId);
-    if (!build) {
-      throw new Error(`Build with ID ${buildId} not found`);
-    }
-    const item = WakfuStore.getInstance().getItemById(itemId);
-    if (!item) {
-      throw new Error(`Item with ID ${itemId} not found`);
-    }
-    if (forcedPosition) {
-      build.equipItem(forcedPosition, item);
-    } else {
-      const itemType = item.getItemType();
-      if (!itemType) {
-        throw new Error(`Item with ID ${itemId} has no type`);
-      }
-      let position = itemType.getEquipmentPositions()[0];
-      if (itemType.getEquipmentPositions().length > 1 && build.isEquipped(position)) {
-        position = itemType.getEquipmentPositions()[1];
-        if (build.isEquipped(position)) {
-          reply({ itemId: itemId, position: itemType.getEquipmentPositions() });
-          return;
-        }
-      }
-      build.equipItem(position, item);
-    }
     ElectronEventManager.send(ElectronEvents.GetBuild, build.toDisplay());
     reply(undefined);
   });

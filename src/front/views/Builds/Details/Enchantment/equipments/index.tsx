@@ -1,4 +1,7 @@
 import { Typography } from "@mui/material";
+import { StackRow } from "src/front/components/Layout/StackRow";
+import { TooltipInfo } from "src/front/components/TooltipInfo";
+import { I18n } from "src/front/i18n";
 import { EnumWakfuRarity } from "src/wakfu/items/rarity";
 import { EnumWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
 import type { TWakfuEnchantment } from "../types";
@@ -27,7 +30,10 @@ export type TEquipmentsEnchantmentsProps = {
 export const EquipmentsEnchantments = ({ enchantments, shardLevelRequirement }: TEquipmentsEnchantmentsProps) => {
   return (
     <EquipmentsEnchantmentsRoot className={equipmentsEnchantmentsClasses.root}>
-      <Typography variant="subtitle2">Équipements</Typography>
+      <StackRow sx={{ justifyContent: "space-between" }}>
+        <Typography variant="subtitle2">Équipements</Typography>
+        <TooltipInfo title={<I18n library="HelperTooltip" message="BuildEnchantments" />} />
+      </StackRow>
       <div className={equipmentsEnchantmentsClasses.scroll}>
         {EnchantableEquipmentsPositions.map((position) => (
           <EquipmentsEnchantmentsRow

@@ -9,7 +9,7 @@ import { ItemSlotBox, itemSlotClasses } from "./styles";
 export type TItemSlotProps = {
   position?: EnumWakfuEquipmentPosition;
   item: Omit<TWakfuBuildStuffDisplay[EnumWakfuEquipmentPosition], "constraints"> & {
-    constraints?: TWakfuBuildStuffDisplay[EnumWakfuEquipmentPosition];
+    constraints?: TWakfuBuildStuffDisplay[EnumWakfuEquipmentPosition]["constraints"];
   };
   size: number;
   disableTooltip?: boolean;

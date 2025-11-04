@@ -5,6 +5,8 @@ export type TUseGlobalClickListenerArgs = {
   excludeTags?: string[];
   onClick?: (evt: PointerEvent, target: HTMLElement) => void;
   onClickAway?: (evt: PointerEvent) => void;
+  onRightClick?: (evt: PointerEvent, target: HTMLElement) => void;
+  onRightClickAway?: (evt: PointerEvent) => void;
 };
 
 const isElementMatchingTags = (element: HTMLElement, tags: string[]): boolean => {
@@ -24,14 +26,18 @@ export const useGlobalClickListener = ({
   excludeTags,
   onClick,
   onClickAway,
+  onRightClick,
+  onRightClickAway,
 }: TUseGlobalClickListenerArgs) => {
   const propsRef = useRef({
     includeTags,
     excludeTags,
     onClick,
     onClickAway,
+    onRightClick,
+    onRightClickAway,
   });
-  propsRef.current = { includeTags, excludeTags, onClick, onClickAway };
+  propsRef.current = { includeTags, excludeTags, onClick, onClickAway, onRightClick, onRightClickAway };
 
   useEffect(() => {
     const handleClick = (event: PointerEvent) => {
@@ -47,9 +53,24 @@ export const useGlobalClickListener = ({
         }
       }
     };
+    const handleRightClick = (event: PointerEvent) => {
+      const { includeTags, excludeTags, onRightClick, onRightClickAway } = propsRef.current;
+      const target = event.target;
+      if (target instanceof HTMLElement) {
+        if (excludeTags && isElementMatchingTags(target, excludeTags)) {
+          return;
+        } else if (includeTags && isElementMatchingTags(target, includeTags)) {
+          onRightClick?.(event, target);
+        } else {
+          onRightClickAway?.(event);
+        }
+      }
+    };
     document.addEventListener("click", handleClick, true);
+    document.addEventListener("contextmenu", handleRightClick, true);
     return () => {
       document.removeEventListener("click", handleClick, true);
+      document.removeEventListener("contextmenu", handleRightClick, true);
     };
   }, []);
 };

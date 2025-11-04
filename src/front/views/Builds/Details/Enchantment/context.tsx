@@ -79,6 +79,18 @@ export const EnchantmentProvider = ({ children }: TEnchantmentProviderProps) => 
     },
   });
 
+  useGlobalClickListener({
+    onRightClickAway: (evt) => {
+      if (selectedSublimation || selectedEnchantment) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        setSelectedSublimation(null);
+        setSelectedEnchantment(null);
+        setCursor(null);
+      }
+    },
+  });
+
   return (
     <Context.Provider
       value={{ selectedEnchantment, setSelectedEnchantment, selectedSublimation, setSelectedSublimation }}

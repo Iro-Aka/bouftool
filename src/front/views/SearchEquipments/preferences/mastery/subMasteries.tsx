@@ -1,6 +1,9 @@
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { ToggleButtonGroup } from "@mui/material";
+import { TooltipToggleButton } from "src/front/components/TooltipToggleButton";
 import { StatsIcon } from "src/front/components/Wakfu/StatsIcon";
+import { getWakfuStatLabel } from "src/wakfu/stats/i18n/label";
 import { EnumWakfuStat } from "src/wakfu/stats/types";
+import { EnumWakfuLang } from "src/wakfu/utils/types";
 import type { TSearchItemsPreferences } from "../logics";
 
 export type TSearchItemsSubMasteriesPreferencesProps = {
@@ -15,18 +18,30 @@ export const SearchItemsSubMasteriesPreferences = ({ value, onChange }: TSearchI
       value={value}
       onChange={(_, newValue: TSearchItemsPreferences["mastery"]["subMasteries"]) => onChange(newValue)}
     >
-      <ToggleButton value={EnumWakfuStat.CriticalMastery}>
+      <TooltipToggleButton
+        value={EnumWakfuStat.CriticalMastery}
+        tooltip={getWakfuStatLabel(EnumWakfuStat.CriticalMastery, EnumWakfuLang.French)}
+      >
         <StatsIcon>{EnumWakfuStat.CriticalMastery}</StatsIcon>
-      </ToggleButton>
-      <ToggleButton value={EnumWakfuStat.RearMastery}>
+      </TooltipToggleButton>
+      <TooltipToggleButton
+        value={EnumWakfuStat.RearMastery}
+        tooltip={getWakfuStatLabel(EnumWakfuStat.RearMastery, EnumWakfuLang.French)}
+      >
         <StatsIcon>{EnumWakfuStat.RearMastery}</StatsIcon>
-      </ToggleButton>
-      <ToggleButton value={EnumWakfuStat.BerserkMastery}>
+      </TooltipToggleButton>
+      <TooltipToggleButton
+        value={EnumWakfuStat.BerserkMastery}
+        tooltip={getWakfuStatLabel(EnumWakfuStat.BerserkMastery, EnumWakfuLang.French)}
+      >
         <StatsIcon>{EnumWakfuStat.BerserkMastery}</StatsIcon>
-      </ToggleButton>
-      <ToggleButton value={EnumWakfuStat.HealingMastery}>
+      </TooltipToggleButton>
+      <TooltipToggleButton
+        value={EnumWakfuStat.HealingMastery}
+        tooltip={getWakfuStatLabel(EnumWakfuStat.HealingMastery, EnumWakfuLang.French)}
+      >
         <StatsIcon>{EnumWakfuStat.HealingMastery}</StatsIcon>
-      </ToggleButton>
+      </TooltipToggleButton>
     </ToggleButtonGroup>
   );
 };

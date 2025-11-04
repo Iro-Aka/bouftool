@@ -1,52 +1,27 @@
-import { Button, Dialog, DialogActions, DialogContent, Typography } from "@mui/material";
-import { ElectronEvents } from "src/electron/types";
-import { StackRow } from "src/front/components/Layout/StackRow";
-import { ItemSlot } from "src/front/components/Wakfu/ItemSlot";
-import { sendElectronEvent } from "src/front/hooks/electron";
-import type { EnumWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
-import { useBuildDetailsContext } from "../context";
+import { useEffect, useState } from "react";
+import { ElectronEvents, type ElectronEventsRenderer } from "src/electron/types";
+import { useElectronEvent } from "src/front/hooks/electron";
+import { ModalEquipConflictDisabled } from "./disabled";
+import { ModalEquipConflictPosition } from "./position";
 
-export type TModalEquipConflictProps = {
-  conflictPositions: { itemId: number; position: EnumWakfuEquipmentPosition[] } | null;
-  onClose: () => void;
-};
+export const ModalEquipConflict = () => {
+  const [, conflicts] = useElectronEvent(ElectronEvents.BuildEquipItem, true);
+  const [queuedConflicts, setQueuedConflicts] = useState<ElectronEventsRenderer[ElectronEvents.BuildEquipItem][]>([]);
 
-export const ModalEquipConflict = ({ conflictPositions, onClose }: TModalEquipConflictProps) => {
-  const build = useBuildDetailsContext();
-
-  const handleClick = (position: EnumWakfuEquipmentPosition) => {
-    if (!conflictPositions) {
-      return;
-    }
-    sendElectronEvent(ElectronEvents.BuildEquipItem, {
-      buildId: build.id,
-      itemId: conflictPositions?.itemId,
-      position,
-    });
-    onClose();
+  const handleClose = () => {
+    setQueuedConflicts((prev) => prev.toSpliced(0, 1));
   };
 
+  useEffect(() => {
+    if (conflicts) {
+      setQueuedConflicts((prev) => [...prev, conflicts]);
+    }
+  }, [conflicts]);
+
   return (
-    <Dialog open={!!conflictPositions} onClose={onClose}>
-      <DialogContent sx={{ display: "flex", flexDirection: "column", gap: 2, alignItems: "center" }}>
-        <Typography variant="body2">Veuillez sélectionner l'équipement à remplacer</Typography>
-        <StackRow sx={{ "&&": { gap: 2 } }}>
-          {conflictPositions?.position.map((position) => (
-            <ItemSlot
-              key={position}
-              position={position}
-              item={build.stuff[position]}
-              size={48}
-              onClick={() => handleClick(position)}
-            />
-          ))}
-        </StackRow>
-      </DialogContent>
-      <DialogActions>
-        <Button variant="push" onClick={onClose}>
-          Annuler
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <ModalEquipConflictPosition conflict={queuedConflicts[0]} onClose={handleClose} />
+      <ModalEquipConflictDisabled conflict={queuedConflicts[0]} onClose={handleClose} />
+    </>
   );
 };

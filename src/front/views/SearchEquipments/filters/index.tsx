@@ -2,6 +2,8 @@ import FilterIcon from "@mui/icons-material/FilterAlt";
 import ReplayIcon from "@mui/icons-material/Replay";
 import { Button, Stack, TextField } from "@mui/material";
 import type { TSearchItemsFilters } from "src/electron/searchItems/types";
+import { TooltipInfo } from "src/front/components/TooltipInfo";
+import { I18n } from "src/front/i18n";
 import type { EnumWakfuStat } from "src/wakfu/stats/types";
 import { RangeFields } from "../../../components/Input/RangeFields";
 import { useSearchItemsFiltersContext } from "../contexts/filters";
@@ -22,6 +24,7 @@ export const SearchItemsFilters = () => {
 
   return (
     <Stack sx={{ flexDirection: "row", gap: 1, flexWrap: "wrap", alignItems: "center" }}>
+      <TooltipInfo title={<I18n library="HelperTooltip" message="SearchItemsFilters" />} />
       <FilterIcon />
       <TextField
         placeholder="Rechercher..."
