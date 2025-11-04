@@ -1,7 +1,8 @@
 import { WakfuBuild } from "src/wakfu/builds/build";
 import { WakfuCharacter } from "src/wakfu/builds/character";
 import type { WakfuItem } from "src/wakfu/items";
-import type { WakfuStats } from "src/wakfu/stats";
+import { type EnumWakfuEquipmentPosition, isWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
+import { WakfuStats } from "src/wakfu/stats";
 import { WakfuStore } from "src/wakfu/store";
 import { lauchOptimization } from "../../wakfu/optimization/optimizationLauncher";
 import { ElectronEvents } from "../types";
@@ -123,16 +124,18 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
     }
     const itemType = targetItem.getItemType();
     const results: {
-      sourceItems: ReturnType<WakfuItem["toObject"]>[];
+      sourceItems: (ReturnType<WakfuItem["toObject"]> | EnumWakfuEquipmentPosition)[];
       targetItem: ReturnType<WakfuItem["toObject"]>;
       stats: ReturnType<WakfuStats["toObject"]>;
     }[] = [];
     for (const position of itemType.getEquipmentPositions()) {
       const equippedItem = build.getEquippedItem(position);
-      if (equippedItem === null) {
-        continue;
+      const sourceItems: (WakfuItem | EnumWakfuEquipmentPosition)[] = [equippedItem ?? position];
+      for (const disablingItem of build.getItemsDisablingPosition(position)) {
+        if (disablingItem) {
+          sourceItems.push(disablingItem);
+        }
       }
-      const sourceItems: WakfuItem[] = [equippedItem];
       for (const disabledPosition of itemType.getEquipmentDisabledPositions()) {
         const disabledItem = build.getEquippedItem(disabledPosition);
         if (disabledItem) {
@@ -141,11 +144,13 @@ export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
       }
       const targetItemStats = targetItem.getStats().toApplyEffects().applyElementalPreferences(elementalPreferences);
       const sourceItemsStats = sourceItems.map((item) =>
-        item.getStats().toApplyEffects().applyElementalPreferences(elementalPreferences),
+        isWakfuEquipmentPosition(item)
+          ? new WakfuStats()
+          : item.getStats().toApplyEffects().applyElementalPreferences(elementalPreferences),
       );
       const delta = targetItemStats.compare(sourceItemsStats);
       results.push({
-        sourceItems: sourceItems.map((item) => item.toObject()),
+        sourceItems: sourceItems.map((item) => (isWakfuEquipmentPosition(item) ? item : item.toObject())),
         targetItem: targetItem.toObject(),
         stats: delta.toObject(),
       });

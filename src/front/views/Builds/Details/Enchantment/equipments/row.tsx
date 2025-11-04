@@ -2,6 +2,7 @@ import { clsx } from "clsx";
 import { ItemTypeIcon } from "src/front/components/Wakfu/ItemTypeIcon";
 import type { EnchantableEquipmentPositions } from "src/wakfu/enchantment/constants";
 import { EnumWakfuEnchantmentColor } from "src/wakfu/enchantment/types";
+import type { EnumWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
 import { useBuildDetailsContext } from "../../context";
 import { useEnchantmentContext } from "../context";
 import type { TWakfuEnchantment } from "../types";
@@ -10,6 +11,7 @@ import { equipmentsEnchantmentsClasses } from "./styles";
 import { EquipmentsEnchantmentsRowSublimation } from "./sublimation";
 
 const getCurrentEnchantmentEffect = (
+  position: EnumWakfuEquipmentPosition,
   selectedEnchantment: (TWakfuEnchantment & { level: number }) | null,
   buildEnchantment: { id: number; color: EnumWakfuEnchantmentColor; level: number } | null,
   enchantments: TWakfuEnchantment[],
@@ -23,7 +25,10 @@ const getCurrentEnchantmentEffect = (
   if (!enchantment) {
     return null;
   }
-  return `${enchantment.effects[level - 1]} ${enchantment.label.fr}`;
+  const value = enchantment.doubleBonusPositions.includes(position)
+    ? enchantment.effects[level - 1] * 2
+    : enchantment.effects[level - 1];
+  return `${value} ${enchantment.label.fr}`;
 };
 
 export type TBuildEnchantmentEquipmentsRowProps = {
@@ -37,8 +42,8 @@ export const EquipmentsEnchantmentsRow = ({
   position,
   shardLevelRequirement,
 }: TBuildEnchantmentEquipmentsRowProps) => {
-  const { id: buildId, enchantments: buildEnchantments } = useBuildDetailsContext();
-  const { selectedEnchantment, selectedSublimation } = useEnchantmentContext();
+  const { enchantments: buildEnchantments } = useBuildDetailsContext();
+  const { selectedEnchantment } = useEnchantmentContext();
 
   const isHighlighted = (color: EnumWakfuEnchantmentColor) => {
     return selectedEnchantment?.color === color && selectedEnchantment.doubleBonusPositions.includes(position);
@@ -66,7 +71,7 @@ export const EquipmentsEnchantmentsRow = ({
             key={index}
             position={position}
             slot={index}
-            effect={getCurrentEnchantmentEffect(selectedEnchantment, e, enchantments)}
+            effect={getCurrentEnchantmentEffect(position, selectedEnchantment, e, enchantments)}
             shardLevelRequirement={shardLevelRequirement}
             enchantment={e}
           />

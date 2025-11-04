@@ -58,6 +58,7 @@ export type TWakfuBuildStuffDisplay = {
   [K in EnumWakfuEquipmentPosition]: {
     item: ReturnType<typeof WakfuItem.prototype.toObject> | null;
     disabled: boolean;
+    constraints: string[];
   };
 };
 

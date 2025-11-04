@@ -147,7 +147,7 @@ export const WakfuStatI18nLabels: Record<EnumWakfuStat, TWakfuI18n> = {
     pt: "Vontade",
   },
   [EnumWakfuStat.RearMastery]: {
-    fr: "Maîtrise Arrière",
+    fr: "Maîtrise Dos",
     en: "Rear Mastery",
     es: "Dominio espalda",
     pt: "Domínio de costas",

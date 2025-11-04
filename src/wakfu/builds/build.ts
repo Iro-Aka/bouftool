@@ -13,6 +13,7 @@ import { WakfuStore } from "../store";
 import { FileHandler } from "../utils/FileHandler";
 import { EnumWakfuStatsBonuses, StatsBonuses } from "./bonus";
 import { WakfuCharacter } from "./character";
+import { EnumWakfuStuffConstraint, WakfuStuffConstraints, WakfuStuffConstraintsCheckers } from "./constraints";
 import type {
   TWakfuBuildDisplay,
   TWakfuBuildEnchantments,
@@ -255,6 +256,17 @@ export class WakfuBuild {
     this.fileHandler.delete();
   }
 
+  public checkItemConstraint(item: WakfuItem, position: EnumWakfuEquipmentPosition): string[] {
+    const constraints: string[] = [];
+    for (const constraint of Object.values(EnumWakfuStuffConstraint)) {
+      const checker = WakfuStuffConstraintsCheckers[constraint];
+      if (checker && !checker(this, item, position)) {
+        constraints.push(WakfuStuffConstraints[constraint]);
+      }
+    }
+    return constraints;
+  }
+
   public getItemsDisablingPosition(position: EnumWakfuEquipmentPosition): WakfuItem[] {
     const items: WakfuItem[] = [];
     for (const equipmentPosition of Object.values(EnumWakfuEquipmentPosition)) {
@@ -393,6 +405,7 @@ export class WakfuBuild {
 
   public setLevel(level: number) {
     this.level = level;
+    this.abilities.setLevel(level);
     this.save();
   }
 
@@ -484,9 +497,11 @@ export class WakfuBuild {
       abilities: this.abilities.getAbilities(),
       elementalPreferences: this.elementalPreferences,
       stuff: Object.values(EnumWakfuEquipmentPosition).reduce<TWakfuBuildStuffDisplay>((acc, position) => {
+        const item = this.stuff[position].item;
         acc[position] = {
-          item: this.stuff[position].item?.toObject() || null,
+          item: item?.toObject() || null,
           disabled: this.stuff[position].disabled > 0,
+          constraints: item ? this.checkItemConstraint(item, position) : [],
         };
         return acc;
       }, {} as TWakfuBuildStuffDisplay),
@@ -537,9 +552,11 @@ export class WakfuBuild {
       name: this.name,
       level: this.level,
       stuff: Object.values(EnumWakfuEquipmentPosition).reduce<TWakfuBuildStuffDisplay>((acc, position) => {
+        const item = this.stuff[position].item;
         acc[position] = {
-          item: this.stuff[position].item?.toObject() || null,
+          item: item?.toObject() || null,
           disabled: this.stuff[position].disabled > 0,
+          constraints: item ? this.checkItemConstraint(item, position) : [],
         };
         return acc;
       }, {} as TWakfuBuildStuffDisplay),

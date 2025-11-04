@@ -3,6 +3,7 @@ import { Stack } from "@mui/material";
 import type { ElectronEvents, ElectronEventsRenderer } from "src/electron/types";
 import { StackRow } from "src/front/components/Layout/StackRow";
 import { ItemSlot } from "src/front/components/Wakfu/ItemSlot";
+import { isWakfuEquipmentPosition } from "src/wakfu/itemTypes/types";
 import { type EnumWakfuStat, isWakfuStat, type TWakfuStats } from "src/wakfu/stats/types";
 import { ModalCompareItemCardRow } from "./row";
 import { CompareItemStats, compareItemStatsClasses } from "./styles";
@@ -34,9 +35,13 @@ export const ModalCompareItemCard = ({ results }: TModalCompareItemCardProps) =>
     <Stack sx={{ p: 1.5, gap: 1.5, bgcolor: "surface.100", borderRadius: "8px" }}>
       <StackRow sx={{ justifyContent: "space-between" }}>
         <StackRow sx={{ flex: 1, justifyContent: "center" }}>
-          {results.sourceItems.map((item) => (
-            <ItemSlot key={item.id} item={{ item, disabled: false }} size={48} />
-          ))}
+          {results.sourceItems.map((item) =>
+            isWakfuEquipmentPosition(item) ? (
+              <ItemSlot key={item} position={item} item={{ item: null, disabled: false }} size={48} />
+            ) : (
+              <ItemSlot key={item.id} item={{ item, disabled: false }} size={48} />
+            ),
+          )}
         </StackRow>
         <CompareArrowsIcon sx={{ flex: "0 0 auto" }} />
         <StackRow sx={{ flex: 1, justifyContent: "center" }}>

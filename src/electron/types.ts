@@ -160,7 +160,7 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildEquipItem]: undefined | { itemId: number; position: EnumWakfuEquipmentPosition[] };
   [ElectronEvents.BuildUnequipItem]: undefined;
   [ElectronEvents.BuildCompareItem]: {
-    sourceItems: ReturnType<WakfuItem["toObject"]>[];
+    sourceItems: (ReturnType<WakfuItem["toObject"]> | EnumWakfuEquipmentPosition)[];
     targetItem: ReturnType<WakfuItem["toObject"]>;
     stats: ReturnType<WakfuStats["toObject"]>;
   }[];

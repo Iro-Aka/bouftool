@@ -31,7 +31,7 @@ export class WakfuEnchantment {
   public getEffectValue(level: number, position?: EnumWakfuEquipmentPosition): number {
     const effectIndex = this.getEffectIndex(level);
     const effect = this.effects[effectIndex];
-    let value = effect.baseValue + effect.perLevelValue * level;
+    let value = Math.floor(effect.baseValue + effect.perLevelValue * level);
     if (position && this.doubleBonusPositions.has(position)) {
       value *= 2;
     }
@@ -42,7 +42,7 @@ export class WakfuEnchantment {
     const effectIndex = this.getEffectIndex(level);
     const effect = this.effects[effectIndex];
     const stats = new WakfuStats();
-    let value = effect.baseValue + effect.perLevelValue * level;
+    let value = Math.floor(effect.baseValue + effect.perLevelValue * level);
     if (position && this.doubleBonusPositions.has(position)) {
       value *= 2;
     }

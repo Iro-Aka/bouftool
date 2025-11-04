@@ -183,9 +183,6 @@ export class WakfuStore {
           break;
         }
         default: {
-          if (item.definition.equipEffects.length === 0) {
-            break;
-          }
           this.items.set(
             item.definition.item.id,
             new WakfuItem({

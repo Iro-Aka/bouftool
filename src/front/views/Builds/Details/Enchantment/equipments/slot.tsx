@@ -21,7 +21,6 @@ const isEnchantmentLevelValid = (
 
   const targetLevel = equippedItem.item?.level ?? buildLevel;
   const requiredLevel = shardLevelRequirement[enchantment.level - 1];
-  console.log(targetLevel, requiredLevel);
   return targetLevel >= requiredLevel;
 };
 
@@ -42,7 +41,6 @@ export const EnchantmentSlot = ({
 }: TEnchantmentSlotProps) => {
   const { id: buildId, level, stuff } = useBuildDetailsContext();
   const { selectedEnchantment, selectedSublimation } = useEnchantmentContext();
-
   const enchantmentLevelValid = isEnchantmentLevelValid(stuff[position], level, enchantment, shardLevelRequirement);
 
   const handleClick = () => {

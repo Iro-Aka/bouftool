@@ -6,6 +6,14 @@ import type { TWakfuEnchantment } from "../types";
 import { ListEnchantmentsRow } from "./row";
 import { ListEnchantmentsRoot, listEnchantmentsClasses } from "./styles";
 
+const getMaxShardLevel = (shardLevelRequirement: number[], level: number) => {
+  const maxLevel = shardLevelRequirement.findIndex((req) => req > level);
+  if (maxLevel < 1) {
+    return shardLevelRequirement.length;
+  }
+  return maxLevel;
+};
+
 export type TAbilitiesCategoryProps = {
   shardLevelRequirement: number[];
   enchantments: TWakfuEnchantment[];
@@ -13,7 +21,7 @@ export type TAbilitiesCategoryProps = {
 
 export const ListEnchantments = ({ shardLevelRequirement, enchantments }: TAbilitiesCategoryProps) => {
   const { level } = useBuildDetailsContext();
-  const maxLevel = shardLevelRequirement.findIndex((req) => req > level) || shardLevelRequirement.length;
+  const maxLevel = getMaxShardLevel(shardLevelRequirement, level);
   const [selectedLevel, setSelectedLevel] = useState(maxLevel);
   const { setSelectedEnchantment } = useEnchantmentContext();
 
