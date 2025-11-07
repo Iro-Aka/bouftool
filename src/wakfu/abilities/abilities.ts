@@ -84,7 +84,13 @@ export enum EnumAbilitiesCategories {
 
 export const AbilitiesCategories: Record<
   EnumAbilitiesCategories,
-  { label: string; abilities: EnumAbilities[]; firstPointLevel: number; nextPointsEveryLevels: number }
+  {
+    label: string;
+    abilities: EnumAbilities[];
+    firstPointLevel: number;
+    nextPointsEveryLevels: number;
+    maxLevel?: number;
+  }
 > = {
   [EnumAbilitiesCategories.Intelligence]: {
     label: "Intelligence",
@@ -144,5 +150,6 @@ export const AbilitiesCategories: Record<
     ],
     firstPointLevel: 25,
     nextPointsEveryLevels: 50,
+    maxLevel: 175,
   },
 };

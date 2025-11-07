@@ -22,6 +22,9 @@ export const getUsedAbilitiesPoints = (
 };
 
 export const getAbilitiesCategoryPoints = (category: EnumAbilitiesCategories, level: number) => {
+  if (AbilitiesCategories[category].maxLevel && level > AbilitiesCategories[category].maxLevel) {
+    level = AbilitiesCategories[category].maxLevel;
+  }
   return Math.max(
     0,
     Math.floor(
