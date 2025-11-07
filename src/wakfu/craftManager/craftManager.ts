@@ -20,7 +20,7 @@ export class WakfuCraftManager {
   private itemsToCraft: TWakfuCraftManagerItem[] = [];
 
   private constructor() {
-    this.fileHandler = new FileHandler<TWakfuCraftManagerRaw>("craftManager.json");
+    this.fileHandler = new FileHandler<TWakfuCraftManagerRaw>("crafting/craftManager.json");
   }
 
   private serializeCraftedIngredientsMap(
