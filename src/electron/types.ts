@@ -42,6 +42,7 @@ export enum ElectronEvents {
   BuildAssignSublimation = "build:assign-sublimation",
   BuildAssignUniqueSublimation = "build:assign-unique-sublimation",
   BuildUnassignUniqueSublimation = "build:unassign-unique-sublimation",
+  BuildSetPositionElementalPreferences = "build:set-position-elemental-preferences",
   BuildSerialize = "build:serialize",
   BuildDeserialize = "build:deserialize",
   BuildOptimize = "build:optimize",
@@ -109,6 +110,11 @@ export type ElectronEventsMain = {
   [ElectronEvents.BuildUnassignUniqueSublimation]: {
     buildId: string;
     rarity: EnumWakfuRarity.Epic | EnumWakfuRarity.Relic;
+  };
+  [ElectronEvents.BuildSetPositionElementalPreferences]: {
+    buildId: string;
+    position: EnumWakfuEquipmentPosition;
+    preferences: TElementalPreferences | null;
   };
   [ElectronEvents.BuildSerialize]: { buildId: string };
   [ElectronEvents.BuildDeserialize]: { characterId: string; serializedBuild: string };
@@ -186,6 +192,7 @@ export type ElectronEventsRenderer = {
   [ElectronEvents.BuildAssignSublimation]: undefined;
   [ElectronEvents.BuildAssignUniqueSublimation]: undefined;
   [ElectronEvents.BuildUnassignUniqueSublimation]: undefined;
+  [ElectronEvents.BuildSetPositionElementalPreferences]: undefined;
   [ElectronEvents.BuildSerialize]: { serializedBuild: string };
   [ElectronEvents.BuildDeserialize]: { buildId: string };
   [ElectronEvents.BuildOptimize]: undefined;

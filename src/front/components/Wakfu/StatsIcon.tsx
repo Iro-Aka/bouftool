@@ -1,8 +1,8 @@
-import type { HTMLProps } from "react";
 import { WakfuStatIcons } from "src/wakfu/stats/icons";
 import type { EnumWakfuStat } from "src/wakfu/stats/types";
+import { StyledImg, type TStyledImgProps } from "../StyledImg";
 
-export type TStatsIconProps = Omit<HTMLProps<HTMLImageElement>, "children" | "src" | "alt"> & {
+export type TStatsIconProps = Omit<TStyledImgProps, "children" | "src" | "alt"> & {
   children: EnumWakfuStat;
 };
 
@@ -11,5 +11,5 @@ export const StatsIcon = ({ children, ...props }: TStatsIconProps) => {
   if (icon === null) {
     return null;
   }
-  return <img src={`wakfu/charac/${icon}.png`} alt={icon} {...props} />;
+  return <StyledImg src={`wakfu/charac/${icon}.png`} alt={icon} {...props} />;
 };

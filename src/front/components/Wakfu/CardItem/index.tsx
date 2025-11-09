@@ -1,8 +1,10 @@
 import { List, ListItem, Typography } from "@mui/material";
 import type { WakfuItem } from "src/wakfu/items";
+import type { TElementalPreferences } from "src/wakfu/stats/types";
 import { StackGrid } from "../../Layout/StackGrid";
 import { ItemTypeIcon } from "../ItemTypeIcon";
 import { RarityIcon } from "../RarityIcon";
+import { StatsIcon } from "../StatsIcon";
 import { SearchItemsCompare } from "./actions/compare";
 import { SearchItemsEncyclopedia } from "./actions/encyclopedia";
 import { SearchEquipmentsItemEquip } from "./actions/equip";
@@ -16,9 +18,10 @@ export type TCardItemProps = {
   buildId?: string;
   displayActions?: boolean;
   constraints?: string[];
+  elementalPreferences?: TElementalPreferences;
 };
 
-export const CardItem = ({ item, buildId, displayActions, constraints }: TCardItemProps) => {
+export const CardItem = ({ item, buildId, displayActions, constraints, elementalPreferences }: TCardItemProps) => {
   return (
     <CardItemRoot className={cardItemClasses.root} rarity={item.rarity}>
       <div className={cardItemClasses.header}>
@@ -40,6 +43,13 @@ export const CardItem = ({ item, buildId, displayActions, constraints }: TCardIt
               <SearchItemsCompare itemId={item.id} buildId={buildId} />
               <SearchItemsEncyclopedia itemId={item.id} itemTypeId={item.itemType.id} />
               <SearchItemsRecipes item={item} />
+            </StackGrid>
+          )}
+          {elementalPreferences && (
+            <StackGrid columns={4} gap={0.25} sx={{ bgcolor: "surface.200", p: 0.25, borderRadius: "8px" }}>
+              {elementalPreferences.map((preference) => (
+                <StatsIcon key={preference}>{preference}</StatsIcon>
+              ))}
             </StackGrid>
           )}
         </div>

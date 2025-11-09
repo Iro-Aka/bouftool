@@ -297,6 +297,7 @@ export class WakfuBuild {
     for (const disabledPosition of equipment.item.getItemType().getEquipmentDisabledPositions()) {
       --this.stuff[disabledPosition].disabled;
     }
+    this.stuff[position].preferences = null;
     this.stuff[position].item = null;
     this.save();
     return true;
@@ -310,6 +311,7 @@ export class WakfuBuild {
     if (equipment.item !== null) {
       this.unequipItem(position);
     }
+    equipment.preferences = null;
     equipment.item = item;
     for (const disabledPosition of item.getItemType().getEquipmentDisabledPositions()) {
       this.unequipItem(disabledPosition);
@@ -413,6 +415,14 @@ export class WakfuBuild {
     this.save();
   }
 
+  public setPositionElementalPreferences(
+    position: EnumWakfuEquipmentPosition,
+    preference: TElementalPreferences | null,
+  ) {
+    this.stuff[position].preferences = preference;
+    this.save();
+  }
+
   public addAbilityLevel(abilityId: EnumAbilities, level: number = 1) {
     this.abilities.addAbilityLevel(abilityId, level);
     this.save();
@@ -494,6 +504,7 @@ export class WakfuBuild {
         const item = this.stuff[position].item;
         acc[position] = {
           item: item?.toObject() || null,
+          preferences: this.stuff[position].preferences,
           disabled: this.stuff[position].disabled > 0,
           constraints: item ? this.checkItemConstraint(item, position) : [],
         };
@@ -551,6 +562,7 @@ export class WakfuBuild {
           item: item?.toObject() || null,
           disabled: this.stuff[position].disabled > 0,
           constraints: item ? this.checkItemConstraint(item, position) : [],
+          preferences: this.stuff[position].preferences,
         };
         return acc;
       }, {} as TWakfuBuildStuffDisplay),

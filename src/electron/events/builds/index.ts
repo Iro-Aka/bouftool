@@ -7,10 +7,12 @@ import { WakfuStore } from "src/wakfu/store";
 import { lauchOptimization } from "../../../wakfu/optimization/optimizationLauncher";
 import { ElectronEvents } from "../../types";
 import { ElectronEventManager } from "../manager";
+import { registerElectronBuildsElementalPreferencesEvents } from "./elementalPreferences";
 import { registerElectronBuildsEquipEvents } from "./equip";
 
 export const registerElectronBuildsEvents = (manager: ElectronEventManager) => {
   registerElectronBuildsEquipEvents(manager);
+  registerElectronBuildsElementalPreferencesEvents(manager);
 
   manager.register(ElectronEvents.BuildCreateCharacter, async (reply, { name, breed }) => {
     const character = await WakfuCharacter.create(name, breed);
