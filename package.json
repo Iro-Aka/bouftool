@@ -1,7 +1,7 @@
 {
   "name": "bouftool",
   "productName": "bouftool",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "My Electron application description",
   "main": ".vite/build/main.js",
   "type": "module",
@@ -11,7 +11,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish"
   },
-  "keywords": [],
+  "keywords": [ ],
   "author": "Romain LEROY",
   "license": "MIT",
   "devDependencies": {
