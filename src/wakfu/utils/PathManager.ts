@@ -4,8 +4,8 @@ import { app } from "electron";
 let baseDir: string | null = null;
 
 export function initializePathManager() {
-  if (import.meta.env.VITE_PORTABLE_BUILD === "true") {
-    baseDir = path.join(app.getPath("documents"), "bouftool");
+  if (import.meta.env.VITE_PORTABLE_BUILD !== "true") {
+    baseDir = app.getPath("userData");
   } else {
     baseDir = "";
   }
