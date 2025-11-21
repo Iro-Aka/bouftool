@@ -5,7 +5,7 @@
   "description": "bouftool",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Iro-Aka/bouftool.git"
+    "url": "https://github.com/Bouftool/bouftool.git"
   },
   "main": ".vite/build/main.js",
   "type": "module",
