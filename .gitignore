@@ -94,7 +94,13 @@ out/
 CLAUDE.md
 .claude/
 
-.yarn/
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # Bouftool
 characters/
