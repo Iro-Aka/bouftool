@@ -12,7 +12,9 @@ const makers: ForgeConfigMaker[] = [
   new MakerDeb({}),
 ];
 
-if (process.env.PORTABLE_BUILD === "true") {
+console.info("VITE_PORTABLE_BUILD:", process.env.VITE_PORTABLE_BUILD);
+
+if (process.env.VITE_PORTABLE_BUILD === "true") {
   makers.push(new MakerZIP({}, ["win32", "linux"]));
 } else {
   makers.push(new MakerSquirrel({}));

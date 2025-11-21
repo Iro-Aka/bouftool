@@ -4,7 +4,7 @@ import { app } from "electron";
 let baseDir: string | null = null;
 
 export function initializePathManager() {
-  if (process.env.PORTABLE_BUILD === "true") {
+  if (import.meta.env.VITE_PORTABLE_BUILD === "true") {
     baseDir = app.getPath("userData");
   } else {
     baseDir = "";
