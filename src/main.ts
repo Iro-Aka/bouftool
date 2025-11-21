@@ -1,6 +1,7 @@
 import path from "node:path";
 import { app, BrowserWindow } from "electron";
 import started from "electron-squirrel-startup";
+import { updateElectronApp } from "update-electron-app";
 import { registerElectronEvents } from "./electron/events";
 import { OverlayWindow } from "./electron/overlay";
 
@@ -61,3 +62,6 @@ app.on("activate", () => {
 });
 
 registerElectronEvents();
+updateElectronApp({
+  updateInterval: "1 hour",
+});
