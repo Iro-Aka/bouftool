@@ -17,6 +17,7 @@ import type { TSearchItemsPayload } from "./searchItems/types";
 
 export enum ElectronEvents {
   AppReady = "app:ready",
+  AppVersion = "app:version",
   OpenWebEncyclopedia = "app:open-web-encyclopedia",
   SearchItems = "search:items",
   GetItemById = "data:get-item-by-id",
@@ -67,6 +68,7 @@ export enum ElectronEvents {
 
 export type ElectronEventsMain = {
   [ElectronEvents.AppReady]: undefined;
+  [ElectronEvents.AppVersion]: undefined;
   [ElectronEvents.OpenWebEncyclopedia]: { itemTypeId: number; itemId: number };
   [ElectronEvents.SearchItems]: TSearchItemsPayload;
   [ElectronEvents.GetItemById]: { id: number };
@@ -141,6 +143,7 @@ export type ElectronEventsMain = {
 
 export type ElectronEventsRenderer = {
   [ElectronEvents.AppReady]: { version: string; lang: EnumWakfuLang };
+  [ElectronEvents.AppVersion]: string;
   [ElectronEvents.OpenWebEncyclopedia]: undefined;
   [ElectronEvents.SearchItems]: ReturnType<WakfuItem["toObject"]>[];
   [ElectronEvents.GetItemById]: ReturnType<WakfuItem["toObject"]>;

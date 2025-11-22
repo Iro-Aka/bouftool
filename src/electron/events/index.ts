@@ -1,4 +1,4 @@
-import { shell } from "electron";
+import { app, shell } from "electron";
 import { WakfuCraftManager } from "src/wakfu/craftManager/craftManager";
 import { WakfuStore } from "src/wakfu/store";
 import { DefaultEncyclopediaBaseUrl, EncyclopediaBaseUrlsMap } from "src/wakfu/utils/encyclopedia";
@@ -18,6 +18,10 @@ export const registerElectronEvents = () => {
       version: store.getGamedataVersion(),
       lang: store.getLang(),
     });
+  });
+
+  manager.register(ElectronEvents.AppVersion, (reply) => {
+    reply(app.getVersion());
   });
 
   manager.register(ElectronEvents.OpenWebEncyclopedia, (reply, { itemTypeId, itemId }) => {

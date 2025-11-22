@@ -1,14 +1,23 @@
 import ModeLightIcon from "@mui/icons-material/LightMode";
 import ModeNightIcon from "@mui/icons-material/ModeNight";
 import { Button, buttonClasses, Divider, Switch, Typography, useColorScheme } from "@mui/material";
+import { useLayoutEffect } from "react";
+import { ElectronEvents } from "src/electron/types";
 import { AppIcon } from "src/front/components/AppIcon";
 import { StackRow } from "src/front/components/Layout/StackRow";
+import { useElectronEvent } from "src/front/hooks/electron";
 import { useNavigationContext } from "../Navigation";
 import { NavigationView } from "../Navigation/types";
 
 export const Navbar = () => {
   const { currentView, setCurrentView } = useNavigationContext();
   const { mode, setMode } = useColorScheme();
+  const [getVersion, version] = useElectronEvent(ElectronEvents.AppVersion);
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: load one time
+  useLayoutEffect(() => {
+    getVersion(undefined);
+  }, []);
 
   return (
     <StackRow
@@ -59,6 +68,9 @@ export const Navbar = () => {
       <StackRow>
         {mode === "light" ? <ModeLightIcon /> : <ModeNightIcon />}
         <Switch checked={mode === "dark"} onChange={() => setMode(mode === "dark" ? "light" : "dark")} size="small" />
+        <Typography variant="subtitle2" color="textDisabled">
+          {version}
+        </Typography>
       </StackRow>
     </StackRow>
   );
